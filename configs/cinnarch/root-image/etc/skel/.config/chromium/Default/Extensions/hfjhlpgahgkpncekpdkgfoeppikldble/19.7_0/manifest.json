@@ -1,0 +1,52 @@
+{
+   "default_locale": "en",
+   "description": "Smart. Simple. Beautiful Theme.",
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCxKdT4vESUq2aqNx1oAWPn4MlqwYtIdosjWj4n+qSfshyDYqGmAyqgEEG3UITi0wP/Aw6Y1yH9wZCo+x/cAjQ/B6p8pCnKZOZdz+uaM5zxzER/Ss1h+Ewcwoo9+OM0iEDasffXcx/1xjseVTMy6EbLrag96dIYNzUexTY72TGTjQIDAQAB",
+   "name": "__MSG_themeName__",
+   "theme": {
+      "colors": {
+         "bookmark_text": [ 50, 33, 33 ],
+         "control_background": [ 50, 33, 0 ],
+         "frame": [ 255, 255, 255 ],
+         "frame_inactive": [ 255, 255, 255 ],
+         "frame_incognito": [ 53, 94, 124 ],
+         "frame_incognito_inactive": [ 91, 162, 213 ],
+         "ntp_background": [ 245, 245, 245 ],
+         "ntp_header": [ 200, 200, 200 ],
+         "ntp_link": [ 51, 102, 204 ],
+         "ntp_section": [ 200, 200, 200, 0.3 ],
+         "ntp_section_link": [ 55, 55, 55 ],
+         "ntp_section_text": [ 55, 55, 55 ],
+         "ntp_text": [ 35, 35, 35 ],
+         "tab_background_text": [ 35, 25, 25 ],
+         "tab_text": [ 33, 33, 33 ],
+         "toolbar": [ 245, 245, 245, 1 ]
+      },
+      "images": {
+         "theme_button_background": "images/theme_button_background.png",
+         "theme_frame": "images/Frame.png",
+         "theme_ntp_background": "images/back.png",
+         "theme_tab_background": "images/theme_tab_background.png",
+         "theme_tab_background_incognito": "images/theme_tab_background.png",
+         "theme_tab_background_v": "images/theme_tab_background.png",
+         "theme_toolbar": "images/theme_toolbar.png"
+      },
+      "properties": {
+         "ntp_background_alignment": "bottom\ncenter",
+         "ntp_background_repeat": "repeat",
+         "ntp_logo_alternate": 1,
+         "tints": {
+            "background_tab": [ -1, 0.5, 0.75 ],
+            "buttons": [ 0.549, 0, 0.45 ],
+            "frame": [ -1, -1, -1 ],
+            "frame_inactive": [ -1, -1, 0.75 ],
+            "frame_incognito": [ -1, 0.2, 0.35 ],
+            "frame_incognito_inactive": [ -1, 0.3, 0.6 ],
+            "theme_tab_background_v": [ 1, 1, 0.1 ],
+            "theme_toolbar": [ 1, 1, 0.3 ]
+         }
+      }
+   },
+   "update_url": "http://clients2.google.com/service/update2/crx",
+   "version": "19.7"
+}

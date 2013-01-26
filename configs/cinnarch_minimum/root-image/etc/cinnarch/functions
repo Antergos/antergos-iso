@@ -1,0 +1,197 @@
+#!/bin/bash
+
+
+# kernel_cmdline <param> <default>
+# Looks for a parameter on the kernel's boot-time command line.
+#
+# returns: 0 if param was found. Also prints its value if it was a K=V param.
+#          1 if it was not. Also prints value passed as <default>
+#
+kernel_cmdline ()
+{
+	for param in $(/bin/cat /proc/cmdline); do
+		case "${param}" in
+			$1=*) echo "${param##*=}"; return 0 ;;
+			$1) return 0 ;;
+			*) continue ;;
+		esac
+	done
+	[ -n "${2}" ] && echo "${2}"
+	return 1
+}
+
+
+_do_locales ()
+{
+	XKEYMAP=""
+	XVARIANT=""
+	CKEYMAP=""
+	case "${KEYMAP}" in
+	  en_US)
+		#Amerikan English
+		XKEYMAP="us"
+		CKEYMAP="us"
+		;;
+	  en_GB)
+		#British English
+		XKEYMAP="gb"
+		CKEYMAP="uk"
+		;;
+	  be_BY)
+		#Belarusian
+		XKEYMAP="by"
+		CKEYMAP="be"
+		;;
+	  pt_BR)
+		#Brazilian Portuguese
+		XKEYMAP="br"
+		CKEYMAP="br-abnt2"
+		;;
+	  bg_BG)
+		#Bulgarian
+		XKEYMAP="bg"
+		CKEYMAP="bg"
+		;;
+	  zh_CN)
+		#Chinese (Simplified)
+		XKEYMAP="cn"
+		CKEYMAP="cn"
+		;;
+	  zh_TW)
+		#Chinese (Traditional)
+		XKEYMAP="cn"
+		CKEYMAP="cn"
+		;;
+	  cs_CZ)
+		#Czech
+		XKEYMAP="cz"
+		CKEYMAP="cz-lat2"
+		;;
+	  da_DK)
+		#Danish
+		XKEYMAP="dk"
+		CKEYMAP="dk"
+		;;
+	  nl_NL)
+		#Dutch
+		XKEYMAP="nl"
+		CKEYMAP="nl"
+		;;
+	  fr_BE)
+		#Belgian
+		XKEYMAP="be"
+		CKEYMAP="be-latin1"
+		;;
+	  fi_FI)
+		#Finnish
+		XKEYMAP="fi"
+		CKEYMAP="fi"
+		;;
+	  fr_FR)
+		#French
+		XKEYMAP="fr"
+		CKEYMAP="fr"
+		;;
+	  fr_CA)
+		#Canadian
+		XKEYMAP="ca+multix"
+		CKEYMAP="cf"
+		;;
+	  de_DE)
+		#German
+		XKEYMAP="de"
+		XVARIANT="nodeadkeys"
+		CKEYMAP="de"
+		;;
+	  el_GR)
+		#Greek
+		XKEYMAP="gr"
+		CKEYMAP="gr"
+		;;
+	  hu_HU)
+		#Hungarian
+		XKEYMAP="hu"
+		CKEYMAP="hu"
+		;;
+	  is_IS)
+		#Icelandic
+		XKEYMAP="is"
+		CKEYMAP="is"
+		;;
+	  it_IT)
+		#Italian
+		XKEYMAP="it"
+		CKEYMAP="it"
+		;;
+	  nn_NO)
+		#Nynorsk
+		XKEYMAP="no"
+		CKEYMAP="no-latin1"
+		;;
+	  pl_PL)
+		#Polish
+		XKEYMAP="pl"
+		CKEYMAP="pl"
+		;;
+	  pt_PT)
+		#Portuguese
+		XKEYMAP="pt"
+		CKEYMAP="pt-latin9"
+		;;
+	  ro_RO)
+		#Romanian
+		XKEYMAP="ro"
+		CKEYMAP="ro_win"
+		;;
+	  ru_RU)
+		#Russian
+		XKEYMAP="ru"
+		CKEYMAP="ru4"
+		;;
+	  es_AR)
+		#Argentinian
+		XKEYMAP="latam"
+		CKEYMAP="la-latin1"
+		;;
+	  sr_RS)
+		#Serbian
+		XKEYMAP="rs"
+		CKEYMAP="rs"
+		;;
+	  es_ES)
+		#Spanish
+		XKEYMAP="es"
+		CKEYMAP="es"
+		;;
+	  ca_ES)
+		#Spanish
+		XKEYMAP="es"
+		XVARIANT="cat"
+		CKEYMAP="es"
+		;;
+	  sv_SE)
+		#Swedish
+		XKEYMAP="se"
+		CKEYMAP="sv-latin1"
+		;;
+	  tr_TR)
+		#Turkish
+		XKEYMAP="tr"
+		CKEYMAP="tr_q-latin5"
+		;;
+	  uk_UA)
+		#Ukrainian
+		XKEYMAP="ua"
+		CKEYMAP="ua"
+		;;
+	esac
+	if [ "${XVARIANT}" != "" ] ; then 
+	   sed -i "s#Identifier \"evdev keyboard catchall\".*#&\n        Option \"XkbLayout\" \"${XKEYMAP}\"\n        Option \"XkbVariant\" \"${XVARIANT}\"#"       ${DESTDIR}/etc/X11/xorg.conf.d/10-evdev.conf
+	else
+	   sed -i "s#Identifier \"evdev keyboard catchall\".*#&\n        Option \"XkbLayout\" \"${XKEYMAP}\"#"       ${DESTDIR}/etc/X11/xorg.conf.d/10-evdev.conf
+	fi
+	touch ${DESTDIR}/etc/vconsole.conf
+	echo "KEYMAP=${CKEYMAP}" > ${DESTDIR}/etc/vconsole.conf
+	sed -i "s/'us'/'${XKEYMAP}'/" /arch/set-gsettings
+}
+

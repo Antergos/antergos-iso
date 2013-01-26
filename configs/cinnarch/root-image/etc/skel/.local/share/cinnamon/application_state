@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<application-state>
+  <context id="">
+    <application id="Cinnarch Installer CLI.desktop" open-window-count="0" score="0" last-seen="0"/>
+    <application id="dconf-editor.desktop" open-window-count="0" score="5" last-seen="1347018871"/>
+    <application id="gnome-terminal.desktop" open-window-count="1" score="0" last-seen="1347018933"/>
+    <application id="pantheon-files.desktop" open-window-count="1" score="20" last-seen="1347018933"/>
+    <application id="eog.desktop" open-window-count="0" score="0" last-seen="1347018921"/>
+  </context>
+</application-state>

@@ -1,0 +1,8 @@
+[Unit]
+Description=Sync pacman on first boot
+After=pacman-init.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/Usr/bin/pacman-boot

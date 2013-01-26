@@ -1,0 +1,10 @@
+[Unit]
+Description=LiveMedia Config Script
+Before=systemd-user-sessions.service
+
+[Service]
+Type=oneshot
+ExecStart=/etc/cinnarch/livecd
+
+[Install]
+WantedBy=multi-user.target

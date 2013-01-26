@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=0.1
+Terminal=false
+Icon=config-language
+Type=Application
+Exec=python /usr/share/welcn/welcn.py
+Name=Welcn
+GenericName=Welcn
+Comment=Welcome screen for Cinnarch
+Name[es_ES]=Pantalla de bienvenida para Cinnarch

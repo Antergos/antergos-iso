@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Change keyboard layaout
+dbus-launch gsettings set org.gnome.desktop.input-sources sources "[('xkb','us')]"
+
+# Set show flags to false
+dbus-launch gsettings set org.cinnamon keyboard-applet-use-flags false
+
+# Change default wallpaper
+dbus-launch gsettings set org.gnome.desktop.background picture-uri file:///usr/share/cinnarch/wallpapers/83II_by_bo0xVn.jpg

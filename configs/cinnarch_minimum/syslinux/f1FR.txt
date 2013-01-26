@@ -1,0 +1,20 @@
+ 
+ 
+ 
+
+
+
+
+        
+                        Bienvenue sur Cinnarch Live DVD.
+		Avant de charger le systŠme d'exploitation, vous pouvez 
+		choisir la langue et le type de clavier, en utilisant les touches F2-F3.
+
+		Le systŠme LiveCD ne n‚cessite pas d'espace sur votre disque dur.
+		Si vous ne pouvez pas booter Cinnarch, ne vous inqui‚tez pas!
+		Nous sommes prˆts … vous aider!
+ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ
+		Merci d'avoir choisi Cinnarch!
+
+		Voir notre site web pour plus d'informations,
+		http://www.cinnarch.com

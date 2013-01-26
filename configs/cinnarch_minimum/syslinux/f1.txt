@@ -1,0 +1,22 @@
+ 
+ 
+ 
+
+
+
+
+        
+                        Welcome to Cinnarch Live DVD.
+
+             Before loading the operating system, you may choose
+             language and keymap, by using F2-F3 keys.
+
+             The live system does not require space on your harddisk.
+
+             If you can't start Cinnarch, don't worry!
+             We are ready to help you! 
+                     
+             Thank you for choosing Cinnarch!
+
+             See our web site for more information,
+             http://www.cinnarch.com

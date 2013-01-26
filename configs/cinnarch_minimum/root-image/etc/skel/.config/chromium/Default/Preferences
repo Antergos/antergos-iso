@@ -1,0 +1,279 @@
+{
+   "backup": {
+      "_signature": "R2FepAagG3CZOlk1jr5r6is2bGSqbv68pSJyvFuLF2c=",
+      "_version": 3,
+      "browser": {
+         "show_home_button": false
+      },
+      "extensions": {
+         "ids": [ "ahfgeienlihckogmohjhadlkjgocpleb", "hfjhlpgahgkpncekpdkgfoeppikldble" ]
+      },
+      "homepage": "",
+      "homepage_is_newtabpage": true,
+      "session": {
+         "restore_on_startup": 4,
+         "urls_to_restore_on_startup": [ "http://www.cinnarch.com/" ]
+      }
+   },
+   "browser": {
+      "clear_lso_data_enabled": true,
+      "custom_chrome_frame": true,
+      "window_placement": {
+         "bottom": 867,
+         "left": 0,
+         "maximized": true,
+         "right": 1050,
+         "top": 25,
+         "work_area_bottom": 900,
+         "work_area_left": 0,
+         "work_area_right": 1440,
+         "work_area_top": 25
+      }
+   },
+   "cloud_print": {
+      "email": ""
+   },
+   "countryid_at_install": 21843,
+   "default_apps_install_state": 1,
+   "default_search_provider": {
+      "enabled": true,
+      "encodings": "UTF-8",
+      "icon_url": "http://www.google.com/favicon.ico",
+      "id": "2",
+      "instant_url": "{google:baseURL}webhp?{google:RLZ}sourceid=chrome-instant&ie={inputEncoding}{google:instantEnabledParameter}{searchTerms}",
+      "keyword": "google.com",
+      "name": "Google",
+      "prepopulate_id": "1",
+      "search_url": "{google:baseURL}search?{google:RLZ}{google:acceptedSuggestion}{google:originalQueryForSuggestion}{google:searchFieldtrialParameter}sourceid=chrome&ie={inputEncoding}&q={searchTerms}",
+      "suggest_url": "{google:baseSuggestURL}search?{google:searchFieldtrialParameter}client=chrome&hl={language}&q={searchTerms}"
+   },
+   "dns_prefetching": {
+      "host_referral_list": [ 2, [ "https://2542116.fls.doubleclick.net/", [ "https://ad.yieldmanager.com/", 2.2733802, "https://conversion-pixel.invitemedia.com/", 2.2733802, "https://googleads.g.doubleclick.net/", 1.9812450151199996, "https://segment-pixel.invitemedia.com/", 2.2733802, "https://www.googleadservices.com/", 2.1251324942399994 ] ], [ "https://chrome.google.com/", [ "https://apis.google.com/", 2.6037003999999997, "https://chrome.google.com/", 2.6037003999999997, "https://fls.doubleclick.net/", 2.6037003999999997, "https://fonts.googleapis.com/", 2.2733802, "https://ssl.google-analytics.com/", 2.2733802, "https://ssl.gstatic.com/", 2.2733802, "https://www.google.com/", 2.2733802 ] ], [ "https://plusone.google.com/", [ "https://plusone.google.com/", 2.9340205999999998 ] ] ],
+      "startup_list": [ 1, "http://goo.gl/", "http://tools.google.com/", "http://www.google.com/", "https://apis.google.com/", "https://chrome.google.com/", "https://fls.doubleclick.net/", "https://fonts.googleapis.com/", "https://ssl.google-analytics.com/", "https://ssl.gstatic.com/", "https://www.google.com/" ]
+   },
+   "download": {
+      "directory_upgrade": true,
+      "extensions_to_open": ""
+   },
+   "extensions": {
+      "autoupdate": {
+         "next_check": "12987421479531430"
+      },
+      "chrome_url_overrides": {
+         "bookmarks": [ "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/main.html" ]
+      },
+      "settings": {
+         "ahfgeienlihckogmohjhadlkjgocpleb": {
+            "app_launcher_ordinal": "n",
+            "page_ordinal": "n"
+         },
+         "hfjhlpgahgkpncekpdkgfoeppikldble": {
+            "events": [ "experimental.runtime.onInstalled" ],
+            "from_bookmark": false,
+            "from_webstore": true,
+            "install_time": "12987403127630577",
+            "location": 1,
+            "manifest": {
+               "current_locale": "en_US",
+               "default_locale": "en",
+               "description": "Smart. Simple. Beautiful Theme.",
+               "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCxKdT4vESUq2aqNx1oAWPn4MlqwYtIdosjWj4n+qSfshyDYqGmAyqgEEG3UITi0wP/Aw6Y1yH9wZCo+x/cAjQ/B6p8pCnKZOZdz+uaM5zxzER/Ss1h+Ewcwoo9+OM0iEDasffXcx/1xjseVTMy6EbLrag96dIYNzUexTY72TGTjQIDAQAB",
+               "name": "Slinky Classic",
+               "theme": {
+                  "colors": {
+                     "bookmark_text": [ 50, 33, 33 ],
+                     "control_background": [ 50, 33, 0 ],
+                     "frame": [ 255, 255, 255 ],
+                     "frame_inactive": [ 255, 255, 255 ],
+                     "frame_incognito": [ 53, 94, 124 ],
+                     "frame_incognito_inactive": [ 91, 162, 213 ],
+                     "ntp_background": [ 245, 245, 245 ],
+                     "ntp_header": [ 200, 200, 200 ],
+                     "ntp_link": [ 51, 102, 204 ],
+                     "ntp_section": [ 200, 200, 200, 0.3 ],
+                     "ntp_section_link": [ 55, 55, 55 ],
+                     "ntp_section_text": [ 55, 55, 55 ],
+                     "ntp_text": [ 35, 35, 35 ],
+                     "tab_background_text": [ 35, 25, 25 ],
+                     "tab_text": [ 33, 33, 33 ],
+                     "toolbar": [ 245, 245, 245, 1 ]
+                  },
+                  "images": {
+                     "theme_button_background": "images/theme_button_background.png",
+                     "theme_frame": "images/Frame.png",
+                     "theme_ntp_background": "images/back.png",
+                     "theme_tab_background": "images/theme_tab_background.png",
+                     "theme_tab_background_incognito": "images/theme_tab_background.png",
+                     "theme_tab_background_v": "images/theme_tab_background.png",
+                     "theme_toolbar": "images/theme_toolbar.png"
+                  },
+                  "properties": {
+                     "ntp_background_alignment": "bottom\ncenter",
+                     "ntp_background_repeat": "repeat",
+                     "ntp_logo_alternate": 1,
+                     "tints": {
+                        "background_tab": [ -1, 0.5, 0.75 ],
+                        "buttons": [ 0.549, 0, 0.45 ],
+                        "frame": [ -1, -1, -1 ],
+                        "frame_inactive": [ -1, -1, 0.75 ],
+                        "frame_incognito": [ -1, 0.2, 0.35 ],
+                        "frame_incognito_inactive": [ -1, 0.3, 0.6 ],
+                        "theme_tab_background_v": [ 1, 1, 0.1 ],
+                        "theme_toolbar": [ 1, 1, 0.3 ]
+                     }
+                  }
+               },
+               "update_url": "http://clients2.google.com/service/update2/crx",
+               "version": "19.7"
+            },
+            "path": "hfjhlpgahgkpncekpdkgfoeppikldble/19.7_0",
+            "state": 1
+         }
+      },
+      "theme": {
+         "id": "hfjhlpgahgkpncekpdkgfoeppikldble",
+         "pack": "/home/cinnarch/.config/chromium/Default/Extensions/hfjhlpgahgkpncekpdkgfoeppikldble/19.7_0/Cached Theme.pak",
+         "use_system": false
+      }
+   },
+   "homepage": "",
+   "homepage_is_newtabpage": true,
+   "net": {
+      "http_server_properties": {
+         "apis.google.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "chrome.google.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "clients2.googleusercontent.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "fls.doubleclick.net:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "fonts.googleapis.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "googleads.g.doubleclick.net:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "ssl.google-analytics.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "ssl.gstatic.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "themes.googleusercontent.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "www.google.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         },
+         "www.googleadservices.com:443": {
+            "settings": [ {
+               "id": 4,
+               "value": 100
+            } ],
+            "supports_spdy": true
+         }
+      }
+   },
+   "ntp": {
+      "app_page_names": [ "Apps" ],
+      "promo_resource_cache_update": "1342928932.496913"
+   },
+   "plugins": {
+      "enabled_internal_pdf3": true,
+      "enabled_nacl": true,
+      "last_internal_directory": "/usr/lib/chromium",
+      "plugins_list": [ {
+         "enabled": true,
+         "name": "Remoting Viewer",
+         "path": "internal-remoting-viewer",
+         "version": ""
+      }, {
+         "enabled": true,
+         "name": "Remoting Viewer"
+      }, {
+         "enabled": true,
+         "name": "Native Client",
+         "path": "/usr/lib/chromium/libppGoogleNaClPluginChrome.so",
+         "version": ""
+      }, {
+         "enabled": true,
+         "name": "Native Client"
+      }, {
+         "enabled": true,
+         "name": "Cinnamon Integration",
+         "path": "/usr/lib/mozilla/plugins/libcinnamon-browser-plugin.so",
+         "version": ""
+      }, {
+         "enabled": true,
+         "name": "Cinnamon Integration"
+      }, {
+         "enabled": true,
+         "name": "Shockwave Flash",
+         "path": "/usr/lib/mozilla/plugins/libflashplayer.so",
+         "version": "11.2 r202"
+      }, {
+         "enabled": true,
+         "name": "Flash"
+      } ]
+   },
+   "profile": {
+      "avatar_index": 0,
+      "content_settings": {
+         "pref_version": 1
+      },
+      "created_by_version": "20.0.1132.57",
+      "exited_cleanly": true,
+      "local_profile_id": 14129721,
+      "name": "First user"
+   },
+   "session": {
+      "restore_on_startup": 4,
+      "restore_on_startup_migrated": true,
+      "urls_to_restore_on_startup": [ "http://www.cinnarch.com/" ]
+   }
+}
