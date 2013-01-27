@@ -1,5 +1,5 @@
 #!/bin/bash
-INSTALLER_VERSION=0.7
+INSTALLER_VERSION=0.7.1
 
 TEXTDOMAIN=cli_installer
 # we rely on some output which is parsed in english!
@@ -4802,6 +4802,16 @@ configure_system() {
 
         # Set Adwaita cursor theme
         chroot ${DESTDIR} ln -s /usr/share/icons/Adwaita /usr/share/icons/default
+
+        # Fix multilib repo in last release
+        cp -f /etc/pacman.conf ${DESTDIR}/etc/pacman.conf
+
+        if [[ $(uname -m) = 'x86_64' ]];then
+            echo "" >> ${DESTDIR}/etc/pacman.conf
+            echo "[multilib]" >> ${DESTDIR}/etc/pacman.conf
+            echo "SigLevel = PackageRequired" >> ${DESTDIR}/etc/pacman.conf
+            echo "Include = /etc/pacman.d/mirrorlist" >> ${DESTDIR}/etc/pacman.conf
+        fi
 
 
         ## END POSTPROCESSING ##
