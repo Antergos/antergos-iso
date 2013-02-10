@@ -2682,19 +2682,9 @@ EOF
 
 # pacman needs a masterkey before checking signed packages
 prepare_pacman_keychain() {
-    # Generate initial keychain, use haveged then no user interaction is required
-    if  [[ -f /var/run/haveged.pid ]]; then
-        kill $(cat /var/run/haveged.pid)
+    if ! [[ -d ${DESTDIR}/etc/pacman.d/gnupg ]]; then
+        cp -ar /etc/pacman.d/gnupg ${DESTDIR}/etc/pacman.d 2>&1
     fi
-    haveged
-    pacman-key --init >/dev/null 2>&1
-    ### HACK: fix accept of master keys!
-    sed -i -e 's#"${GPG_PACMAN\[\@\]}" --quiet --lsign-key "${key_id}"#"${GPG_PACMAN\[\@\]}" --batch --yes --quiet --lsign-key "${key_id}"#g' \
-    /usr/bin/pacman-key
-    pacman-key --populate archlinux cinnarch >/dev/null 2>&1
-    sed -i -e 's#"${GPG_PACMAN\[\@\]}" --batch --yes --quiet --lsign-key "${key_id}"#"${GPG_PACMAN\[\@\]}" --quiet --lsign-key "${key_id}"#g' \
-    /usr/bin/pacman-key
-    kill $(cat /var/run/haveged.pid)
 }
 
 # configures pacman and syncs db on destination system
@@ -4599,8 +4589,7 @@ configure_system() {
     cp -f /usr/bin/pacman-key ${DESTDIR}/usr/bin/pacman-key
 
     cp -f /usr/lib/systemd/system/lightdm.service ${DESTDIR}/usr/lib/systemd/system/lightdm.service
-    cp -f /etc/systemd/system/pacman-init.service ${DESTDIR}/usr/lib/systemd/system/pacman-init.service
-    chroot ${DESTDIR} systemctl enable lightdm.service NetworkManager.service pacman-init.service >/dev/null 2>&1
+    chroot ${DESTDIR} systemctl enable lightdm.service NetworkManager.service  >/dev/null 2>&1
     if [[ -f /tmp/use_ntp ]];then
         chroot ${DESTDIR} systemctl enable ntpd.service >/dev/null 2>&1
     fi
