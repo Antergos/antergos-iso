@@ -1,5 +1,5 @@
 #!/bin/bash
-INSTALLER_VERSION=0.7.2
+INSTALLER_VERSION=0.8
 
 TEXTDOMAIN=cli_installer
 # we rely on some output which is parsed in english!
@@ -2816,7 +2816,7 @@ select_packages() {
 
     #PACKAGES="${PACKAGES} $(cat /run/archiso/bootmnt/arch/pkglist.x86_64.txt)"
 
-    PACKAGES="${PACKAGES} base base-devel cinnarch-meta libgnomeui"
+    PACKAGES="${PACKAGES} base base-devel haveged crda ipw2100-fw ipw2200-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter btrfs-progs ntfs-3g ntfsprogs dosfstools xorg-server xorg-server-utils sudo yaourt pacmanxg4 pkgfile ttf-dejavu ttf-bitstream-vera network-manager-applet usb_modeswitch modemmanager networkmanager-openvpn gnome-terminal chromium file-roller evince gnome-screenshot flashplugin gnome-bluetooth nemo-fm nemo-fileroller gcalctool xdg-user-dirs-gtk gedit alsa-utils gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav whois dnsutils gnome-screensaver brasero gnome-system-monitor pidgin transmission-cli transmission-gtk libreoffice-installer xnoise faenza-hotot-icon hotot-gtk3-git shotwell faenza-icon-theme gnome-themes-standard cinnamon-theme-minty cinnarch-wallpapers hicolor-icon-theme unzip unrar p7zip gnome-menus2 gnome-control-center python2 python2-gconf telepathy-logger clutter gconf gobject-introspection libcanberra libxxf86vm startup-notification zenity muffin cinnamon gnome-panel accountsservice gtk3 gnome-common librsvg dbus-glib libwebkit libxklavier libxslt python2-distutils-extra libindicator3 desktop-file-utils libwebkit3 python2-gobject lightdm net-tools gnome-keyring xf86-input-synaptics libgnomeui"
 
     if [[ -f /tmp/use_ntp ]];then
         PACKAGES="${PACKAGES} ntp"
@@ -3145,13 +3145,10 @@ do_uefi_i386() {
 
 do_uefi_efibootmgr() {
     
-    modprobe -q efivars
-    
-    if [[ "$(lsmod | grep ^efivars)" ]]; then
-        chroot_mount
+    chroot_mount
         
-        if [[ -d "${DESTDIR}/sys/firmware/efi/vars" ]]; then
-            cat << EFIBEOF > "${DESTDIR}/efibootmgr_run.sh"
+    if [[ -d "${DESTDIR}/sys/firmware/efi/vars" ]]; then
+        cat << EFIBEOF > "${DESTDIR}/efibootmgr_run.sh"
 #!/usr/bin/env bash
 
 for _bootnum in \$(efibootmgr | grep '^Boot[0-9]' | fgrep -i '${_EFIBOOTMGR_LABEL}' | cut -b5-8) ; do
@@ -3164,18 +3161,14 @@ echo
 
 EFIBEOF
             
-            chmod a+x "${DESTDIR}/efibootmgr_run.sh"
-            chroot "${DESTDIR}" "/bin/bash" "/efibootmgr_run.sh" &>"/tmp/efibootmgr_run.log"
-            mv "${DESTDIR}/efibootmgr_run.sh" "/tmp/efibootmgr_run.sh"
-        else
-            DIALOG --msgbox $"${DESTDIR}/sys/firmware/efi/vars/ directory not found. Check whether you have booted in UEFI boot mode, manually load efivars kernel module and create a boot entry for ${_EFIBOOTMGR_LABEL} in the UEFI Boot Manager." 0 0
-        fi
-        
-        chroot_umount
-    else
-        DIALOG --msgbox $"efivars kernel module was not loaded properly. Manually load it and create a boot entry for DISC ${_EFIBOOTMGR_DISC} , PART ${_EFIBOOTMGR_PART_NUM} and LOADER \\EFI\\${_EFIBOOTMGR_LOADER_DIR}\\${_EFIBOOTMGR_LOADER_FILE} , in UEFI Boot Manager using efibootmgr." 0 0
-    fi
+        chmod a+x "${DESTDIR}/efibootmgr_run.sh"
+        chroot "${DESTDIR}" "/bin/bash" "/efibootmgr_run.sh" &>"/tmp/efibootmgr_run.log"
+        mv "${DESTDIR}/efibootmgr_run.sh" "/tmp/efibootmgr_run.sh"
     
+    else
+        DIALOG --msgbox $"${DESTDIR}/sys/firmware/efi/vars/ directory not found. Check whether you have booted in UEFI boot mode and create a boot entry for ${_EFIBOOTMGR_LABEL} in the UEFI Boot Manager." 0 0
+    fi
+    chroot_umount
     unset _EFIBOOTMGR_LABEL
     unset _EFIBOOTMGR_DISC
     unset _EFIBOOTMGR_PART_NUM
@@ -3186,7 +3179,6 @@ EFIBEOF
 
 do_apple_efi_hfs_bless() {
     
-    modprobe -q -r efivars || true
     
     ## Grub upstream bzr mactel branch => http://bzr.savannah.gnu.org/lh/grub/branches/mactel/changes
     ## Fedora's mactel-boot => https://bugzilla.redhat.com/show_bug.cgi?id=755093
@@ -3294,23 +3286,7 @@ CONFEOF
         
         chroot "${DESTDIR}" /usr/bin/systemctl enable efistub_copy.path
         
-        if [[ "${INITSCRIPTS}" = "1" ]]; then
-            PACKAGES="incron"
-            run_pacman
-            PACKAGES=""
-            
-            cat << CONFEOF > "${DESTDIR}/usr/local/bin/efistub_copy.sh"
-/bin/cp -f /boot/${VMLINUZ} /boot/efi/EFI/arch/${_EFISTUB_KERNEL}
-/bin/cp -f /boot/${INITRAMFS}.img /boot/efi/EFI/arch/${_EFISTUB_INITRAMFS}.img
-/bin/cp -f /boot/${INITRAMFS}-fallback.img /boot/efi/EFI/arch/${_EFISTUB_INITRAMFS}-fallback.img
-CONFEOF
-            
-            cat << CONFEOF > "${DESTDIR}/etc/incron.d/efistub_copy.conf"
-/boot/${INITRAMFS}-fallback.img IN_CLOSE_WRITE /usr/local/bin/efistub_copy.sh
-CONFEOF
-            
-            DIALOG --msgbox "Add incrond to the DAEMONS list in /etc/rc.conf ." 0 0
-        fi
+
         
         ###########################
         
@@ -3509,28 +3485,21 @@ dorefind_uefi_common() {
     PACKAGES=""
     
     mkdir -p "${DESTDIR}/boot/efi/EFI/refind/"
-    cp -f "${DESTDIR}/usr/lib/refind/refind${_SPEC_UEFI_ARCH}.efi" "${DESTDIR}/boot/efi/EFI/refind/refind${_SPEC_UEFI_ARCH}.efi"
+    cp -f "${DESTDIR}/usr/lib/refind/refind_${_SPEC_UEFI_ARCH}.efi" "${DESTDIR}/boot/efi/EFI/refind/refind${_SPEC_UEFI_ARCH}.efi"
     cp -r "${DESTDIR}/usr/share/refind/icons" "${DESTDIR}/boot/efi/EFI/refind/icons"
-    
+    cp -r "${DESTDIR}/usr/share/refind/fonts" "${DESTDIR}/boot/efi/EFI/refind/fonts"
+
     mkdir -p "${DESTDIR}/boot/efi/EFI/tools/"
     cp -rf "${DESTDIR}/usr/lib/refind/drivers_${_SPEC_UEFI_ARCH}" "${DESTDIR}/boot/efi/EFI/tools/drivers_${_SPEC_UEFI_ARCH}"
     
     _REFIND_CONFIG="${DESTDIR}/boot/efi/EFI/refind/refind.conf"
     cp -f "${DESTDIR}/usr/lib/refind/config/refind.conf" "${_REFIND_CONFIG}"
 
-    sed 's|^timeout 20|timeout 5|g' -i "${_REFIND_CONFIG}"
-    sed 's|^#hideui singleuser|hideui singleuser|g' -i "${_REFIND_CONFIG}"
     sed 's|^#resolution 1024 768|resolution 1024 768|g' -i "${_REFIND_CONFIG}"
-    sed 's|^#use_graphics_for osx,linux|use_graphics_for osx|g' -i "${_REFIND_CONFIG}"
-    sed 's|^#showtools shell, about, reboot|showtools shell,about,reboot,shutdown,exit|g' -i "${_REFIND_CONFIG}"
     sed 's|^#scan_driver_dirs EFI/tools/drivers,drivers|scan_driver_dirs EFI/tools/drivers_${_SPEC_UEFI_ARCH}|g' -i "${_REFIND_CONFIG}"
     sed 's|^#scanfor internal,external,optical,manual|scanfor manual,internal,external,optical|g' -i "${_REFIND_CONFIG}"
-    sed 's|^#scan_delay 5|scan_delay 1|g' -i "${_REFIND_CONFIG}"
-    sed 's|^#also_scan_dirs boot,EFI/linux/kernels|also_scan_dirs boot|g' -i "${_REFIND_CONFIG}"
-    sed 's|^#dont_scan_dirs EFI/boot|dont_scan_dirs EFI/boot|g' -i "${_REFIND_CONFIG}"
-    sed 's|^#scan_all_linux_kernels|scan_all_linux_kernels|g' -i "${_REFIND_CONFIG}"
-    sed 's|^#max_tags 0|max_tags 0|g' -i "${_REFIND_CONFIG}"
-    
+    sed 's|^#also_scan_dirs boot,ESP2:EFI/linux/kernels|also_scan_dirs boot|g' -i "${_REFIND_CONFIG}"
+
     if [[ "${_EFILINUX}" == "1" ]]; then
         cat << REFINDEOF >> "${_REFIND_CONFIG}"
 
@@ -3539,10 +3508,6 @@ menuentry "Cinnarch LTS via EFILINUX" {
     loader /EFI/efilinux/efilinux${_SPEC_UEFI_ARCH}.efi
 }
 
-menuentry "Cinnarch LTS via EFILINUX - fallback initramfs" {
-    icon /EFI/refind/icons/os_arch.icns
-    loader /EFI/efilinux/efilinux${_SPEC_UEFI_ARCH}.efi
-}
 
 REFINDEOF
         
@@ -3554,10 +3519,10 @@ REFINDEOF
         
     fi
     
-    if [[ -e "${DESTDIR}/boot/efi/EFI/refind/refind${_SPEC_UEFI_ARCH}.efi" ]]; then
+    if [[ -e "${DESTDIR}/boot/efi/EFI/refind/refind_${_SPEC_UEFI_ARCH}.efi" ]]; then
         _BOOTMGR_LABEL="Cinnarch (rEFInd)"
         _BOOTMGR_LOADER_DIR="refind"
-        _BOOTMGR_LOADER_FILE="refind${_SPEC_UEFI_ARCH}.efi"
+        _BOOTMGR_LOADER_FILE="refind_${_SPEC_UEFI_ARCH}.efi"
         do_uefi_bootmgr_setup
         
         DIALOG --msgbox $"refind-efi has been setup successfully." 0 0
@@ -3576,7 +3541,7 @@ REFINDEOF
             rm -f "${DESTDIR}/boot/efi/EFI/boot/refind.conf"
             rm -rf "${DESTDIR}/boot/efi/EFI/boot/icons"
             
-            cp -f "${DESTDIR}/boot/efi/EFI/refind/refind${_SPEC_UEFI_ARCH}.efi" "${DESTDIR}/boot/efi/EFI/boot/boot${_SPEC_UEFI_ARCH}.efi"
+            cp -f "${DESTDIR}/boot/efi/EFI/refind/refind_${_SPEC_UEFI_ARCH}.efi" "${DESTDIR}/boot/efi/EFI/boot/boot${_SPEC_UEFI_ARCH}.efi"
             cp -f "${_REFIND_CONFIG}" "${DESTDIR}/boot/efi/EFI/boot/refind.conf"
             cp -rf "${DESTDIR}/boot/efi/EFI/refind/icons" "${DESTDIR}/boot/efi/EFI/boot/icons"
         fi
@@ -4807,6 +4772,7 @@ configure_system() {
         sed -i 's/ scsi//' ${DESTDIR}/etc/mkinitcpio.conf
         sed -i 's/ sata//' ${DESTDIR}/etc/mkinitcpio.conf
         sed -i 's/ filesystem/ block filesystem/' ${DESTDIR}/etc/mkinitcpio.conf
+        sed -i 's/usbinput/keyboard/' ${DESTDIR}/etc/mkinitcpio.conf
         run_mkinitcpio
         
         # /etc/locale.gen

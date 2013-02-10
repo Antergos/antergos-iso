@@ -256,6 +256,9 @@ make_customize_root_image() {
             run
         umount ${work_dir}/root-image/var/run/dbus
         
+        # Black list floppy
+        echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
+
 
 
         : > ${work_dir}/build.${FUNCNAME}

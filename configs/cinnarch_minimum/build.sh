@@ -211,6 +211,8 @@ make_customize_root_image() {
         # Configure powerpill
         sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
 
+        # Black list floppy
+        echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
 
         : > ${work_dir}/build.${FUNCNAME}
     fi
