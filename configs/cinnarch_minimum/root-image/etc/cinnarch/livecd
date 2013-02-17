@@ -3,26 +3,12 @@
 
 source /etc/cinnarch/functions
 
-NETWORK_ALIVE=`ping -c1 google.com 2>&1 | grep unknown`
+LOCALE=$(get_country)
+KEYMAP=$(get_keyboard)
+KBLAYOUT=$(get_layout)
 
-CINNARCHVAR="$(kernel_cmdline cinnarchvar lang:en_US,keymap:en_US)"
-LOCALE="$(echo "$CINNARCHVAR" | cut -d, -f1 | cut -d: -f2)"
-KEYMAP="$(echo "$CINNARCHVAR" | cut -d, -f2 | cut -d: -f2)"
-
-
-# edit /etc/locale.conf & /etc/environment
-echo "LANG=${LOCALE}.UTF-8" > /etc/locale.conf
-echo "LC_COLLATE=C" >> /etc/locale.conf
-echo "LANG=${LOCALE}.UTF-8" >> /etc/environment
-
-# prepare_locale_gen
-for i in $(grep "^LANG" /etc/locale.conf | sed -e 's/.*=//g' -e's/\..*//g'); do
-	sed -i -e "s/^#$i/$i/g" /etc/locale.gen
-done
-if [ "$LOCALE" != "en_US.UTF-8" ]; then
-        sed -i -e "s/^#en_US/en_US/g" /etc/locale.gen
-fi
-/usr/sbin/locale-gen > /dev/null
+_set_locales
+locale-gen > /dev/null
 
 # Install chinese fonts
 if [ "$LOCALE" = 'zh_TW' ] || [ "$LOCALE" = 'zh_CN' ];then
@@ -30,16 +16,9 @@ if [ "$LOCALE" = 'zh_TW' ] || [ "$LOCALE" = 'zh_CN' ];then
 fi
 
 
-# update_pacman_databases
-if [[ "$NETWORK_ALIVE" = "" ]];then
-	pacman -Syy &> /dev/null
-fi
-
-
-# do_lang_settings
-# setup locales
-_do_locales
-
-
 # load keys
 loadkeys $(cat /etc/vconsole.conf | grep "KEYMAP=" | cut -d= -f2)
+
+echo ${LOCALE} > /home/cinnarch/.config/user-dirs.locale
+
+su -c "xdg-user-dirs-update" cinnarch

@@ -17,6 +17,14 @@ gparted
 crda
 
 
+# Cnchi dependencies
+python
+python-gobject
+python-dbus
+libtimezonemap
+py3parted
+hdparm
+
 # Network
 
 ipw2100-fw
@@ -147,8 +155,6 @@ python2-distutils-extra
 desktop-file-utils
 libwebkit3
 python2-gobject
-python
-python-gobject
 
 # LightDM
 

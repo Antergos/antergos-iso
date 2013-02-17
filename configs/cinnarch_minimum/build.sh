@@ -126,40 +126,15 @@ make_efiboot() {
     fi
 }
 
-# Prepare /${install_dir}/boot/syslinux
-make_syslinux() {
-    if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        local _src_syslinux=${work_dir}/root-image/usr/lib/syslinux
-        local _dst_syslinux=${work_dir}/iso/${install_dir}/boot/syslinux
-        mkdir -p ${_dst_syslinux}
-        for _cfg in ${script_path}/syslinux/*.cfg; do
-            sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                 s|%INSTALL_DIR%|${install_dir}|g;
-                 s|%ARCH%|${arch}|g" ${_cfg} > ${_dst_syslinux}/${_cfg##*/}
-        done
-        cp ${script_path}/syslinux/splash.png ${_dst_syslinux}
-        cp ${_src_syslinux}/*.c32 ${_dst_syslinux}
-        cp ${_src_syslinux}/*.com ${_dst_syslinux}
-        cp ${_src_syslinux}/*.0 ${_dst_syslinux}
-        cp ${_src_syslinux}/memdisk ${_dst_syslinux}
-        mkdir -p ${_dst_syslinux}/hdt
-        cat ${work_dir}/root-image/usr/share/hwdata/pci.ids | gzip -9 > ${_dst_syslinux}/hdt/pciids.gz
-        cat ${work_dir}/root-image/usr/lib/modules/*-ARCH/modules.alias | gzip -9 > ${_dst_syslinux}/hdt/modalias.gz
-
-        # Overwrite menu.c32 
-        cp -f ${script_path}/syslinux/menu.c32 ${_dst_syslinux}
-    
-        : > ${work_dir}/build.${FUNCNAME}
-    fi
-}
-
 # Prepare /isolinux
 make_isolinux() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        mkdir -p ${work_dir}/iso/isolinux
-        sed "s|%INSTALL_DIR%|${install_dir}|g" ${script_path}/isolinux/isolinux.cfg > ${work_dir}/iso/isolinux/isolinux.cfg
+        cp -Lr isolinux ${work_dir}/iso
         cp ${work_dir}/root-image/usr/lib/syslinux/isolinux.bin ${work_dir}/iso/isolinux/
         cp ${work_dir}/root-image/usr/lib/syslinux/isohdpfx.bin ${work_dir}/iso/isolinux/
+        sed "s|%ARCHISO_LABEL%|${iso_label}|g;
+                s|%INSTALL_DIR%|${install_dir}|g;
+                s|%ARCH%|${arch}|g" ${script_path}/isolinux/isolinux.cfg > ${work_dir}/iso/isolinux/isolinux.cfg
         : > ${work_dir}/build.${FUNCNAME}
     fi
 }
@@ -277,7 +252,6 @@ make_common_single() {
     make_boot
     make_efi
     make_efiboot
-    make_syslinux
     make_isolinux
     make_customize_root_image
     make_usr_lib_modules

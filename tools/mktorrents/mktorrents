@@ -1,11 +1,19 @@
 #!/bin/bash
+# Script generator of Cinnarch Live torrents
+# Alexandre Filgueira Sánchez <alexfilgueira@cinnarch.com>
+
+iso_version=$(date +%Y.%m.%d)
 
 for arch in i686 x86_64; do 
-    for type in cinnarch cinnarch_minimum; do
+    for iso_name in cinnarch cinnarch_minimum; do
     	echo
-    	echo "### Generating $type-2013.01.23-netinstall-$arch.torrent ..."
+    	echo "### Generating $iso_name-$iso_version-netinstall-$arch.torrent ..."
     	echo
-    	mktorrent -a udp://tracker.openbittorrent.com:80 -n "$type-2013.01.23-$arch.iso" -o $type-2013.01.23-$arch.torrent -w http://repo.cinnarch.com/iso/2013.01.23/$type-2013.01.23-$arch.iso $type-2013.01.23-$arch.iso
+    	mktorrent -a udp://tracker.openbittorrent.com:80 \
+    			  -n "$iso_name-$iso_version-$arch.iso" \
+    			  -o $iso_name-$iso_version-$arch.torrent \
+    			  -w http://mirrors.cinnarch.com/iso/$iso_version/$iso_name-$iso_version-$arch.iso \
+    			  $iso_name-$iso_version-$arch.iso
     done
 done
 

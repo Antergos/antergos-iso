@@ -12,6 +12,7 @@ TITLE=$"Cinnarch Installation - v$INSTALLER_VERSION"
 LOG="/dev/tty6"
 
 # don't use /mnt because it's intended to mount other things there!
+mkdir /install
 DESTDIR="/install"
 EDITOR=""
 _BLKID="blkid -c /dev/null"
@@ -42,9 +43,9 @@ PART_ROOT=""
 ROOTFS=""
 
 # Localization parameters
-CINNARCHVAR="$(kernel_cmdline cinnarchvar lang:en_US,keymap:en_US)"
-KEYMAP="$(echo "$CINNARCHVAR" | cut -d, -f2 | cut -d: -f2)"
-LOCALE="$(echo "$CINNARCHVAR" | cut -d, -f1 | cut -d: -f2)"
+LOCALE=$(get_country)
+KEYMAP=$(get_keyboard)
+KBLAYOUT=$(get_layout)
 
 # Mylex DAC960 PCI RAID controller, Compaq Next Generation Drive Array, 
 # Compaq Intelligent Drive Array
@@ -170,13 +171,13 @@ activate_dmraid()
 activate_lvm2()
 {
     ACTIVATE_LVM2=""
-    if [[ -e /sbin/lvm ]]; then
+    if [[ -e /usr/sbin/lvm ]]; then
         OLD_LVM2_GROUPS=${LVM2_GROUPS}
         OLD_LVM2_VOLUMES=${LVM2_VOLUMES}
         DIALOG --infobox $"Scanning logical volumes..." 0 0
-        /sbin/lvm vgscan --ignorelockingfailure >/dev/null 2>&1
+        /usr/sbin/lvm vgscan --ignorelockingfailure >/dev/null 2>&1
         DIALOG --infobox $"Activating logical volumes..." 0 0
-        /sbin/lvm vgchange --ignorelockingfailure --ignoremonitoring -ay >/dev/null 2>&1
+        /usr/sbin/lvm vgchange --ignorelockingfailure --ignoremonitoring -ay >/dev/null 2>&1
         LVM2_GROUPS="$(vgs -o vg_name --noheading 2>/dev/null)"
         LVM2_VOLUMES="$(lvs -o vg_name,lv_name --noheading --separator - 2>/dev/null)"
         [[ "${OLD_LVM2_GROUPS}" = "${LVM2_GROUPS}" && "${OLD_LVM2_GROUPS}" = "${LVM2_GROUPS}" ]] && ACTIVATE_LVM2="no"
@@ -2371,7 +2372,7 @@ mountpoints() {
     done
 
     DIALOG --msgbox $"Partitions were successfully mounted." 0 0
-    NEXTITEM="5"
+    NEXTITEM="6"
     S_MKFS=1
 }
 
@@ -4476,7 +4477,7 @@ auto_fb() {
 auto_parameters() {
 
        
-    _do_locales
+    _set_locales
 
 
     if [[ -s  /tmp/.timezone ]]; then
