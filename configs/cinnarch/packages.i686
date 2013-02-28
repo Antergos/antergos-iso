@@ -126,6 +126,7 @@ p7zip
 
 gnome-menus2
 cinnamon-control-center
+cinnamon-screensaver
 python2
 python2-gconf
 telepathy-logger
