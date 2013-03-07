@@ -1,0 +1,236 @@
+<?xml version="1.0"?>
+<!DOCTYPE greeter SYSTEM "greeter.dtd">
+
+
+<greeter gtk-theme="Mint-X">
+
+	<!-- background basecolor -->
+	<item type="rect">
+		<pos x="0" y="0" width="100%" height="100%"/>
+		<!--change this if you want another color-->
+		<normal color="#000000"/>
+	</item>
+
+
+	<!-- background pixmap image -->
+	<!-- If you want another background image-->
+	<!-- or you could get rid of this and just have a base color (from above)-->
+	<item type="pixmap" id="background" background="true">
+		<!-- Point this to another file -->
+		<normal file="bg.png"/>
+		<pos anchor="c" x="50%" y="50%" width="scale" height="100%"/>
+	</item>
+
+
+	<!-- login window container -->
+	<item type="rect">
+		
+		<pos anchor="center" x="50%" y="50%" width="640" height="462"/>
+		<fixed>
+
+
+		<!-- login window pixmap -->
+		<item type="pixmap">
+			<normal file="main_box.png"/>
+			<pos anchor="center" x="50%" y="50%"/>
+		</item>
+		<!-- Distro logo -->
+	<item type="pixmap">
+			<normal file="logo.png"/>
+			<pos anchor="w" x="2%" y="1%"/>
+			</item>	
+		<!-- Distro Label-->
+		<item type="label">
+			<pos anchor="w" x="5%" y="1%"/>
+			<normal color="#E6E6E6" font="Sans Bold 8"/>
+			<!--  %h is the hostname, or write Ubuntu, Suse, etc -->
+			<stock type="welcome-label"/>
+			</item>
+						
+
+		<!--Clock-->
+		<item type="label" id="clock">
+			<pos anchor="e" x="98%" y="1%"/>
+			<normal color="#9B9B9B" font="Sans 8"/>
+			<!--  %c is the clock -->
+			<text>%c</text>
+			</item>
+
+
+		<!-- textbox -->
+		<item type="pixmap">
+			<normal file="text.png"/>
+			<pos anchor="n" x="50%" y="5%"/>
+		</item>
+
+		<!-- face browser -->
+		<item type="list" id="userlist">
+			<pos x="44" y="56" width="237" height="297"/>
+			<color iconcolor="#ffffff" labelcolor="#ffffff"/>
+		</item>
+
+		<!-- username/password label -->
+		<item type="label" id="pam-prompt">
+			<pos anchor="e" x="65%" y="72%" />
+			<stock type="username-label"/>
+			<normal color="#FFFFFF" font="Sans Bold 8"/>
+		</item>
+
+
+		 <!-- username/password entry -->
+		<item type="entry" id="user-pw-entry">
+			<pos anchor="w" x="68%" y="72%" />
+			<normal color="#1A1A1A" font="Sans Bold 8"/>
+			<pos width="150" height="20"/>
+		</item>
+
+
+		<!-- CAPS-LOCK warning -->
+		<item type="label" id="caps-lock-warning">
+			<pos anchor="n" x="70%" y="260"/>
+			<normal font="Sans Bold 8" color="#e84949"/>
+			<stock type="caps-lock-warning"/>
+		</item>
+
+
+		<!-- timer warning -->
+		<item type="label" id="timed-label">
+			<pos anchor="n" x="50%" y="500"/>
+			<show type="timed"/>
+			<normal font="Sans Bold 8" color="#e84949"/>
+			<stock type="timed-label"/>
+		</item>
+			
+
+		<!-- error messages -->
+		<item type="label" id="pam-error">
+			<pos anchor="n" x="50%" y="480"/>
+			<normal font="Sans Bold 8" color="#e84949"/>
+			<text></text>
+		</item>
+
+
+		<!-- Options Label-->
+		<item type="rect" id="options_button" button="true">
+			<pos anchor="w" x="4%" y="404"/>
+				<box orientation="vertical" spacing="5">
+			<item type="label">
+					<normal color="#E6E6E6" font="Sans Bold 8"/>
+					<prelight color="#ffffff" font="Sans Bold 8"/>
+			<stock type="options"/>
+			</item>
+			</box>
+		</item>
+
+
+		<!-- language option -->
+		<item type="rect" id="language_button" button="true">
+			<pos anchor="w" x="4%" y="450" width="53" height="50"/>		
+			<box orientation="vertical" spacing="5">
+				<!-- button text-label -->
+				<item type="label">
+					<normal color="#9B9B9B" font="Sans 8"/>
+					<prelight color="#E6E6E6" font="Sans 8"/>
+					<stock type="language"/>
+				</item>
+			</box>
+		</item>
+
+
+		<!-- session option -->
+		<item type="rect" id="session_button" button="true">
+			<pos anchor="w" x="4%" y="470" width="53" height="50"/>			
+			<box orientation="vertical" spacing="5">
+				<!-- button text-label -->
+				<item type="label">
+					<normal color="#9B9B9B" font="Sans 8"/>
+					<prelight color="#E6E6E6" font="Sans 8"/>
+					<stock type="session"/>
+				</item>
+			</box>
+		</item>
+	
+
+		<!-- button container -->
+		<item type="rect">
+			
+			<pos x="96%" y="422" anchor="e" width="box" height="box"/>
+		
+			<box orientation="horizontal" spacing="15">
+				
+				<!-- suspend button -->
+				<item type="rect" id="suspend_button" button="true">
+					<pos anchor="nw" width="96" height="50"/>
+						
+						<box orientation="vertical" spacing="6">
+		
+							<!-- button image -->
+							<item type="pixmap">
+								<normal file="suspend.png" alpha="0.8"/>
+								<prelight file="suspend.png"/>
+								<pos x="50%" anchor="n"/>
+							</item>
+
+							<!-- button text-label -->
+							<item type="label">
+								<pos x="50%" y="12" anchor="s"/>
+								<normal color="#9B9B9B" font="Sans 8"/>
+								<prelight color="#E6E6E6" font="Sans 8"/>
+								<stock type="suspend"/>
+							</item>
+						</box>
+				</item>
+	
+				<!-- Restart button -->
+				<item type="rect" id="reboot_button" button="true">
+					<pos anchor="nw" width="96" height="50"/>
+						
+					<box orientation="vertical" spacing="6">
+		
+						<!-- button image -->
+						<item type="pixmap">
+							<normal file="reboot.png" alpha="0.8"/>
+							<prelight file="reboot.png"/>
+							<pos x="50%" anchor="n"/>
+						</item>
+
+						<!-- button text-label -->
+						<item type="label">
+							<pos x="50%" y="12" anchor="s"/>
+								<normal color="#9B9B9B" font="Sans 8"/>
+								<prelight color="#E6E6E6" font="Sans 8"/>
+							<stock type="reboot"/>
+						</item>
+					</box>
+				</item>
+
+				<!-- Halt button -->
+				<item type="rect" id="halt_button" button="true">
+					<pos anchor="nw" width="96" height="50"/>
+					
+					<box orientation="vertical" spacing="6">
+		
+						<!-- button image -->
+						<item type="pixmap">
+							<normal file="halt.png" alpha="0.8"/>
+							<prelight file="halt.png"/>
+							<pos x="50%" anchor="n"/>
+						</item>
+
+						<!-- button text-label -->
+						<item type="label">
+							<pos x="50%" y="12" anchor="s"/>
+								<normal color="#9B9B9B" font="Sans 8"/>
+								<prelight color="#E6E6E6" font="Sans 8"/>
+							<stock type="halt"/>
+						</item>
+					</box>
+				</item>
+				
+				</box>
+			</item> 
+		</fixed>
+	</item>
+
+
+</greeter>

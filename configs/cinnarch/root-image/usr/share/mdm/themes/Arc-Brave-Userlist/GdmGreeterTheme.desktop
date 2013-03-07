@@ -1,0 +1,8 @@
+[GdmGreeterTheme]
+Encoding=UTF-8
+Greeter=Arc-GDM.xml
+Name=Arc-Brave-Userlist
+Description=Smooth looking login screen
+Author=perfectska04, Daniel Fore.
+Copyright=GPL
+Screenshot=screen.jpg

@@ -4814,6 +4814,12 @@ configure_system() {
             echo "Include = /etc/pacman.d/mirrorlist" >> ${DESTDIR}/etc/pacman.conf
         fi
 
+        # Set default MDM theme
+        sed -i "s#\[greeter\].*#&\n\nGraphicalTheme=Arc-Brave-Userlist\n\n#" ${DESTDIR}/etc/mdm/custom.conf
+        cp /home/cinnarch/.dmrc ${DESTDIR}/home/${USER_NAME}
+        chroot ${DESTDIR} chown ${USER_NAME}:users /home/${USER_NAME}/.dmrc
+        chroot ${DESTDIR} chmod 644 /home/${USER_NAME}/.dmrc
+
 
         ## END POSTPROCESSING ##
     fi

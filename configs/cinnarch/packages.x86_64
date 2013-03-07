@@ -1,5 +1,5 @@
 # Intallation
-gummiboot-efi
+gummiboot
 #grub-efi-x86_64
 #refind-efi
 haveged
@@ -156,7 +156,7 @@ desktop-file-utils
 libwebkit3
 python2-gobject
 
-# LightDM
+# MDM
 
-lightdm
-pantheon-greeter
+mdm-display-manager
+
