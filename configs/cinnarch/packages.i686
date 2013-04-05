@@ -72,7 +72,7 @@ xf86-video-vesa
 
 sudo
 gksu
-yaourt
+#yaourt
 pacmanxg4
 pkgfile
 alsa-utils

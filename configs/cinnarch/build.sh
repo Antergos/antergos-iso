@@ -195,7 +195,7 @@ make_customize_root_image() {
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
         mv ${work_dir}/root-image/usr/lib/tmpfiles.d/transmission.conf ${work_dir}/root-image/usr/lib/tmpfiles.d/transmission.conf.backup
-        patch ${work_dir}/root-image/usr/bin/pacman-key < ${script_path}/pacman-key-4.0.3_unattended-keyring-init.patch
+        #patch ${work_dir}/root-image/usr/bin/pacman-key < ${script_path}/pacman-key-4.0.3_unattended-keyring-init.patch
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl -f enable pacman-init.service pacman-boot.service mdm.service NetworkManager.service livecd.service || true' \
             run

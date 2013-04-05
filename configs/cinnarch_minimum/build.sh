@@ -164,7 +164,7 @@ make_customize_root_image() {
             -r 'useradd -m -p "liLfqaUhrN8Hs" -g users -G "audio,disk,optical,wheel,network" cinnarch' \
             run
 
-        patch ${work_dir}/root-image/usr/bin/pacman-key < ${script_path}/pacman-key-4.0.3_unattended-keyring-init.patch
+        #patch ${work_dir}/root-image/usr/bin/pacman-key < ${script_path}/pacman-key-4.0.3_unattended-keyring-init.patch
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl enable getty@.service pacman-init.service livecd.service || true' \
