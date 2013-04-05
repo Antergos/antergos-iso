@@ -46,14 +46,12 @@ wget
 
 btrfs-progs
 ntfs-3g
-ntfsprogs
 dosfstools
 
 # Xorg
 
 xorg-server
 xorg-server-utils
-#xorg-drivers
 xf86-input-synaptics
 
 # Graphical Drivers
@@ -107,7 +105,6 @@ xnoise
 hotot-gtk3-git
 shotwell
 gnome-screenshot
-gnome-font-viewer
 nemo-fm
 
 # Theme
@@ -116,6 +113,7 @@ faenza-icon-theme
 gnome-themes-standard
 cinnamon-theme-minty
 cinnarch-wallpapers
+#gtk-theme-evolve
 
 # Compression
 
@@ -126,9 +124,7 @@ p7zip
 
 # Gnome & Cinnamon
 
-gnome-menus2
 cinnamon-control-center
-cinnamon-screensaver
 python2
 python2-gconf
 telepathy-logger
@@ -136,25 +132,12 @@ clutter
 gconf
 gobject-introspection
 libcanberra
-libxxf86vm
 startup-notification
 zenity
 muffin
 cinnamon
 gnome-panel
 accountsservice
-gtk3
-gnome-common
-librsvg
-dbus-glib
-intltool
-libwebkit
-libxklavier
-libxslt
-python2-distutils-extra
-desktop-file-utils
-libwebkit3
-python2-gobject
 
 # MDM
 

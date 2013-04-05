@@ -8,7 +8,7 @@ KEYMAP=$(get_keyboard)
 KBLAYOUT=$(get_layout)
 
 _set_locales
-locale-gen > /dev/null
+#locale-gen > /dev/null
 
 # Install chinese fonts
 if [ "$LOCALE" = 'zh_TW' ] || [ "$LOCALE" = 'zh_CN' ];then

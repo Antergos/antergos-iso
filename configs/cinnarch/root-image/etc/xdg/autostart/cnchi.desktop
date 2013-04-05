@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=0.1
+Terminal=false
+Icon=/usr/share/cinnarch/cnchi.png
+Type=Application
+Exec=sudo python /usr/share/cnchi/cnchi.py
+Name=Cnchi
+GenericName=Cnchi
+Comment=Cinnarch Graphical Installer
+

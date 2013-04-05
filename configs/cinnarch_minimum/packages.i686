@@ -35,7 +35,6 @@ wget
 
 btrfs-progs
 ntfs-3g
-ntfsprogs
 dosfstools
 
 # Others

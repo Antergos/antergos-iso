@@ -54,7 +54,7 @@ _set_locales ()
 
 	# generate LOCALE
 	local TLANG=${LOCALE%.*} # remove everything after the ., including the dot from LOCALE
-	sed -i -r "s/#(.*${TLANG}.*UTF-8)/\1/g" ${DESTDIR}/etc/locale.gen
+	#sed -i -r "s/#(.*${TLANG}.*UTF-8)/\1/g" ${DESTDIR}/etc/locale.gen
 	# add also American English as safe default
 	sed -i -r "s/#(en_US.*UTF-8)/\1/g" ${DESTDIR}/etc/locale.gen
 

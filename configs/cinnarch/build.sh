@@ -191,7 +191,7 @@ make_customize_root_image() {
 
 
 
-        sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/pacmanxg4.desktop
+        sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
         mv ${work_dir}/root-image/usr/lib/tmpfiles.d/transmission.conf ${work_dir}/root-image/usr/lib/tmpfiles.d/transmission.conf.backup
@@ -218,10 +218,18 @@ make_customize_root_image() {
             run
         # Change default wallpaper
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "dbus-launch gsettings set org.gnome.desktop.background picture-uri file:///usr/share/cinnarch/wallpapers/83II_by_bo0xVn.jpg" cinnarch' \
+            -r 'su -c "dbus-launch gsettings set org.gnome.desktop.background picture-uri file:///usr/share/cinnarch/wallpapers/cinnarch-wallpaper.png" cinnarch' \
             run
+
+        # Set gtk theme
+        # mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        #     -r 'su -c "dbus-launch gsettings set org.gnome.desktop.interface gtk-theme Evolve" cinnarch' \
+        #     run
+        # mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        #     -r 'su -c "dbus-launch gsettings set org.gnome.desktop.wm.preferences theme Evolve" cinnarch' \
+        #     run
         
-        
+
         #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
         #    -r 'unlink /usr/share/backgrounds/cinnarch-default' \
         #    run
