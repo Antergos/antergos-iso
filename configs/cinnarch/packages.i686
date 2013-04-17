@@ -15,6 +15,7 @@ parted
 gparted
 crda
 
+
 # Cnchi dependencies
 python
 python-gobject
@@ -36,9 +37,9 @@ net-tools
 usb_modeswitch
 modemmanager
 networkmanager-openvpn
-whois
+whois 
 dnsutils
-netcfg
+netctl
 wget
 
 # Filesystems
@@ -94,50 +95,46 @@ file-roller
 evince
 gnome-bluetooth
 gcalctool
+#gnome-calculator
 gedit
 gnome-system-monitor
-pidgin
+empathy
 transmission-cli
 transmission-gtk
+libreoffice-installer
 xnoise
 hotot-gtk3-git
 shotwell
 gnome-screenshot
-nemo-fm
-libreoffice-installer
+nautilus
+nautilus-open-terminal
 
 # Theme
 
 faenza-icon-theme
 gnome-themes-standard
-cinnamon-theme-minty
 cinnarch-wallpapers
-#gtk-theme-evolve
 
 # Compression
 
 unzip
 zip
 unrar
-p7zip
 
-# Gnome & Cinnamon
+# Gnome
 
-cinnamon-control-center
 python2
-python2-gconf
-telepathy-logger
 clutter
 gconf
 gobject-introspection
 libcanberra
 startup-notification
 zenity
-muffin
-cinnamon
-gnome-panel
 accountsservice
+gnome-shell
+gnome-control-center
 
-# MDM
+# GDM
 
-mdm-display-manager
+gdm
+

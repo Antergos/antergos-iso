@@ -183,6 +183,7 @@ make_customize_root_image() {
         sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
         sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${work_dir}/root-image/etc/pacman.conf
         if [[ ${arch} == 'x86_64' ]];then
+            echo '' >> ${work_dir}/root-image/etc/pacman.conf
             echo '[multilib]' >> ${work_dir}/root-image/etc/pacman.conf
             echo 'SigLevel = PackageRequired' >> ${work_dir}/root-image/etc/pacman.conf
             echo 'Include = /etc/pacman.d/mirrorlist' >> ${work_dir}/root-image/etc/pacman.conf
@@ -197,7 +198,7 @@ make_customize_root_image() {
         mv ${work_dir}/root-image/usr/lib/tmpfiles.d/transmission.conf ${work_dir}/root-image/usr/lib/tmpfiles.d/transmission.conf.backup
         #patch ${work_dir}/root-image/usr/bin/pacman-key < ${script_path}/pacman-key-4.0.3_unattended-keyring-init.patch
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -f enable pacman-init.service pacman-boot.service mdm.service NetworkManager.service livecd.service || true' \
+            -r 'systemctl -f enable pacman-init.service gdm.service NetworkManager.service livecd.service || true' \
             run
 
         # Fix sudoers
@@ -213,12 +214,12 @@ make_customize_root_image() {
         # Gsettings changes
         mkdir -p ${work_dir}/root-image/var/run/dbus
         mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "dbus-launch gsettings set org.cinnamon keyboard-applet-use-flags false" cinnarch' \
-            run
+        cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
+        chmod +x ${work_dir}/root-image/usr/bin/
+
         # Change default wallpaper
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "dbus-launch gsettings set org.gnome.desktop.background picture-uri file:///usr/share/cinnarch/wallpapers/cinnarch-wallpaper.png" cinnarch' \
+            -r 'su -c "/usr/bin/set-gsettings" cinnarch' \
             run
 
         # Set gtk theme
@@ -230,20 +231,10 @@ make_customize_root_image() {
         #     run
         
 
-        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        #    -r 'unlink /usr/share/backgrounds/cinnarch-default' \
-        #    run
-        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        #    -r 'ln -s /usr/share/cinnarch/wallpapers/83II_by_bo0xVn.jpg /usr/share/backgrounds/cinnarch-default' \
-        #    run
         umount ${work_dir}/root-image/var/run/dbus
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
-
-        # Set default MDM theme
-        sed -i "s#\[greeter\].*#&\n\nGraphicalTheme=Arc-Brave-Userlist\n\n#" ${work_dir}/root-image/etc/mdm/custom.conf
-        sed -i "s#\[daemon\].*#&\n\nAutomaticLoginEnable=true\n\nAutomaticLogin=cinnarch\n\n#" ${work_dir}/root-image/etc/mdm/custom.conf
 
 
 

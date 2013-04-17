@@ -1,5 +1,5 @@
 #!/bin/bash
-INSTALLER_VERSION=0.8
+INSTALLER_VERSION=0.9
 
 TEXTDOMAIN=cli_installer
 # we rely on some output which is parsed in english!
@@ -27,7 +27,7 @@ INITRAMFS="initramfs-${KERNELPKG}"
 # detect systemd running
 [[ "$(cat /proc/cmdline | grep -w init=/bin/systemd)" ]] && SYSTEMD="0"
 # abstract the common pacman args
-PACMAN="powerpill --root ${DESTDIR} --config /tmp/pacman.conf --noconfirm --noprogressbar"
+PACMAN="pacman --root ${DESTDIR} --config /tmp/pacman.conf --noconfirm --noprogressbar"
 # downloader
 DLPROG="wget"
 PACKAGES=""
@@ -2807,7 +2807,7 @@ select_packages() {
 
     #PACKAGES="${PACKAGES} $(cat /run/archiso/bootmnt/arch/pkglist.x86_64.txt)"
 
-    PACKAGES="${PACKAGES} base base-devel haveged crda ipw2100-fw ipw2200-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter btrfs-progs ntfs-3g ntfsprogs dosfstools xorg-server xorg-server-utils sudo yaourt pacmanxg4 pkgfile ttf-dejavu ttf-bitstream-vera network-manager-applet usb_modeswitch modemmanager networkmanager-openvpn gnome-terminal chromium file-roller evince gnome-screenshot flashplugin gnome-bluetooth nemo-fm nemo-fileroller gcalctool xdg-user-dirs-gtk gedit alsa-utils gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav whois dnsutils gnome-screensaver xfburn gnome-system-monitor pidgin transmission-cli transmission-gtk libreoffice-installer xnoise faenza-hotot-icon hotot-gtk3-git shotwell faenza-icon-theme gnome-themes-standard cinnamon-theme-minty cinnarch-wallpapers hicolor-icon-theme unzip unrar p7zip gnome-menus2 gnome-control-center python2 python2-gconf telepathy-logger clutter gconf gobject-introspection libcanberra libxxf86vm startup-notification zenity muffin cinnamon gnome-panel accountsservice gtk3 gnome-common librsvg dbus-glib libwebkit libxklavier libxslt python2-distutils-extra libindicator3 desktop-file-utils libwebkit3 python2-gobject mdm-display-manager mdm-themes net-tools gnome-keyring xf86-input-synaptics libgnomeui"
+    PACKAGES="${PACKAGES} base base-devel cinnarch-keyring cinnarch-mirrorlist haveged crda ipw2100-fw ipw2200-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter btrfs-progs ntfs-3g dosfstools xorg-server xorg-server-utils sudo yaourt pacmanxg4 pkgfile ttf-dejavu ttf-bitstream-vera network-manager-applet usb_modeswitch modemmanager networkmanager-openvpn gnome-terminal chromium file-roller evince gnome-screenshot flashplugin gnome-bluetooth nautilus gcalctool xdg-user-dirs-gtk gedit alsa-utils gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav whois dnsutils xfburn gnome-system-monitor pidgin transmission-cli transmission-gtk libreoffice-installer xnoise faenza-hotot-icon hotot-gtk3-git shotwell faenza-icon-theme gnome-themes-standard cinnarch-wallpapers hicolor-icon-theme unzip unrar gnome-control-center python2 clutter gconf gobject-introspection libcanberra libxxf86vm startup-notification zenity gnome-shell accountsservice gtk3 gdm net-tools gnome-keyring xf86-input-synaptics libgnomeui"
 
     if [[ -f /tmp/use_ntp ]];then
         PACKAGES="${PACKAGES} ntp"
@@ -4590,7 +4590,7 @@ configure_system() {
     cp -f /usr/bin/pacman-key ${DESTDIR}/usr/bin/pacman-key
 
     cp -f /usr/lib/systemd/system/lightdm.service ${DESTDIR}/usr/lib/systemd/system/lightdm.service
-    chroot ${DESTDIR} systemctl enable mdm.service NetworkManager.service  >/dev/null 2>&1
+    chroot ${DESTDIR} systemctl enable gdm.service NetworkManager.service  >/dev/null 2>&1
     if [[ -f /tmp/use_ntp ]];then
         chroot ${DESTDIR} systemctl enable ntpd.service >/dev/null 2>&1
     fi
@@ -4761,7 +4761,6 @@ configure_system() {
         sed -i 's/ pata//' ${DESTDIR}/etc/mkinitcpio.conf
         sed -i 's/ scsi//' ${DESTDIR}/etc/mkinitcpio.conf
         sed -i 's/ sata//' ${DESTDIR}/etc/mkinitcpio.conf
-        sed -i 's/ filesystem/ block filesystem/' ${DESTDIR}/etc/mkinitcpio.conf
         sed -i 's/usbinput/keyboard/' ${DESTDIR}/etc/mkinitcpio.conf
         run_mkinitcpio
         
@@ -4795,7 +4794,6 @@ configure_system() {
 
         # Set Cinnarch name in filesystem files
         cp /etc/arch-release ${DESTDIR}/etc
-        cp /etc/issue ${DESTDIR}/etc
         cp -f /etc/os-release ${DESTDIR}/etc/os-release
 
         # Set Adwaita cursor theme
@@ -4810,12 +4808,6 @@ configure_system() {
             echo "SigLevel = PackageRequired" >> ${DESTDIR}/etc/pacman.conf
             echo "Include = /etc/pacman.d/mirrorlist" >> ${DESTDIR}/etc/pacman.conf
         fi
-
-        # Set default MDM theme
-        sed -i "s#\[greeter\].*#&\n\nGraphicalTheme=Arc-Brave-Userlist\n\n#" ${DESTDIR}/etc/mdm/custom.conf
-        cp /home/cinnarch/.dmrc ${DESTDIR}/home/${USER_NAME}
-        chroot ${DESTDIR} chown ${USER_NAME}:users /home/${USER_NAME}/.dmrc
-        chroot ${DESTDIR} chmod 644 /home/${USER_NAME}/.dmrc
 
 
         ## END POSTPROCESSING ##
@@ -4973,7 +4965,7 @@ if [[ "$NETWORK_ALIVE" = "" ]];then
     INSTALLER_VERSION_NET=`curl http://www.cinnarch.com/cinnarch_installer/version 2>/dev/null`
 
     if [[ ${INSTALLER_VERSION} < ${INSTALLER_VERSION_NET} ]];then
-            if [[ ${INSTALLER_VERSION} < 0.5 ]];then
+            if [[ ${INSTALLER_VERSION} < 0.8 ]];then
                 DIALOG --msgbox $"Your version is too old. \n\nPlease, download the last Cinnarch Live" 7 50
             else
 

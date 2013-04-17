@@ -3,15 +3,8 @@
 # Change keyboard layaout
 dbus-launch gsettings set org.gnome.desktop.input-sources sources "[('xkb','us')]"
 
-# Set show flags to false
-dbus-launch gsettings set org.cinnamon keyboard-applet-use-flags false
-
 # Change default wallpaper
 dbus-launch gsettings set org.gnome.desktop.background picture-uri file:///usr/share/cinnarch/wallpapers/cinnarch-wallpaper.png
 
-# Set gtk theme
-dbus-launch gsettings set org.gnome.desktop.interface gtk-theme Evolve
-dbus-launch gsettings set org.gnome.desktop.wm.preferences theme Evolve
-
-# Remove overview-corner
-dbus-launch gsettings set org.cinnamon overview-corner "['expo:false:false', 'scale:false:false', 'scale:false:false', 'scale:false:false']"
+# Set favorite apps
+dbus-launch gsettings set org.gnome.shell favorite-apps "['nautilus.desktop', 'chromium.desktop', 'empathy.desktop', 'xnoise.desktop']"
