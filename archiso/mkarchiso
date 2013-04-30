@@ -10,9 +10,9 @@ pkg_list=""
 run_cmd=""
 quiet="y"
 pacman_conf="/etc/pacman.conf"
-export iso_label="CINNARCH_$(date +%Y%m)"
-iso_publisher="Cinnarch <http://www.cinnarch.com>"
-iso_application="Cinnarch Live/Rescue CD"
+export iso_label="ANTERGOS$(date +%Y%m)"
+iso_publisher="Antergos <http://www.antergos.com>"
+iso_application="Antergos Live/Rescue CD"
 install_dir="arch"
 work_dir="work"
 out_dir="out"
@@ -74,7 +74,7 @@ _chroot_umount () {
 _chroot_init() {
     if [[ ! -d ${work_dir}/root-image/var/cache/pacman ]]; then
         mkdir -p ${work_dir}/root-image/{dev,proc,run,sys,tmp,var/lib/pacman}
-        _pacman "bash bzip2 cinnarch-keyring cinnarch-mirrorlist coreutils cronie cryptsetup device-mapper dhcpcd diffutils e2fsprogs file filesystem findutils gawk gcc-libs gettext glibc grep gzip heirloom-mailx inetutils iputils jfsutils less licenses linux logrotate lvm2 mdadm nano pacman pciutils pcmciautils perl ppp procps-ng psmisc reiserfsprogs sed shadow sysfsutils systemd systemd-sysvcompat tar texinfo usbutils util-linux vi which xfsprogs"
+        _pacman "bash bzip2 antergos-keyring antergos-mirrorlist coreutils cronie cryptsetup device-mapper dhcpcd diffutils e2fsprogs file filesystem findutils gawk gcc-libs gettext glibc grep gzip heirloom-mailx inetutils iputils jfsutils less licenses linux logrotate lvm2 mdadm nano pacman pciutils pcmciautils perl ppp procps-ng psmisc reiserfsprogs sed shadow sysfsutils systemd systemd-sysvcompat tar texinfo usbutils util-linux vi which xfsprogs"
         _pacman "syslinux"
     fi
 }

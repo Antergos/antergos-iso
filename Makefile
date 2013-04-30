@@ -24,12 +24,12 @@ install-initcpio:
 	install -m 644 -t $(INSTALL_DIR) $(INSTALL_FILES)
 
 install-examples:
-	install -d -m 755 $(DESTDIR)/usr/share/cinnarch-iso/
-	cp -a --no-preserve=ownership configs $(DESTDIR)/usr/share/cinnarch-iso/
+	install -d -m 755 $(DESTDIR)/usr/share/antergos-iso/
+	cp -a --no-preserve=ownership configs $(DESTDIR)/usr/share/antergos-iso/
 
 
 dist:
-	git archive --format=tar --prefix=cinnarch-iso-$(V)/ v$(V) | gzip -9 > cinnarch-iso-$(V).tar.gz
-	gpg --detach-sign --use-agent cinnarch-iso-$(V).tar.gz
+	git archive --format=tar --prefix=antergos-iso-$(V)/ v$(V) | gzip -9 > antergos-iso-$(V).tar.gz
+	gpg --detach-sign --use-agent antergos-iso-$(V).tar.gz
 
 .PHONY: install install-program install-initcpio install-examples dist

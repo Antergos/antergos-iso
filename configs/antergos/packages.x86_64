@@ -1,0 +1,138 @@
+# Intallation
+gummiboot
+#grub-efi-x86_64
+#refind-efi
+haveged
+dmraid
+hwdetect
+hwinfo
+squashfs-tools
+ntp
+libui-sh
+dialog
+gptfdisk
+parted
+gparted
+crda
+
+
+# Cnchi dependencies
+python
+python-gobject
+python-dbus
+libtimezonemap
+py3parted
+hdparm
+
+# Network
+
+ipw2100-fw
+ipw2200-fw
+zd1211-firmware
+wireless_tools
+wpa_actiond
+b43-fwcutter
+#broadcom-wl
+net-tools
+usb_modeswitch
+modemmanager
+networkmanager-openvpn
+whois 
+dnsutils
+netctl
+wget
+
+# Filesystems
+
+btrfs-progs
+ntfs-3g
+dosfstools
+
+# Xorg
+
+xorg-server
+xorg-server-utils
+xf86-input-synaptics
+
+# Graphical Drivers
+
+xf86-video-intel
+xf86-video-nouveau
+xf86-video-ati
+nouveau-dri
+intel-dri
+ati-dri
+virtualbox-guest-utils
+virtualbox-guest-modules
+xf86-video-vmware
+xf86-video-openchrome
+xf86-video-vesa
+
+
+# System Tools
+
+sudo
+gksu
+pacmanxg4
+pkgfile
+alsa-utils
+xdg-user-dirs-gtk
+powerpill
+
+# Fonts
+
+ttf-dejavu
+ttf-bitstream-vera
+
+# Desktop
+
+gnome-keyring
+network-manager-applet
+gnome-terminal
+chromium
+file-roller
+evince
+gnome-bluetooth
+gnome-calculator
+gedit
+gnome-system-monitor
+empathy
+transmission-cli
+transmission-gtk
+libreoffice-installer
+xnoise
+#hotot-gtk3-git
+shotwell
+gnome-screenshot
+nautilus
+nautilus-open-terminal
+
+# Theme
+
+faenza-icon-theme
+gnome-themes-standard
+antergos-wallpapers
+
+# Compression
+
+unzip
+zip
+unrar
+
+# Gnome
+
+python2
+clutter
+gconf
+gobject-introspection
+libcanberra
+startup-notification
+zenity
+accountsservice
+gnome-shell
+gnome-control-center
+
+# GDM
+
+gdm
+

@@ -1,20 +1,18 @@
 #!/bin/bash
-# Script generator of Cinnarch Live torrents
-# Alexandre Filgueira Sánchez <alexfilgueira@cinnarch.com>
+# Script generator of Antergos Live torrents
+# Alexandre Filgueira Sánchez <faidoc@gmail.com>
 
 iso_version=$(date +%Y.%m.%d)
 
 for arch in i686 x86_64; do 
-    for iso_name in cinnarch cinnarch_minimum; do
-    	echo
-    	echo "### Generating $iso_name-$iso_version-netinstall-$arch.torrent ..."
-    	echo
-    	mktorrent -a udp://tracker.openbittorrent.com:80 \
-    			  -n "$iso_name-$iso_version-$arch.iso" \
-    			  -o $iso_name-$iso_version-$arch.torrent \
-    			  -w http://mirrors.cinnarch.com/iso/$iso_version/$iso_name-$iso_version-$arch.iso \
-    			  $iso_name-$iso_version-$arch.iso
-    done
+	echo
+	echo "### Generating $iso_name-$iso_version-netinstall-$arch.torrent ..."
+	echo
+	mktorrent -a udp://tracker.openbittorrent.com:80 \
+			  -n "$iso_name-$iso_version-$arch.iso" \
+			  -o $iso_name-$iso_version-$arch.torrent \
+			  -w http://mirrors.antergos.com/iso/$iso_version/$iso_name-$iso_version-$arch.iso \
+			  $iso_name-$iso_version-$arch.iso
 done
 
 
