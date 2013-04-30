@@ -13,4 +13,4 @@ wget
 ## Instructions ##
 
  - sudo make install
- - copy the config of your choice from /usr/share/antergos-iso
+ - copy the config folder from /usr/share/antergos-iso
