@@ -1,5 +1,5 @@
 #!/bin/bash
-INSTALLER_VERSION=0.9
+INSTALLER_VERSION=1.0
 
 TEXTDOMAIN=cli_installer
 # we rely on some output which is parsed in english!
@@ -27,7 +27,7 @@ INITRAMFS="initramfs-${KERNELPKG}"
 # detect systemd running
 [[ "$(cat /proc/cmdline | grep -w init=/bin/systemd)" ]] && SYSTEMD="0"
 # abstract the common pacman args
-PACMAN="pacman --root ${DESTDIR} --config /tmp/pacman.conf --noconfirm --noprogressbar"
+PACMAN="powerpill --root ${DESTDIR} --config /tmp/pacman.conf --noconfirm --noprogressbar"
 # downloader
 DLPROG="wget"
 PACKAGES=""
@@ -2771,6 +2771,27 @@ run_pacman(){
     chroot_umount
 }
 
+select_desktop(){
+
+    DESKTOP_SELECTED=""
+    DM_SELECTED=''
+
+    while [[ "${DESKTOP_SELECTED}" = "" ]]; do
+
+        DIALOG --menu $"Select a desktop:" 10 35 3 \
+        "1" "Gnome (Default)" \
+        "2" "Cinnamon" \
+        "3" "Xfce" \
+        "4" "Razor-qt" 2>${ANSWER} || return 1
+        case $(cat ${ANSWER}) in
+            "1") DESKTOP_SELECTED="gnome" ;;
+            "2") DESKTOP_SELECTED="cinnamon" ;;
+            "3") DESKTOP_SELECTED="xfce" ;;
+            "4") DESKTOP_SELECTED="razor" ;;
+        esac
+    done
+}
+
 # select_packages()
 # prompts the user to select packages to install
 #
@@ -2798,10 +2819,22 @@ select_packages() {
         ! [[ "$(echo ${PACKAGES} | grep -w v86d)" ]] && PACKAGES="${PACKAGES} v86d"
     fi
 
-    #PACKAGES="${PACKAGES} $(cat /run/archiso/bootmnt/arch/pkglist.x86_64.txt)"
 
-    PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist haveged crda ipw2100-fw ipw2200-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter btrfs-progs ntfs-3g dosfstools xorg-server xorg-server-utils sudo yaourt pacmanxg4 pkgfile ttf-dejavu ttf-bitstream-vera network-manager-applet usb_modeswitch modemmanager networkmanager-openvpn gnome-terminal chromium file-roller evince gnome-screenshot flashplugin gnome-bluetooth nautilus gnome-calculator xdg-user-dirs-gtk gedit alsa-utils gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav whois dnsutils xfburn gnome-system-monitor empathy transmission-cli transmission-gtk libreoffice-installer xnoise faenza-hotot-icon hotot-gtk3-git shotwell faenza-icon-theme gnome-themes-standard antergos-wallpapers hicolor-icon-theme unzip unrar gnome-control-center python2 clutter gconf gobject-introspection libcanberra libxxf86vm startup-notification zenity gnome-shell accountsservice gtk3 gdm net-tools gnome-keyring xf86-input-synaptics libgnomeui"
+    if [[ "${DESKTOP_SELECTED}" == 'gnome' ]];then
+        PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist haveged crda ipw2100-fw ipw2200-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter btrfs-progs ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile ttf-dejavu ttf-bitstream-vera network-manager-applet usb_modeswitch modemmanager networkmanager-openvpn gnome-terminal chromium file-roller evince gnome-screenshot flashplugin gnome-bluetooth nautilus gnome-calculator xdg-user-dirs-gtk gedit alsa-utils gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav whois dnsutils xfburn gnome-system-monitor empathy transmission-cli transmission-gtk libreoffice-installer xnoise faenza-hotot-icon hotot-gtk3 shotwell faenza-icon-theme gnome-themes-standard antergos-wallpapers hicolor-icon-theme unzip unrar gnome-control-center python2 clutter gconf gobject-introspection libcanberra libxxf86vm startup-notification zenity gnome-shell accountsservice gtk3 gdm net-tools gnome-keyring xf86-input-synaptics libgnomeui zukitwo-themes"
+        DM_SELECTED='gdm'
+    elif [[ "${DESKTOP_SELECTED}" == 'cinnamon' ]];then
+        PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist haveged crda ipw2100-fw ipw2200-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter btrfs-progs ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile ttf-dejavu ttf-bitstream-vera network-manager-applet usb_modeswitch modemmanager networkmanager-openvpn gnome-terminal chromium file-roller evince gnome-screenshot flashplugin gnome-bluetooth nemo nemo-fileroller gnome-calculator xdg-user-dirs-gtk gedit alsa-utils gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav whois dnsutils xfburn gnome-system-monitor pidgin transmission-cli transmission-gtk libreoffice-installer xnoise faenza-hotot-icon hotot-gtk3 shotwell faenza-icon-theme gnome-themes-standard antergos-wallpapers hicolor-icon-theme unzip unrar cinnamon-control-center python2 clutter gconf gobject-introspection libcanberra libxxf86vm startup-notification zenity gtk3 lxdm net-tools gnome-keyring xf86-input-synaptics libgnomeui zukitwo-themes cinnamon-screensaver"
+        DM_SELECTED='lxdm'
+    elif [[ "${DESKTOP_SELECTED}" == 'xfce' ]];then
+        PACKAGES="${PACKAGES} lxdm xfce4 gamin mousepad ristretto thunar-archive-plugin xfburn xfce4-battery-plugin xfce4-datetime-plugin xfce4-notifyd xfce4-screenshooter xfce4-taskmanager network-manager-applet xnoise evince transmission-gtk pidgin gnome-calculator zukitwo-themes gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav xdg-user-dirs-gtk hotot-gtk3 base  base-devel  antergos-keyring antergos-mirrorlist haveged crda ipw2200-fw ipw2100-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile chromium flashplugin alsa-utils whois dnsutils transmission-cli libreoffice-installer faenza-hotot-icon faenza-icon-theme antergos-wallpapers unzip unrar net-tools xf86-input-synaptics usb_modeswitch modemmanager"
+        DM_SELECTED='lxdm'
+    elif [[ "${DESKTOP_SELECTED}" == 'razor' ]];then
+        PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist haveged crda ipw2200-fw ipw2100-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile chromium flashplugin alsa-utils whois dnsutils transmission-cli libreoffice-installer faenza-hotot-icon faenza-icon-theme antergos-wallpapers unzip unrar net-tools xf86-input-synaptics usb_modeswitch modemmanager kdebase-workspace razor-qt qtfm kdebase-konsole kdeartwork-desktopthemes kdeplasma-applets-networkmanagement kovpn kdesdk-kate kdenetwork-kopete kdegraphics-gwenview clementine vlc kdeutils-kcalc kdegraphics-ksnapshot transmission-qt phonon-vlc hotot-qt"
+        DM_SELECTED='kdm'
+    fi
 
+    
     if [[ -f /tmp/use_ntp ]];then
         PACKAGES="${PACKAGES} ntp"
     fi
@@ -4504,59 +4537,6 @@ auto_ftpmirror() {
     mv /tmp/.mirrorlist "${DESTDIR}/etc/pacman.d/mirrorlist"
 }
 
-_set_50-synaptics() {
-    cat << EOF > ${DESTDIR}/etc/X11/xorg.conf.d/50-synaptics.conf 
-# Example xorg.conf.d snippet that assigns the touchpad driver
-# to all touchpads. See xorg.conf.d(5) for more information on
-# InputClass.
-# DO NOT EDIT THIS FILE, your distribution will likely overwrite
-# it when updating. Copy (and rename) this file into
-# /etc/X11/xorg.conf.d first.
-# Additional options may be added in the form of
-#   Option "OptionName" "value"
-#
-Section "InputClass"
-        Identifier "touchpad catchall"
-        Driver "synaptics"
-        MatchIsTouchpad "on"
-        Option "TapButton1" "1"
-        Option "TapButton2" "2"
-        Option "TapButton3" "3"
-# This option is recommend on all Linux systems using evdev, but cannot be
-# enabled by default. See the following link for details:
-# http://who-t.blogspot.com/2010/11/how-to-ignore-configuration-errors.html
-        MatchDevicePath "/dev/input/event*"
-EndSection
-
-Section "InputClass"
-        Identifier "touchpad ignore duplicates"
-        MatchIsTouchpad "on"
-        MatchOS "Linux"
-        MatchDevicePath "/dev/input/mouse*"
-        Option "Ignore" "on"
-EndSection
-
-# This option enables the bottom right corner to be a right button on
-# non-synaptics clickpads.
-# This option is only interpreted by clickpads.
-Section "InputClass"
-        Identifier "Default clickpad buttons"
-        MatchDriver "synaptics"
-        Option "SoftButtonAreas" "50% 0 82% 0 0 0 0 0"
-EndSection
-
-# This option disables software buttons on Apple touchpads.
-# This option is only interpreted by clickpads.
-Section "InputClass"
-        Identifier "Disable clickpad buttons on Apple touchpads"
-        MatchProduct "Apple|bcm5974"
-        MatchDriver "synaptics"
-        Option "SoftButtonAreas" "0 0 0 0 0 0 0 0"
-EndSection
-EOF
-
-}
-
 
 configure_system() {
     destdir_mounts || return 1
@@ -4565,12 +4545,12 @@ configure_system() {
     if [[ ${S_CONFIG} -eq 0 ]]; then
 
         mkdir -p ${DESTDIR}/usr/share/antergos/
-        cp /usr/share/antergos/antergos_menu.png ${DESTDIR}/usr/share/antergos/antergos_menu.png
+        cp /usr/share/antergos/antergos-menu.png ${DESTDIR}/usr/share/antergos/antergos-menu.png
 
         auto_ftpmirror
         auto_parameters
         auto_fb
-        auto_hwdetect
+        #auto_hwdetect
     fi
     ## END PREPROCESS ##
     geteditor || return 1
@@ -4579,11 +4559,7 @@ configure_system() {
     CONTROL_USER=0
 
 
-    ## populate keyring
-    cp -f /usr/bin/pacman-key ${DESTDIR}/usr/bin/pacman-key
-
-    cp -f /usr/lib/systemd/system/lightdm.service ${DESTDIR}/usr/lib/systemd/system/lightdm.service
-    chroot ${DESTDIR} systemctl enable gdm.service NetworkManager.service  >/dev/null 2>&1
+    chroot ${DESTDIR} systemctl enable ${DM_SELECTED} NetworkManager.service  >/dev/null 2>&1
     if [[ -f /tmp/use_ntp ]];then
         chroot ${DESTDIR} systemctl enable ntpd.service >/dev/null 2>&1
     fi
@@ -4659,17 +4635,11 @@ configure_system() {
 
                 DIALOG --infobox $"Creating user..." 4 30
 
-                cp -rf /etc/skel ${DESTDIR}/etc/  >/dev/null 2>&1
-                rm -rf ${DESTDIR}/etc/skel/Desktop >/dev/null 2>&1
                 chroot ${DESTDIR} useradd -m -s /bin/bash -g users -G lp,video,network,storage,wheel,audio ${USER_NAME} >/dev/null 2>&1
                 chroot ${DESTDIR} passwd ${USER_NAME} < /tmp/.user_password >/dev/null 2>&1
                 chroot ${DESTDIR} chfn -f "${USER_FULL_NAME}" "${USER_NAME}" >/dev/null 2>&1
                 
                 rm /tmp/.user_password
-
-
-                cp -rf /etc/skel/.config /etc/skel/.gconf /etc/skel/.local /etc/skel/.gnome2 /etc/skel/.gtkrc-2 ${DESTDIR}/home/${USER_NAME}/ >/dev/null 2>&1
-                chroot ${DESTDIR} chown -R ${USER_NAME}:users /home/${USER_NAME} >/dev/null 2>&1
 
 
                 CONTROL_USER=1
@@ -4734,12 +4704,6 @@ configure_system() {
 
         ###### USER CONFIGURATIONS  #####
 
-        ## Set defaults directories
-        chroot ${DESTDIR} su -c "xdg-user-dirs-update" ${USER_NAME} || true
-
-        ## Unmute alsa channels
-        chroot ${DESTDIR} amixer -c 0 set Master playback 100% unmute>/dev/null 2>&1
-
 
         ## Copy locales
         cp -f /tmp/locale.gen ${DESTDIR}/etc/locale.gen
@@ -4764,19 +4728,8 @@ configure_system() {
         chroot ${DESTDIR} locale-gen >/dev/null 2>&1
 
 
-        # Set gsettings
-        cp /arch/set-gsettings ${DESTDIR}/usr/bin/set-gsettings
-        mkdir -p ${DESTDIR}/var/run/dbus
-        mount -o bind /var/run/dbus ${DESTDIR}/var/run/dbus
-        chroot ${DESTDIR} su -c "/usr/bin/set-gsettings" ${USER_NAME} >/dev/null 2>&1
-        rm ${DESTDIR}/usr/bin/set-gsettings
-
-        # Fix transmission leftover
-        mv ${DESTDIR}/usr/lib/tmpfiles.d/transmission.conf ${DESTDIR}/usr/lib/tmpfiles.d/transmission.conf.backup
-
-        # Configure touchpad
-        _set_50-synaptics
-        # cp /etc/X11/xorg.conf.d/10-synaptics.conf ${DESTDIR}/etc/X11/xorg.conf.d/10-synaptics.conf
+        # Set settings
+        sh /usr/share/cnchi/scripts/postinstall.sh ${USER_NAME} ${DESTDIR} ${DESKTOP_SELECTED} ${KBLAYOUT}
 
         # Fix grub locale error
         chroot ${DESTDIR} cp "/boot/grub/locale/en@quot.mo" "/boot/grub/locale/$(echo ${LOCALE}|cut -b 1-2).mo.gz"
@@ -4784,13 +4737,6 @@ configure_system() {
         # Fix QT apps
         echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${DESTDIR}/etc/bash.bashrc
 
-
-        # Set Antergos name in filesystem files
-        cp /etc/arch-release ${DESTDIR}/etc
-        cp -f /etc/os-release ${DESTDIR}/etc/os-release
-
-        # Set Adwaita cursor theme
-        chroot ${DESTDIR} ln -s /usr/share/icons/Adwaita /usr/share/icons/default
 
         # Fix multilib repo in last release
         cp -f /etc/pacman.conf ${DESTDIR}/etc/pacman.conf
@@ -4900,6 +4846,7 @@ mainmenu() {
             prepare_harddrive ;;
 
         "3")
+            select_desktop
             select_packages
             install_bootloader ;;
         "4")

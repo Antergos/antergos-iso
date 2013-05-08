@@ -215,12 +215,12 @@ make_customize_root_image() {
             run
 
         # Set gtk theme
-        # mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        #     -r 'su -c "dbus-launch gsettings set org.gnome.desktop.interface gtk-theme Evolve" cinnarch' \
-        #     run
-        # mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        #     -r 'su -c "dbus-launch gsettings set org.gnome.desktop.wm.preferences theme Evolve" cinnarch' \
-        #     run
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'su -c "dbus-launch gsettings set org.gnome.desktop.interface gtk-theme Zukitwo" antergos' \
+            run
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'su -c "dbus-launch gsettings set org.gnome.desktop.wm.preferences theme Zukitwo" antergos' \
+            run
         
 
         umount ${work_dir}/root-image/var/run/dbus

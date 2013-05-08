@@ -1,8 +1,8 @@
-mainAjuda del gestor d'arrencadaBenvingut a Cinnarch
+mainAjuda del gestor d'arrencadaBenvingut a Antergos
 Useu aquest menú per a seleccionar la funció desitjada. Si teniu problemes per a navegar en aquest sistema d'ajuda, premeu F1 per a entrar a la helpdescripció del sistema d'ajuda. Les funcions principals d'aquest menú són:
-startInicia el sistema live: Seleccioneu aquesta opció per començar a usar el sistema Cinnarch live.
+startInicia el sistema live: Seleccioneu aquesta opció per començar a usar el sistema Antergos live.
 harddiskInicia des de disc dur: Aquesta selecció no afecta el sistema instal·lat. Només inicia un sistema operatiu prèviament instal·lat.
-hdtEina de detecció de maquinari: Aquesta selecció obre una eina per a comprovar el vostre maquinari. Aquesta eina no afecta o determina el maquinari usat per a instal·lar Cinnarch.
+hdtEina de detecció de maquinari: Aquesta selecció obre una eina per a comprovar el vostre maquinari. Aquesta eina no afecta o determina el maquinari usat per a instal·lar Antergos.
 noacpiDeshabilita ACPI: Molts dels ordinador venuts avui dia tenen una implementació ACPI incompleta o incorrecta. Aquesta selecció deshabilita la implementació ACPI al nucli del sistema, però conserva moltes característiques de rendiment, com ara DMA per a discs durs IDE.
 nolapicDeshabilita APIC local: Si la instal·lació normal falla, pot ser que el maquinari del sistema no implementi APIC local. Si aquest sembla ser el cas. useu aquesta opció per a instal·lar sense implementació APIC local.
 memtestProva de memòria: La prova de memòria és útil per a més coses a part de comprovar la instal·lació de nous mòduls de memòria. És una prova d'estres d'una gran part del vostre ordinador i pot detectar problemes de maquinari.
@@ -23,7 +23,7 @@ Seleccione Deshabilita ACPI si trobeu problemes en iniciar el nucli del sistem
   • El nucli es congela en iniciar  • No es poden detectar les targetes PCI o no s'inicialitzen correctament
 Torna a mainAjuda del gestor d'arrencadanolapicDeshabilita APIC localNormalment no hi ha cap problema amb l'APIC (controlador d'interrupcions programable avançat). No obstant, si sembla que en teniu algun, proveu aquesta opció per a iniciar sense implementació APIC local.
 No confoneu això amb noacpiACPI (interfície de configuració avançada i alimentació elèctrica).
-Torna a mainAjuda del gestor d'arrencadanonfreeInicia Cinnarch amb controladors no lliuresSeleccioneu aquesta opció per a iniciar aquest suport Cinnarch live. En seleccionar aquesta opció, Cinnarch intentarà usar controladors no lliures pel vostre maquinari com ara el controlador propietari nVidia o el controlador Ati Catalyst
+Torna a mainAjuda del gestor d'arrencadanonfreeInicia Antergos amb controladors no lliuresSeleccioneu aquesta opció per a iniciar aquest suport Antergos live. En seleccionar aquesta opció, Antergos intentarà usar controladors no lliures pel vostre maquinari com ara el controlador propietari nVidia o el controlador Ati Catalyst
 Torna a mainAjuda del gestor d'arrencadaoptOpcions d'arrencadaOpcions del nucli 
   • o_apmapm -- commuta la gestió d'energia elèctrica  • o_acpiacpi -- interfície de configuració avançada i energia elèctrica  • o_ideide -- control del subsistema IDE
 Torna a mainAjuda del gestor d'arrencadao_acpiOpcions del nucli: acpiL?ACPI (interfície de configuració avançada i alimentació elèctrica) és un estàndard que defineix les interfícies de la gestió de configuració i alimentació elèctrica entre un sistema operatiu i la BIOS. Per omissió, acpi s'activa en detectar una BIOS a partir de l'any 2000. Hi ha diversos paràmetres usats generalment per a controlar el comportament de l'ACPI: 
@@ -34,7 +34,7 @@ Torna a optOpcions d'arrencadao_apmOpcions del nucli: apmL'APM és una de
 Algun ordinadors nous poden tenir més avantatge del sistema actual o_acpiACPI.
 Torna a optOpcions d'arrencadao_ideOpcions del nucli: ideL'IDE és, contràriament a SCSI, usat de forma comuna a moltes estacions de treball. Per a solucionar alguns problemes de maquinari, que poden ocórrer amb l'IDE, useu el paràmetre del nucli: 
   • ide=nodma -- apaga la DMA per a unitats IDE
-Torna a optOpcions d'arrencadastartInici del sistema Cinnarch LiveSeleccioneu aquesta opció per començar a usar aquest suport de Cinnarch Live.
+Torna a optOpcions d'arrencadastartInici del sistema Antergos LiveSeleccioneu aquesta opció per començar a usar aquest suport de Antergos Live.
 Torna a mainAjuda del gestor d'arrencadavideomodeSelecció del mode de vídeoPremeu F3 per a obtenir una llista dels modes de vídeo implementats per la vostra targeta gràfica. Se selecciona automàticament el mode més alt que pot acceptar la vostra pantalla.
 Possiblement el vostre monitor no pugui detectar-se automàticament, En aquest cas, seleccioneu el vostre mode preferit manualment.
 Si teniu problemes amb la targeta gràfica en iniciar, proveu el mode text com a possible solució.

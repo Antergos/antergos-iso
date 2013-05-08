@@ -9,3 +9,5 @@ dbus-launch gsettings set org.gnome.shell favorite-apps "['nautilus.desktop', 'c
 # Disable screensaver
 dbus-launch gsettings set org.gnome.desktop.screensaver lock-enabled false
 dbus-launch gsettings set org.gnome.desktop.screensaver idle-activation-enabled false
+dbus-launch gsettings set org.gnome.desktop.lockdown disable-lock-screen true
+dbus-launch gsettings set org.gnome.desktop.session idle-delay 0

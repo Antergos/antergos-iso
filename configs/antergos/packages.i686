@@ -1,7 +1,5 @@
 # Intallation
 gummiboot
-#grub-efi-x86_64
-#refind-efi
 haveged
 dmraid
 hwdetect
@@ -16,13 +14,8 @@ gparted
 crda
 
 
-# Cnchi dependencies
-python
-python-gobject
-python-dbus
-libtimezonemap
-py3parted
-hdparm
+# Cnchi Graphical Installer
+cnchi
 
 # Network
 
