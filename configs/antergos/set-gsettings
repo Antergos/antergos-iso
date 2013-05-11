@@ -11,3 +11,10 @@ dbus-launch gsettings set org.gnome.desktop.screensaver lock-enabled false
 dbus-launch gsettings set org.gnome.desktop.screensaver idle-activation-enabled false
 dbus-launch gsettings set org.gnome.desktop.lockdown disable-lock-screen true
 dbus-launch gsettings set org.gnome.desktop.session idle-delay 0
+
+# Set theme
+dbus-launch gsettings set org.gnome.desktop.interface gtk-theme Zukitwo
+dbus-launch gsettings set org.gnome.desktop.wm.preferences theme Zukitwo
+
+# Set icon theme
+dbus-launch gsettings set org.gnome.desktop.interface icon-theme Faenza-Dark

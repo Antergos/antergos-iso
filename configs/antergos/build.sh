@@ -151,6 +151,8 @@ make_customize_root_image() {
         wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
         sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
 
+        # Download opendesktop-fonts
+        wget -O ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'locale-gen' \
@@ -209,20 +211,12 @@ make_customize_root_image() {
         cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
         chmod +x ${work_dir}/root-image/usr/bin/
 
-        # Change default wallpaper
+        # Set gsettings
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'su -c "/usr/bin/set-gsettings" antergos' \
             run
-
-        # Set gtk theme
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "dbus-launch gsettings set org.gnome.desktop.interface gtk-theme Zukitwo" antergos' \
-            run
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "dbus-launch gsettings set org.gnome.desktop.wm.preferences theme Zukitwo" antergos' \
-            run
         
-
+        rm ${work_dir}/root-image/usr/bin/set-gsettings
         umount ${work_dir}/root-image/var/run/dbus
         
         # Black list floppy
