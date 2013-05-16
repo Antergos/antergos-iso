@@ -25,7 +25,7 @@ zd1211-firmware
 wireless_tools
 wpa_actiond
 b43-fwcutter
-broadcom-wl
+#broadcom-wl
 net-tools
 usb_modeswitch
 modemmanager
@@ -94,7 +94,7 @@ transmission-cli
 transmission-gtk
 libreoffice-installer
 xnoise
-hotot-gtk3-git
+#hotot-gtk3-git
 shotwell
 gnome-screenshot
 nautilus
@@ -105,6 +105,7 @@ nautilus-open-terminal
 faenza-icon-theme
 gnome-themes-standard
 antergos-wallpapers
+zukitwo-themes
 
 # Compression
 

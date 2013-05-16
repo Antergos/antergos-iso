@@ -152,7 +152,7 @@ make_customize_root_image() {
         sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
 
         # Download opendesktop-fonts
-        wget -O ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
+        wget -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'locale-gen' \

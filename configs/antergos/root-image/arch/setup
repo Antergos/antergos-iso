@@ -1,5 +1,5 @@
 #!/bin/bash
-INSTALLER_VERSION=1.0
+INSTALLER_VERSION=1.1
 
 TEXTDOMAIN=cli_installer
 # we rely on some output which is parsed in english!
@@ -2860,6 +2860,13 @@ select_packages() {
     if [[ `echo ${GRAPHIC_CARD}|grep -i 'lenovo[[:space:]]'` != "" ]];then
         PACKAGES="${PACKAGES} xf86-video-intel intel-dri"
         touch /tmp/card_intel
+                cat << EOF > /etc/X11/xorg.conf.d/20-intel.conf
+Section "Device"
+   Identifier  "Intel Graphics"
+   Driver      "intel"
+   Option      "AccelMethod"  "sna"
+EndSection
+EOF
     fi
 
     if [[ `echo ${GRAPHIC_CARD}|grep -i 'virtualbox[[:space:]]'` != "" ]];then
@@ -4559,7 +4566,7 @@ configure_system() {
     CONTROL_USER=0
 
 
-    chroot ${DESTDIR} systemctl enable ${DM_SELECTED} NetworkManager.service  >/dev/null 2>&1
+    chroot ${DESTDIR} systemctl enable ${DM_SELECTED}.service NetworkManager.service  >/dev/null 2>&1
     if [[ -f /tmp/use_ntp ]];then
         chroot ${DESTDIR} systemctl enable ntpd.service >/dev/null 2>&1
     fi

@@ -4,7 +4,7 @@
 dbus-launch gsettings set org.gnome.desktop.background picture-uri file:///usr/share/antergos/wallpapers/antergos-wallpaper.png
 
 # Set favorite apps
-dbus-launch gsettings set org.gnome.shell favorite-apps "['nautilus.desktop', 'chromium.desktop', 'empathy.desktop', 'xnoise.desktop']"
+dbus-launch gsettings set org.gnome.shell favorite-apps "['Cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'empathy.desktop', 'xnoise.desktop']"
 
 # Disable screensaver
 dbus-launch gsettings set org.gnome.desktop.screensaver lock-enabled false
@@ -18,3 +18,6 @@ dbus-launch gsettings set org.gnome.desktop.wm.preferences theme Zukitwo
 
 # Set icon theme
 dbus-launch gsettings set org.gnome.desktop.interface icon-theme Faenza-Dark
+
+# Not show desktop icons
+dbus-launch gsettings set org.gnome.desktop.background show-desktop-icons false
