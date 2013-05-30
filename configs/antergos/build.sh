@@ -152,17 +152,13 @@ make_customize_root_image() {
         sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
 
         # Download opendesktop-fonts
-        wget -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
+        wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'locale-gen' \
             run
 
         #sed -i 's|^root:|root:liLfqaUhrN8Hs|g' ${work_dir}/root-image/etc/shadow
-
-        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        #    -r 'useradd -m -p "liLfqaUhrN8Hs" -g users -G "audio,disk,optical,wheel,network" cinnarch' \
-        #    run
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'useradd -m -g users -G "audio,disk,optical,wheel,network" antergos' \
@@ -222,6 +218,8 @@ make_customize_root_image() {
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
 
+        # Remove gtk-docs
+        rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0}
 
 
         : > ${work_dir}/build.${FUNCNAME}

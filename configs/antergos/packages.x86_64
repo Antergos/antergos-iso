@@ -40,6 +40,7 @@ wget
 btrfs-progs
 ntfs-3g
 dosfstools
+xfsprogs
 
 # Xorg
 
@@ -78,27 +79,15 @@ ttf-dejavu
 ttf-bitstream-vera
 
 # Desktop
-
-gnome-keyring
 network-manager-applet
-gnome-terminal
 chromium
-file-roller
-evince
-gnome-bluetooth
-gnome-calculator
-gedit
-gnome-system-monitor
-empathy
 transmission-cli
 transmission-gtk
 libreoffice-installer
 xnoise
-#hotot-gtk3-git
+hotot-gtk3
 shotwell
-gnome-screenshot
-nautilus
-nautilus-open-terminal
+
 
 # Theme
 
@@ -110,21 +99,24 @@ zukitwo-themes
 # Compression
 
 unzip
-zip
 unrar
 
 # Gnome
 
-python2
-clutter
-gconf
-gobject-introspection
-libcanberra
-startup-notification
-zenity
-accountsservice
 gnome-shell
 gnome-control-center
+gnome-keyring
+gnome-terminal
+file-roller
+evince
+gnome-bluetooth
+gnome-calculator
+gedit
+gnome-system-monitor
+empathy
+gnome-screenshot
+nautilus
+nautilus-open-terminal
 
 # GDM
 
