@@ -3,6 +3,7 @@
 # Alexandre Filgueira Sánchez <faidoc@gmail.com>
 
 iso_version=$(date +%Y.%m.%d)
+iso_name='antergos'
 
 for arch in i686 x86_64; do 
 	echo
