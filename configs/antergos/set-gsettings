@@ -21,3 +21,6 @@ dbus-launch gsettings set org.gnome.desktop.interface icon-theme Faenza-Dark
 
 # Not show desktop icons
 dbus-launch gsettings set org.gnome.desktop.background show-desktop-icons false
+
+# Minimize and close buttons
+dbus-launch gsettings set org.gnome.shell.overrides button-layout :minimize,close

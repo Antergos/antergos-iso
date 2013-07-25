@@ -30,6 +30,7 @@ net-tools
 usb_modeswitch
 modemmanager
 networkmanager-openvpn
+networkmanager-pptp
 whois 
 dnsutils
 netctl

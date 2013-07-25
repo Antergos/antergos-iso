@@ -1,5 +1,5 @@
-#!/bin/bash
-INSTALLER_VERSION=1.1
+#!/usr/bin/bash
+INSTALLER_VERSION=1.2
 
 TEXTDOMAIN=cli_installer
 # we rely on some output which is parsed in english!
@@ -25,7 +25,7 @@ VMLINUZ="vmlinuz-${KERNELPKG}"
 INITRAMFS="initramfs-${KERNELPKG}"
 
 # detect systemd running
-[[ "$(cat /proc/cmdline | grep -w init=/bin/systemd)" ]] && SYSTEMD="0"
+[[ "$(cat /proc/cmdline | grep -w init=/usr/bin/systemd)" ]] && SYSTEMD="0"
 # abstract the common pacman args
 PACMAN="powerpill --root ${DESTDIR} --config /tmp/pacman.conf --noconfirm --noprogressbar"
 # downloader
@@ -160,9 +160,9 @@ net_interfaces() {
 # activate dmraid devices
 activate_dmraid()
 {
-    if [[ -e /sbin/dmraid ]]; then
+    if [[ -e /usr/bin/dmraid ]]; then
         DIALOG --infobox $"Activating dmraid arrays..." 0 0
-        /sbin/dmraid -ay -I -Z >/dev/null 2>&1
+        /usr/bin/dmraid -ay -I -Z >/dev/null 2>&1
     fi
 }
 
@@ -171,13 +171,13 @@ activate_dmraid()
 activate_lvm2()
 {
     ACTIVATE_LVM2=""
-    if [[ -e /usr/sbin/lvm ]]; then
+    if [[ -e /usr/bin/lvm ]]; then
         OLD_LVM2_GROUPS=${LVM2_GROUPS}
         OLD_LVM2_VOLUMES=${LVM2_VOLUMES}
         DIALOG --infobox $"Scanning logical volumes..." 0 0
-        /usr/sbin/lvm vgscan --ignorelockingfailure >/dev/null 2>&1
+        /usr/bin/lvm vgscan --ignorelockingfailure >/dev/null 2>&1
         DIALOG --infobox $"Activating logical volumes..." 0 0
-        /usr/sbin/lvm vgchange --ignorelockingfailure --ignoremonitoring -ay >/dev/null 2>&1
+        /usr/bin/lvm vgchange --ignorelockingfailure --ignoremonitoring -ay >/dev/null 2>&1
         LVM2_GROUPS="$(vgs -o vg_name --noheading 2>/dev/null)"
         LVM2_VOLUMES="$(lvs -o vg_name,lv_name --noheading --separator - 2>/dev/null)"
         [[ "${OLD_LVM2_GROUPS}" = "${LVM2_GROUPS}" && "${OLD_LVM2_GROUPS}" = "${LVM2_GROUPS}" ]] && ACTIVATE_LVM2="no"
@@ -189,9 +189,9 @@ activate_lvm2()
 activate_raid()
 {
     ACTIVATE_RAID=""
-    if [[ -e /sbin/mdadm ]]; then
+    if [[ -e /usr/bin/mdadm ]]; then
         DIALOG --infobox $"Activating RAID arrays..." 0 0
-        /sbin/mdadm --assemble --scan >/dev/null 2>&1 || ACTIVATE_RAID="no"
+        /usr/bin/mdadm --assemble --scan >/dev/null 2>&1 || ACTIVATE_RAID="no"
     fi
 }
 
@@ -200,7 +200,7 @@ activate_raid()
 activate_luks()
 {
     ACTIVATE_LUKS=""
-    if [[ -e /usr/sbin/cryptsetup ]]; then
+    if [[ -e /usr/bin/cryptsetup ]]; then
         DIALOG --infobox $"Scanning for luks encrypted devices..." 0 0
         if [[ "$(${_BLKID} | grep "TYPE=\"crypto_LUKS\"")" ]]; then
             for PART in $(${_BLKID} | grep "TYPE=\"crypto_LUKS\"" | sed -e 's#:.*##g'); do
@@ -546,14 +546,14 @@ findbootloaderpartitions() {
 # freeze and unfreeze xfs, as hack for grub(2) installing
 freeze_xfs() {
     sync
-    if [[ -x /usr/sbin/xfs_freeze ]]; then
+    if [[ -x /usr/bin/xfs_freeze ]]; then
         if [[ "$(cat /proc/mounts | grep "${DESTDIR}/boot " | grep " xfs ")" ]]; then
-            /usr/sbin/xfs_freeze -f ${DESTDIR}/boot >/dev/null 2>&1
-            /usr/sbin/xfs_freeze -u ${DESTDIR}/boot >/dev/null 2>&1
+            /usr/bin/xfs_freeze -f ${DESTDIR}/boot >/dev/null 2>&1
+            /usr/bin/xfs_freeze -u ${DESTDIR}/boot >/dev/null 2>&1
         fi
         if [[ "$(cat /proc/mounts | grep "${DESTDIR} " | grep " xfs ")" ]]; then
-            /usr/sbin/xfs_freeze -f ${DESTDIR} >/dev/null 2>&1
-            /usr/sbin/xfs_freeze -u ${DESTDIR} >/dev/null 2>&1
+            /usr/bin/xfs_freeze -f ${DESTDIR} >/dev/null 2>&1
+            /usr/bin/xfs_freeze -u ${DESTDIR} >/dev/null 2>&1
         fi
     fi
 }
@@ -2049,6 +2049,7 @@ select_btrfs_raid_devices () {
         [[ "${RAIDNUMBER}" -ge 3 && ! "${BTRFS_LEVEL}" = "raid10" && ! "${BTRFS_LEVEL}" = "raid6" && ! "${BTRFS_LEVEL}" = "raid5" ]] && BTRFS_DONE="DONE _"
         [[ "${RAIDNUMBER}" -ge 4 && "${BTRFS_LEVEL}" = "raid5" ]] && BTRFS_DONE="DONE _"
         [[ "${RAIDNUMBER}" -ge 5 && "${BTRFS_LEVEL}" = "raid10" || "${BTRFS_LEVEL}" = "raid6" ]] && BTRFS_DONE="DONE _"
+
         # clean loop from used partition and options
         BTRFS_PARTS="$(echo ${BTRFS_PARTS} | sed -e "s#${BTRFS_PART}\ _##g")"
         # add more devices
@@ -2745,7 +2746,7 @@ run_pacman(){
         dialog --backtitle "${TITLE}" --title $" Installing... Please Wait " \
             --no-kill --tailboxbg "/tmp/pacman.log" 18 70 2>${ANSWER}
         while [[ -f /tmp/setup-pacman-running ]]; do
-            /bin/true
+            /usr/bin/true
         done
         kill $(cat ${ANSWER})
 
@@ -2784,12 +2785,16 @@ select_desktop(){
         "1" "Gnome (Default)" \
         "2" "Cinnamon" \
         "3" "Xfce" \
-        "4" "Razor-qt" 2>${ANSWER} || return 1
+        "4" "Openbox" \
+        "5" "Razor-qt" \
+        "6" "Base" 2>${ANSWER} || return 1
         case $(cat ${ANSWER}) in
             "1") DESKTOP_SELECTED="gnome" ;;
             "2") DESKTOP_SELECTED="cinnamon" ;;
             "3") DESKTOP_SELECTED="xfce" ;;
-            "4") DESKTOP_SELECTED="razor" ;;
+            "4") DESKTOP_SELECTED="openbox" ;;
+            "5") DESKTOP_SELECTED="razor" ;;
+            "6") DESKTOP_SELECTED="base" ;;
         esac
     done
 }
@@ -2823,17 +2828,23 @@ select_packages() {
 
 
     if [[ "${DESKTOP_SELECTED}" == 'gnome' ]];then
-        PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist haveged crda ipw2100-fw ipw2200-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter btrfs-progs ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile ttf-dejavu ttf-bitstream-vera network-manager-applet usb_modeswitch modemmanager networkmanager-openvpn gnome-terminal chromium file-roller evince gnome-screenshot flashplugin gnome-bluetooth nautilus gnome-calculator xdg-user-dirs-gtk gedit alsa-utils gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav whois dnsutils xfburn gnome-system-monitor empathy transmission-cli transmission-gtk libreoffice-installer xnoise faenza-hotot-icon hotot-gtk3 shotwell faenza-icon-theme gnome-themes-standard antergos-wallpapers hicolor-icon-theme unzip unrar gnome-control-center python2 clutter gconf gobject-introspection libcanberra libxxf86vm startup-notification zenity gnome-shell accountsservice gtk3 gdm net-tools gnome-keyring xf86-input-synaptics libgnomeui zukitwo-themes"
+        PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist openssh haveged crda ipw2100-fw ipw2200-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter btrfs-progs ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile ttf-dejavu ttf-bitstream-vera network-manager-applet usb_modeswitch modemmanager networkmanager-openvpn gnome-terminal chromium file-roller evince gnome-screenshot flashplugin gnome-bluetooth nautilus gnome-calculator xdg-user-dirs-gtk gedit alsa-utils gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav whois dnsutils xfburn gnome-system-monitor empathy transmission-cli transmission-gtk libreoffice-installer xnoise faenza-hotot-icon hotot-gtk3 shotwell faenza-icon-theme gnome-themes-standard antergos-wallpapers hicolor-icon-theme unzip unrar gnome-control-center python2 clutter gconf gobject-introspection libcanberra libxxf86vm startup-notification zenity gnome-shell accountsservice gtk3 gdm net-tools gnome-keyring xf86-input-synaptics libgnomeui zukitwo-themes gnome-tweak-tool gnome-shell-extensions networkmanager-pptp"
         DM_SELECTED='gdm'
     elif [[ "${DESKTOP_SELECTED}" == 'cinnamon' ]];then
-        PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist haveged crda ipw2100-fw ipw2200-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter btrfs-progs ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile ttf-dejavu ttf-bitstream-vera network-manager-applet usb_modeswitch modemmanager networkmanager-openvpn gnome-terminal chromium file-roller evince gnome-screenshot flashplugin gnome-bluetooth nemo nemo-fileroller gnome-calculator xdg-user-dirs-gtk gedit alsa-utils gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav whois dnsutils xfburn gnome-system-monitor pidgin transmission-cli transmission-gtk libreoffice-installer xnoise faenza-hotot-icon hotot-gtk3 shotwell faenza-icon-theme gnome-themes-standard antergos-wallpapers hicolor-icon-theme unzip unrar cinnamon-control-center python2 clutter gconf gobject-introspection libcanberra libxxf86vm startup-notification zenity gtk3 lxdm net-tools gnome-keyring xf86-input-synaptics libgnomeui zukitwo-themes cinnamon-screensaver cinnamon-theme-nadia"
+        PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist haveged crda ipw2100-fw ipw2200-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter btrfs-progs ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile ttf-dejavu ttf-bitstream-vera network-manager-applet usb_modeswitch modemmanager networkmanager-openvpn gnome-terminal chromium file-roller evince gnome-screenshot flashplugin gnome-bluetooth nemo nemo-fileroller gnome-calculator xdg-user-dirs-gtk gedit alsa-utils gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav whois dnsutils xfburn gnome-system-monitor pidgin transmission-cli transmission-gtk libreoffice-installer xnoise faenza-hotot-icon hotot-gtk3 shotwell faenza-icon-theme gnome-themes-standard antergos-wallpapers hicolor-icon-theme unzip unrar cinnamon-control-center python2 clutter gconf gobject-introspection libcanberra libxxf86vm startup-notification zenity gtk3 lxdm net-tools gnome-keyring xf86-input-synaptics libgnomeui zukitwo-themes cinnamon-screensaver cinnamon-theme-nadia networkmanager-pptp"
         DM_SELECTED='lxdm'
     elif [[ "${DESKTOP_SELECTED}" == 'xfce' ]];then
-        PACKAGES="${PACKAGES} lxdm xfce4 gamin mousepad ristretto thunar-archive-plugin xfburn xfce4-battery-plugin xfce4-datetime-plugin xfce4-notifyd xfce4-screenshooter xfce4-taskmanager network-manager-applet xnoise evince transmission-gtk pidgin gnome-calculator zukitwo-themes gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav xdg-user-dirs-gtk hotot-gtk3 base  base-devel  antergos-keyring antergos-mirrorlist haveged crda ipw2200-fw ipw2100-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile chromium flashplugin alsa-utils whois dnsutils transmission-cli libreoffice-installer faenza-hotot-icon faenza-icon-theme antergos-wallpapers unzip unrar net-tools xf86-input-synaptics usb_modeswitch modemmanager"
+        PACKAGES="${PACKAGES} lxdm xfce4 gamin mousepad ristretto thunar-archive-plugin xfburn xfce4-battery-plugin xfce4-datetime-plugin xfce4-notifyd xfce4-screenshooter xfce4-taskmanager network-manager-applet xnoise evince transmission-gtk pidgin gnome-calculator zukitwo-themes gstreamer0.10-bad-plugins gstreamer0.10-base-plugins gstreamer0.10-ffmpeg gstreamer0.10-good-plugins gstreamer0.10-ugly-plugins gst-libav xdg-user-dirs-gtk hotot-gtk3 base  base-devel  antergos-keyring antergos-mirrorlist haveged crda ipw2200-fw ipw2100-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile chromium flashplugin alsa-utils whois dnsutils transmission-cli libreoffice-installer faenza-hotot-icon faenza-icon-theme antergos-wallpapers unzip unrar net-tools xf86-input-synaptics usb_modeswitch modemmanager networkmanager-pptp"
         DM_SELECTED='lxdm'
+    elif [[ "${DESKTOP_SELECTED}" == 'openbox' ]];then
+        PACKAGES="${PACKAGES} base  base-devel  antergos-keyring antergos-mirrorlist haveged crda ipw2200-fw ipw2100-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile chromium flashplugin alsa-utils whois dnsutils transmission-cli libreoffice-installer faenza-hotot-icon faenza-icon-theme antergos-wallpapers unzip unrar net-tools xf86-input-synaptics usb_modeswitch modemmanager openbox obmenu oblogout obconf obkey lxappearance-obconf python2-xdg tint2 volumeicon pcmanfm slim gmrun nitrogen network-manager-applet networkmanager-openvpn networkmanager-pptp sakura mousepad zukitwo-theme-openbox openbox-menu compton xorg-xinit xorg-xkill xnoise slimlock"
+        DM_SELECTED='slim'
     elif [[ "${DESKTOP_SELECTED}" == 'razor' ]];then
-        PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist haveged crda ipw2200-fw ipw2100-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile chromium flashplugin alsa-utils whois dnsutils transmission-cli libreoffice-installer faenza-hotot-icon faenza-icon-theme antergos-wallpapers unzip unrar net-tools xf86-input-synaptics usb_modeswitch modemmanager kdebase-workspace razor-qt qtfm kdebase-konsole kdeartwork-desktopthemes kdeplasma-applets-networkmanagement kovpn kdesdk-kate kdenetwork-kopete kdegraphics-gwenview clementine vlc kdeutils-kcalc kdegraphics-ksnapshot transmission-qt phonon-vlc hotot-qt"
-        DM_SELECTED='kdm'
+        PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist haveged crda ipw2200-fw ipw2100-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter ntfs-3g dosfstools xorg-server xorg-server-utils sudo pacmanxg4 pkgfile chromium flashplugin alsa-utils whois dnsutils transmission-cli libreoffice-installer faenza-hotot-icon faenza-icon-theme antergos-wallpapers unzip unrar net-tools xf86-input-synaptics usb_modeswitch modemmanager razor-qt openbox openbox-themes qtfm kdebase-konsole kdeartwork-desktopthemes kdeplasma-applets-networkmanagement kovpn kdesdk-kate kdenetwork-kopete kdegraphics-gwenview clementine vlc kdeutils-kcalc kdegraphics-ksnapshot transmission-qt phonon-vlc hotot-qt qconnman-ui"
+        DM_SELECTED='lxdm'
+    elif [[ "${DESKTOP_SELECTED}" == 'base' ]];then
+        PACKAGES="${PACKAGES} base base-devel antergos-keyring antergos-mirrorlist haveged crda ipw2200-fw ipw2100-fw zd1211-firmware wireless_tools wpa_actiond b43-fwcutter ntfs-3g dosfstools sudo pkgfile alsa-utils whois dnsutils transmission-cli unzip unrar net-tools usb_modeswitch modemmanager openssh"
+        DM_SELECTED='none'
     fi
 
     
@@ -2862,14 +2873,6 @@ select_packages() {
     if [[ `echo ${GRAPHIC_CARD}|grep -i 'lenovo[[:space:]]'` != "" ]];then
         PACKAGES="${PACKAGES} xf86-video-intel intel-dri"
         touch /tmp/card_intel
-        mkdir -p ${DESTDIR}/etc/X11/xorg.conf.d/
-        cat << EOF > ${DESTDIR}/etc/X11/xorg.conf.d/20-intel.conf
-Section "Device"
-   Identifier  "Intel Graphics"
-   Driver      "intel"
-   Option      "AccelMethod"  "sna"
-EndSection
-EOF
     fi
 
     if [[ `echo ${GRAPHIC_CARD}|grep -i 'virtualbox[[:space:]]'` != "" ]];then
@@ -3189,7 +3192,7 @@ echo
 EFIBEOF
             
         chmod a+x "${DESTDIR}/efibootmgr_run.sh"
-        chroot "${DESTDIR}" "/bin/bash" "/efibootmgr_run.sh" &>"/tmp/efibootmgr_run.log"
+        chroot "${DESTDIR}" "/usr/bin/bash" "/efibootmgr_run.sh" &>"/tmp/efibootmgr_run.log"
         mv "${DESTDIR}/efibootmgr_run.sh" "/tmp/efibootmgr_run.sh"
     
     else
@@ -3603,42 +3606,42 @@ dogrub_config() {
 
     ########
     
-    BOOT_PART_FS_UUID="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs_uuid" "${DESTDIR}/boot" 2>/dev/null)"
-    BOOT_PART_FS="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs" "${DESTDIR}/boot" 2>/dev/null)"
+    BOOT_PART_FS_UUID="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs_uuid" "${DESTDIR}/boot" 2>/dev/null)"
+    BOOT_PART_FS="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs" "${DESTDIR}/boot" 2>/dev/null)"
     
-    BOOT_PART_FS_LABEL="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs_label" "${DESTDIR}/boot" 2>/dev/null)"
-    BOOT_PART_DRIVE="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="drive" "${DESTDIR}/boot" 2>/dev/null)"
+    BOOT_PART_FS_LABEL="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs_label" "${DESTDIR}/boot" 2>/dev/null)"
+    BOOT_PART_DRIVE="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="drive" "${DESTDIR}/boot" 2>/dev/null)"
     
-    BOOT_PART_HINTS_STRING="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="hints_string" "${DESTDIR}/boot" 2>/dev/null)"
-    
-    ########
-    
-    ROOT_PART_FS_UUID="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs_uuid" "${DESTDIR}/" 2>/dev/null)"
-    ROOT_PART_FS="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs" "${DESTDIR}/" 2>/dev/null)"
-    
-    ROOT_PART_FS_LABEL="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs_label" "${DESTDIR}/" 2>/dev/null)"
-    ROOT_PART_DEVICE="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="device" "${DESTDIR}/" 2>/dev/null)"
-    
-    ROOT_PART_HINTS_STRING="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="hints_string" "${DESTDIR}/" 2>/dev/null)"
+    BOOT_PART_HINTS_STRING="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="hints_string" "${DESTDIR}/boot" 2>/dev/null)"
     
     ########
     
-    USR_PART_FS_UUID="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs_uuid" "${DESTDIR}/usr" 2>/dev/null)"
-    USR_PART_FS="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs" "${DESTDIR}/usr" 2>/dev/null)"
+    ROOT_PART_FS_UUID="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs_uuid" "${DESTDIR}/" 2>/dev/null)"
+    ROOT_PART_FS="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs" "${DESTDIR}/" 2>/dev/null)"
     
-    USR_PART_FS_LABEL="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs_label" "${DESTDIR}/usr" 2>/dev/null)"
+    ROOT_PART_FS_LABEL="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs_label" "${DESTDIR}/" 2>/dev/null)"
+    ROOT_PART_DEVICE="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="device" "${DESTDIR}/" 2>/dev/null)"
     
-    USR_PART_HINTS_STRING="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="hints_string" "${DESTDIR}/usr" 2>/dev/null)"
+    ROOT_PART_HINTS_STRING="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="hints_string" "${DESTDIR}/" 2>/dev/null)"
+    
+    ########
+    
+    USR_PART_FS_UUID="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs_uuid" "${DESTDIR}/usr" 2>/dev/null)"
+    USR_PART_FS="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs" "${DESTDIR}/usr" 2>/dev/null)"
+    
+    USR_PART_FS_LABEL="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs_label" "${DESTDIR}/usr" 2>/dev/null)"
+    
+    USR_PART_HINTS_STRING="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="hints_string" "${DESTDIR}/usr" 2>/dev/null)"
     
     ########
     
     if [[ "${GRUB_UEFI}" == "1" ]]; then
-        UEFISYS_PART_FS_UUID="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs_uuid" "${DESTDIR}/boot/efi" 2>/dev/null)"
+        UEFISYS_PART_FS_UUID="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs_uuid" "${DESTDIR}/boot/efi" 2>/dev/null)"
         
-        UEFISYS_PART_FS_LABEL="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs_label" "${DESTDIR}/boot/efi" 2>/dev/null)"
-        UEFISYS_PART_DRIVE="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="drive" "${DESTDIR}/boot/efi" 2>/dev/null)"
+        UEFISYS_PART_FS_LABEL="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs_label" "${DESTDIR}/boot/efi" 2>/dev/null)"
+        UEFISYS_PART_DRIVE="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="drive" "${DESTDIR}/boot/efi" 2>/dev/null)"
         
-        UEFISYS_PART_HINTS_STRING="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="hints_string" "${DESTDIR}/boot/efi" 2>/dev/null)"
+        UEFISYS_PART_HINTS_STRING="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="hints_string" "${DESTDIR}/boot/efi" 2>/dev/null)"
     fi
     
     ########
@@ -3920,7 +3923,7 @@ dogrub_bios() {
     
     dogrub_common_before
 
-    PACKAGES="grub-common grub-bios os-prober"
+    PACKAGES="grub os-prober"
     run_pacman
     # reset PACKAGES after installing
     PACKAGES=""
@@ -4024,7 +4027,7 @@ dogrub_bios() {
     freeze_xfs
     chroot_mount
     
-    chroot "${DESTDIR}" "/usr/sbin/grub-install" \
+    chroot "${DESTDIR}" "grub-install" \
         --directory="/usr/lib/grub/i386-pc" \
         --target="i386-pc" \
         --boot-directory="/boot" \
@@ -4064,7 +4067,7 @@ dogrub_uefi_common() {
     dogrub_common_before
     
     DIALOG --msgbox $"Installing grub-efi-${UEFI_ARCH} now ..." 0 0
-    PACKAGES="grub-common grub-efi-${UEFI_ARCH}"
+    PACKAGES="grub os-prober"
     
     run_pacman
     # reset PACKAGES after installing
@@ -4072,7 +4075,7 @@ dogrub_uefi_common() {
     
     chroot_mount
     
-    chroot "${DESTDIR}" "/usr/sbin/grub-install" \
+    chroot "${DESTDIR}" "grub-install" \
         --directory="/usr/lib/grub/${UEFI_ARCH}-efi" \
         --target="${UEFI_ARCH}-efi" \
         --efi-directory="/boot/efi" \
@@ -4088,10 +4091,10 @@ dogrub_uefi_common() {
     cp -f "${DESTDIR}/usr/share/locale/en@quot/LC_MESSAGES/grub.mo" "${DESTDIR}/boot/grub/locale/en.mo"
     
     
-    BOOT_PART_FS_UUID="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs_uuid" "${DESTDIR}/boot" 2>/dev/null)"
-    BOOT_PART_FS="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="fs" "${DESTDIR}/boot" 2>/dev/null)"
+    BOOT_PART_FS_UUID="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs_uuid" "${DESTDIR}/boot" 2>/dev/null)"
+    BOOT_PART_FS="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="fs" "${DESTDIR}/boot" 2>/dev/null)"
     
-    BOOT_PART_HINTS_STRING="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/sbin/grub-probe" --target="hints_string" "${DESTDIR}/boot" 2>/dev/null)"
+    BOOT_PART_HINTS_STRING="$(LD_LIBRARY_PATH="${DESTDIR}/usr/lib:${DESTDIR}/lib" "${DESTDIR}/usr/bin/grub-probe" --target="hints_string" "${DESTDIR}/boot" 2>/dev/null)"
     
     [[ -e "${DESTDIR}/boot/grub/grub.cfg" ]] && mv "${DESTDIR}/boot/grub/grub.cfg" "${DESTDIR}/boot/grub/grub.cfg.save"
     
@@ -4232,7 +4235,7 @@ run_mkinitcpio() {
     sleep 2
     dialog --backtitle "${TITLE}" --title $"Rebuilding initramfs images ..." --no-kill --tailboxbg "/tmp/mkinitcpio.log" 18 70
     while [[ -f /tmp/setup-mkinitcpio-running ]]; do
-        /bin/true
+        /usr/bin/true
     done
     chroot_umount
 }
@@ -4267,7 +4270,7 @@ prepare_harddrive() {
                 partition ;;
             "3")
                 if [[ `which gparted` ]];then
-                    /usr/sbin/gparted &>/dev/null &
+                    /usr/bin/gparted &>/dev/null &
                     DIALOG --msgbox $"Click 'OK' when you're done with GParted" 7 55
 
                 else
@@ -4542,7 +4545,7 @@ auto_ftpmirror() {
     # /etc/pacman.d/mirrorlist
     # add installer-selected mirror to the top of the mirrorlist
     while [[ -f '/tmp/.rankmirrors' ]]; do
-        /bin/true
+        /usr/bin/true
     done;
     mv /tmp/.mirrorlist "${DESTDIR}/etc/pacman.d/mirrorlist"
 }
@@ -4616,7 +4619,6 @@ configure_system() {
                     DIALOG --inputbox $"Enter your user name (no spaces):" 9 40 2>${ANSWER} || return 1
                     USER_NAME_TMP=$(cat ${ANSWER})
                     USER_NAME=${USER_NAME_TMP,,}
-                    rm -f ${DESTDIR}/etc/sudoers
                     echo "${USER_NAME} ALL=(ALL) ALL" >> ${DESTDIR}/etc/sudoers.d/installer
                     chmod 440 ${DESTDIR}/etc/sudoers.d/installer
 
@@ -4755,6 +4757,16 @@ configure_system() {
             echo "Include = /etc/pacman.d/mirrorlist" >> ${DESTDIR}/etc/pacman.conf
         fi
 
+        # Set SNA Acceleration Method in Intel cards
+        if [[ -e /tmp/card_intel ]];then
+            cat << EOF > ${DESTDIR}/etc/X11/xorg.conf.d/20-intel.conf
+Section "Device"
+   Identifier  "Intel Graphics"
+   Driver      "intel"
+   Option      "AccelMethod"  "sna"
+EndSection
+EOF
+        fi
 
         ## END POSTPROCESSING ##
     fi

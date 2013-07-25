@@ -155,7 +155,7 @@ make_customize_root_image() {
         wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'locale-gen' \
+            -r '/usr/bin/locale-gen' \
             run
 
         #sed -i 's|^root:|root:liLfqaUhrN8Hs|g' ${work_dir}/root-image/etc/shadow
@@ -185,7 +185,6 @@ make_customize_root_image() {
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
-        mv ${work_dir}/root-image/usr/lib/tmpfiles.d/transmission.conf ${work_dir}/root-image/usr/lib/tmpfiles.d/transmission.conf.backup
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl -f enable pacman-init.service gdm.service NetworkManager.service livecd.service || true' \
