@@ -2,6 +2,7 @@ Modified version of archiso to build the Antergos ISO
 
 ## Dependencies ##
 
+arch-install-scripts
 dosfstools
 libisoburn
 make

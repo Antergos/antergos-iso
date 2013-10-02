@@ -25,7 +25,7 @@ setup_workdir() {
 # Base installation (root-image)
 make_basefs() {
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "memtest86+ mkinitcpio-nfs-utils nbd curl" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "memtest86+ mkinitcpio-nfs-utils nbd" install
 }
 
 # Additional packages (root-image)
@@ -35,36 +35,43 @@ make_packages() {
 
 # Copy mkinitcpio archiso hooks (root-image)
 make_setup_mkinitcpio() {
-   if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        local _hook
-        for _hook in archiso archiso_shutdown archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_loop_mnt; do
-            cp /usr/lib/initcpio/hooks/${_hook} ${work_dir}/root-image/usr/lib/initcpio/hooks
-            cp /usr/lib/initcpio/install/${_hook} ${work_dir}/root-image/usr/lib/initcpio/install
-        done
-        cp /usr/lib/initcpio/install/archiso_kms ${work_dir}/root-image/usr/lib/initcpio/install
-        cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/usr/lib/initcpio
-        cp ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
-        : > ${work_dir}/build.${FUNCNAME}
-   fi
+    local _hook
+    for _hook in archiso archiso_shutdown archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_loop_mnt; do
+        cp /usr/lib/initcpio/hooks/${_hook} ${work_dir}/root-image/usr/lib/initcpio/hooks
+        cp /usr/lib/initcpio/install/${_hook} ${work_dir}/root-image/usr/lib/initcpio/install
+    done
+    cp /usr/lib/initcpio/install/archiso_kms ${work_dir}/root-image/usr/lib/initcpio/install
+    cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/usr/lib/initcpio
+    cp ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run
 }
 
 # Prepare ${install_dir}/boot/
 make_boot() {
+    mkdir -p ${work_dir}/iso/${install_dir}/boot/
+    cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
+    cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
+}
+
+make_boot_extra() {
+    cp ${work_dir}/root-image/boot/memtest86+/memtest.bin ${work_dir}/iso/${install_dir}/boot/memtest
+    cp ${work_dir}/root-image/usr/share/licenses/common/GPL2/license.txt ${work_dir}/iso/${install_dir}/boot/memtest.COPYING
+}
+
+
+make_isolinux() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        local _src=${work_dir}/root-image
-        local _dst_boot=${work_dir}/iso/${install_dir}/boot
-        mkdir -p ${_dst_boot}/${arch}
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' \
-            run
-        mv ${_src}/boot/archiso.img ${_dst_boot}/${arch}/archiso.img
-        mv ${_src}/boot/vmlinuz-linux ${_dst_boot}/${arch}/vmlinuz
-        cp ${_src}/boot/memtest86+/memtest.bin ${_dst_boot}/memtest
-        cp ${_src}/usr/share/licenses/common/GPL2/license.txt ${_dst_boot}/memtest.COPYING
+        cp -Lr isolinux ${work_dir}/iso
+        cp ${work_dir}/root-image/usr/lib/syslinux/isolinux.bin ${work_dir}/iso/isolinux/
+        cp ${work_dir}/root-image/usr/lib/syslinux/isohdpfx.bin ${work_dir}/iso/isolinux/
+        sed "s|%ARCHISO_LABEL%|${iso_label}|g;
+                s|%INSTALL_DIR%|${install_dir}|g;
+                s|%ARCH%|${arch}|g" ${script_path}/isolinux/isolinux.cfg > ${work_dir}/iso/isolinux/isolinux.cfg
         : > ${work_dir}/build.${FUNCNAME}
     fi
 }
 
+# Prepare /EFI
 make_efi() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
         if [[ ${arch} == "x86_64" ]]; then
@@ -90,6 +97,7 @@ make_efi() {
     fi
 }
 
+# Prepare efiboot.img::/EFI for "El Torito" EFI boot mode
 make_efiboot() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
         if [[ ${arch} == "x86_64" ]]; then
@@ -102,8 +110,8 @@ make_efiboot() {
             mount ${work_dir}/iso/EFI/archiso/efiboot.img ${work_dir}/efiboot
 
             mkdir -p ${work_dir}/efiboot/EFI/archiso
-            cp ${work_dir}/iso/${install_dir}/boot/x86_64/vmlinuz ${work_dir}/efiboot/EFI/archiso/vmlinuz.efi
-            cp ${work_dir}/iso/${install_dir}/boot/x86_64/archiso.img ${work_dir}/efiboot/EFI/archiso/archiso.img
+            cp ${work_dir}/iso/${install_dir}/boot/vmlinuz ${work_dir}/efiboot/EFI/archiso/vmlinuz.efi
+            cp ${work_dir}/iso/${install_dir}/boot/archiso.img ${work_dir}/efiboot/EFI/archiso/archiso.img
 
             mkdir -p ${work_dir}/efiboot/EFI/boot
             cp ${work_dir}/root-image/usr/lib/gummiboot/gummibootx64.efi ${work_dir}/efiboot/EFI/boot/bootx64.efi
@@ -126,19 +134,6 @@ make_efiboot() {
     fi
 }
 
-
-# Prepare /isolinux
-make_isolinux() {
-    if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        cp -Lr isolinux ${work_dir}/iso
-        cp ${work_dir}/root-image/usr/lib/syslinux/isolinux.bin ${work_dir}/iso/isolinux/
-        cp ${work_dir}/root-image/usr/lib/syslinux/isohdpfx.bin ${work_dir}/iso/isolinux/
-        sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                s|%INSTALL_DIR%|${install_dir}|g;
-                s|%ARCH%|${arch}|g" ${script_path}/isolinux/isolinux.cfg > ${work_dir}/iso/isolinux/isolinux.cfg
-        : > ${work_dir}/build.${FUNCNAME}
-    fi
-}
 
 # Customize installation (root-image)
 make_customize_root_image() {
@@ -187,7 +182,7 @@ make_customize_root_image() {
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -f enable pacman-init.service gdm.service NetworkManager.service livecd.service || true' \
+            -r 'systemctl -f enable pacman-init.service gdm.service NetworkManager.service ModemManager.service livecd.service || true' \
             run
 
         # Fix sudoers
@@ -217,8 +212,10 @@ make_customize_root_image() {
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
 
-        # Remove gtk-docs
-        rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0}
+
+        rm -rf ${work_dir}/root-image/var/cache/pacman/pkg
+        mkdir -p ${work_dir}/root-image/var/cache/pacman
+        cp -R /var/cache/pacman/pkg ${work_dir}/root-image/var/cache/pacman
 
 
         : > ${work_dir}/build.${FUNCNAME}
@@ -251,8 +248,11 @@ make_aitab() {
 
 # Build all filesystem images specified in aitab (.fs .fs.sfs .sfs)
 make_prepare() {
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" pkglist
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" prepare
+    cp -a -l -f ${work_dir}/root-image ${work_dir}
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" pkglist
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" prepare
+    rm -rf ${work_dir}/root-image
+    # rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
 }
 
 # Build ISO
@@ -283,13 +283,14 @@ make_common_single() {
     make_packages
     make_setup_mkinitcpio
     make_boot
+    make_boot_extra
+    make_isolinux
     make_efi
     make_efiboot
-    make_isolinux
+    make_aitab
     make_customize_root_image
     make_usr_lib_modules
     make_usr_share
-    make_aitab
     make_prepare
     make_iso
 }

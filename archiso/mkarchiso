@@ -47,42 +47,39 @@ _show_space_usage () {
     _msg_info "Total: ${_total} MiB (100%) | Used: ${_used} MiB (${_pct_u}) | Avail: ${_avail} MiB ($((100 - ${_pct_u%\%}))%)"
 }
 
-_chroot_mount () {
-    mount -t devtmpfs dev "${work_dir}/root-image/dev"
-    mount -t devpts devpts "${work_dir}/root-image/dev/pts"
-    mount -t tmpfs devshm "${work_dir}/root-image/dev/shm"
-    mount -t proc proc "${work_dir}/root-image/proc"
-    mount -t tmpfs run "${work_dir}/root-image/run"
-    mount -t sysfs sys "${work_dir}/root-image/sys"
-    mount -t tmpfs tmp "${work_dir}/root-image/tmp"
+# _chroot_mount () {
+#     mount -t devtmpfs dev "${work_dir}/root-image/dev"
+#     mount -t devpts devpts "${work_dir}/root-image/dev/pts"
+#     mount -t tmpfs devshm "${work_dir}/root-image/dev/shm"
+#     mount -t proc proc "${work_dir}/root-image/proc"
+#     mount -t tmpfs run "${work_dir}/root-image/run"
+#     mount -t sysfs sys "${work_dir}/root-image/sys"
+#     mount -t tmpfs tmp "${work_dir}/root-image/tmp"
 
-    trap '_chroot_umount' EXIT HUP INT TERM
-}
+#     trap '_chroot_umount' EXIT HUP INT TERM
+# }
 
-_chroot_umount () {
-    umount "${work_dir}/root-image/tmp"
-    umount "${work_dir}/root-image/sys"
-    umount "${work_dir}/root-image/run"
-    umount "${work_dir}/root-image/proc"
-    umount "${work_dir}/root-image/dev/shm"
-    umount "${work_dir}/root-image/dev/pts"
-    umount -l "${work_dir}/root-image/dev"
+# _chroot_umount () {
+#     umount "${work_dir}/root-image/tmp"
+#     umount "${work_dir}/root-image/sys"
+#     umount "${work_dir}/root-image/run"
+#     umount "${work_dir}/root-image/proc"
+#     umount "${work_dir}/root-image/dev/shm"
+#     umount "${work_dir}/root-image/dev/pts"
+#     umount -l "${work_dir}/root-image/dev"
 
-    trap - EXIT HUP INT TERM
-}
+#     trap - EXIT HUP INT TERM
+# }
 
 _chroot_init() {
     if [[ ! -d ${work_dir}/root-image/var/cache/pacman ]]; then
         mkdir -p ${work_dir}/root-image/{dev,proc,run,sys,tmp,var/lib/pacman}
-        _pacman "bash bzip2 antergos-keyring antergos-mirrorlist coreutils cronie cryptsetup device-mapper dhcpcd diffutils e2fsprogs file filesystem findutils gawk gcc-libs gettext glibc grep gzip heirloom-mailx inetutils iputils jfsutils less licenses linux logrotate lvm2 mdadm nano pacman pciutils pcmciautils perl ppp procps-ng psmisc reiserfsprogs sed shadow sysfsutils systemd systemd-sysvcompat tar texinfo usbutils util-linux vi which xfsprogs"
-        _pacman "syslinux"
+        _pacman "base antergos-keyring antergos-mirrorlist syslinux"
     fi
 }
 
 _chroot_run() {
-    _chroot_mount
-    eval chroot ${work_dir}/root-image "${run_cmd}"
-    _chroot_umount
+    eval arch-chroot ${work_dir}/root-image "${run_cmd}"
 }
 
 # Mount a filesystem (trap signals in case of error for unmounting it
@@ -218,15 +215,11 @@ _pacman ()
 {
     _msg_info "Installing packages to '${work_dir}/root-image/'..."
 
-    _chroot_mount
-
     if [[ "${quiet}" = "y" ]]; then
-        pacman -Sy --noconfirm -r "${work_dir}/root-image" --config "${pacman_conf}" --needed $* &> /dev/null
+        pacstrap -C "${pacman_conf}" -c -d -G -M "${work_dir}/root-image" $* &> /dev/null
     else
-        pacman -Sy --noconfirm -r "${work_dir}/root-image" --config "${pacman_conf}" --needed $*
+        pacstrap -C "${pacman_conf}" -c -d -G -M "${work_dir}/root-image" $*
     fi
-
-    _chroot_umount
 
     _msg_info "Packages installed successfully!"
 }
@@ -235,9 +228,13 @@ _pacman ()
 _cleanup () {
     _msg_info "Cleaning up what we can on root-image..."
 
-    # remove the initcpio images that were generated for the host system
-    if [[ -d "${work_dir}/root-image/boot" ]]; then 
-        find "${work_dir}/root-image/boot" -name '*.img' -delete
+    # Delete initcpio image(s)
+    if [[ -d "${work_dir}/root-image/boot" ]]; then
+        find "${work_dir}/root-image/boot" -type f -name '*.img' -delete
+    fi
+    # Delete kernel(s)
+    if [[ -d "${work_dir}/root-image/boot" ]]; then
+        find "${work_dir}/root-image/boot" -type f -name 'vmlinuz*' -delete
     fi
     # Delete pacman database sync cache files (*.tar.gz)
     if [[ -d "${work_dir}/root-image/var/lib/pacman" ]]; then
@@ -259,18 +256,15 @@ _cleanup () {
     if [[ -d "${work_dir}/root-image/var/tmp" ]]; then
         find "${work_dir}/root-image/var/tmp" -mindepth 1 -delete
     fi
-    # Delete all temporary files and dirs
-    if [[ -d "${work_dir}/root-image/tmp" ]]; then
-        find "${work_dir}/root-image/tmp" -mindepth 1 -delete
-    fi
     # Delete package pacman related files.
-    find "${work_dir}" -name "*.pacnew" -name "*.pacsave" -name "*.pacorig" -delete
-    # Create etc/mtab if not is a symlink.
-    if [[ ! -L "${work_dir}/root-image/etc/mtab" ]]; then
-        ln -sf "/proc/self/mounts" "${work_dir}/root-image/etc/mtab"
-    fi
+    find "${work_dir}" \( -name "*.pacnew" -o -name "*.pacsave" -o -name "*.pacorig" \) -delete
+
+    rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0}
+
     _msg_info "Done!"
 }
+
+
 
 # Makes a SquashFS filesystem image of file/directory passes as argument with desired compression.
 # $1: Source file/directory
@@ -330,14 +324,14 @@ _mkfs () {
 
     _msg_info "Creating ${_fs_type} image of ${_fs_size} MiB..."
     rm -f "${_fs_img}"
-    dd of="${_fs_img}" count=0 bs=1M seek=${_fs_size} &> /dev/null
+    truncate -s ${_fs_size}M "${_fs_img}"
     local _qflag=""
     if [[ ${quiet} == "y" ]]; then
         _qflag="-q"
     fi
     case "${_fs_type}" in
         ext4)
-            mkfs.ext4 ${_qflag} -O ^has_journal -m 0 -F "${_fs_img}"
+            mkfs.ext4 ${_qflag} -O ^has_journal -E lazy_itable_init=0 -m 0 -F "${_fs_img}"
             tune2fs -c 0 -i 0 "${_fs_img}" &> /dev/null
             ;;
         ext3)
@@ -414,7 +408,10 @@ command_iso () {
 
     # If exists, add an EFI "El Torito" boot image (FAT filesystem) to ISO-9660 image.
     if [[ -f "${work_dir}/iso/EFI/archiso/efiboot.img" ]]; then
-        _iso_efi_boot_args="--efi-boot EFI/archiso/efiboot.img"
+        _iso_efi_boot_args="-eltorito-alt-boot
+                            -e EFI/archiso/efiboot.img
+                            -no-emul-boot
+                            -isohybrid-gpt-basdat"
     fi
 
     _show_config iso
@@ -436,8 +433,8 @@ command_iso () {
             -eltorito-boot isolinux/isolinux.bin \
             -eltorito-catalog isolinux/boot.cat \
             -no-emul-boot -boot-load-size 4 -boot-info-table \
-            ${_iso_efi_boot_args} \
             -isohybrid-mbr ${work_dir}/iso/isolinux/isohdpfx.bin \
+            ${_iso_efi_boot_args} \
             -output "${out_dir}/${img_name}" \
             "${work_dir}/iso/"
         _msg_info "Done! | $(ls -sh ${out_dir}/${img_name})"
@@ -455,6 +452,9 @@ command_prepare () {
     local _aitab_img _aitab_mnt _aitab_arch _aitab_sfs_comp _aitab_fs_type _aitab_fs_size
     while read _aitab_img _aitab_mnt _aitab_arch _aitab_sfs_comp _aitab_fs_type _aitab_fs_size ; do
         if [[ ${_aitab_img} =~ ^# ]]; then
+            continue
+        fi
+        if [[ "${_aitab_arch}" != "any" && "${_aitab_arch}" != "${arch}" ]]; then
             continue
         fi
         local _src="${work_dir}/${_aitab_img}"
