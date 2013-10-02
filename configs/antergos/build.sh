@@ -213,11 +213,6 @@ make_customize_root_image() {
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
 
 
-        rm -rf ${work_dir}/root-image/var/cache/pacman/pkg
-        mkdir -p ${work_dir}/root-image/var/cache/pacman
-        cp -R /var/cache/pacman/pkg ${work_dir}/root-image/var/cache/pacman
-
-
         : > ${work_dir}/build.${FUNCNAME}
     fi
 }
