@@ -3,18 +3,6 @@
 
 source /etc/antergos/functions
 
-GRAPHIC_CARD=`hwinfo --gfxcard|grep 'Model:[[:space:]]'`
-if [[ `echo ${GRAPHIC_CARD}|grep -i 'intel[[:space:]]'` != "" ]];then
-        cat << EOF > /etc/X11/xorg.conf.d/20-intel.conf
-Section "Device"
-   Identifier  "Intel Graphics"
-   Driver      "intel"
-   Option      "AccelMethod"  "sna"
-EndSection
-EOF
-fi
-
-
 LOCALE=$(get_country)
 KEYMAP=$(get_keyboard)
 KBLAYOUT=$(get_layout)
