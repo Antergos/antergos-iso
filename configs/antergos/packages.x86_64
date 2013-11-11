@@ -78,6 +78,9 @@ powerpill
 
 ttf-dejavu
 ttf-bitstream-vera
+ttf-freefont
+ttf-arphic-uming
+ttf-baekmuk
 
 # Desktop
 network-manager-applet
