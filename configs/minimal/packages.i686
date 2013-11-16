@@ -1,0 +1,84 @@
+# Intallation
+gummiboot
+haveged
+dmraid
+hwdetect
+hwinfo
+squashfs-tools
+gptfdisk
+parted
+gparted
+crda
+iso-codes
+
+
+# Cnchi Graphical Installer
+cnchi
+
+# Network
+
+ipw2100-fw
+ipw2200-fw
+zd1211-firmware
+wireless_tools
+wpa_actiond
+b43-fwcutter
+#broadcom-wl
+net-tools
+usb_modeswitch
+modemmanager
+networkmanager-openvpn
+networkmanager-pptp
+whois 
+dnsutils
+netctl
+
+# Filesystems
+
+btrfs-progs
+ntfs-3g
+dosfstools
+xfsprogs
+
+# Xorg
+
+xorg-server
+xorg-server-utils
+xf86-input-synaptics
+xorg-xinit
+xterm
+
+# Graphical Drivers
+
+xf86-video-intel
+xf86-video-nouveau
+xf86-video-ati
+nouveau-dri
+intel-dri
+ati-dri
+virtualbox-guest-utils
+virtualbox-guest-modules
+xf86-video-vmware
+xf86-video-openchrome
+xf86-video-vesa
+
+
+# System Tools
+
+sudo
+
+# Fonts
+
+ttf-dejavu
+ttf-bitstream-vera
+
+
+# Theme
+
+gnome-themes-standard
+antergos-wallpapers
+
+# Openbox
+openbox
+zukitwo-themes
+zukitwo-theme-openbox
