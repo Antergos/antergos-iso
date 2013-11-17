@@ -13,6 +13,7 @@ squashfs-tools
 
 # Cnchi Graphical Installer
 cnchi
+upower
 
 # Network
 b43-fwcutter
@@ -76,3 +77,4 @@ zukitwo-themes
 # Openbox
 openbox
 zukitwo-theme-openbox
+feh
