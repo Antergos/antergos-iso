@@ -1,1 +1,3 @@
 antergos ALL=(ALL) NOPASSWD: ALL
+Defaults env_keep += "HOME"
+
