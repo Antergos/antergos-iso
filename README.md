@@ -5,6 +5,7 @@ Modified version of archiso to build the Antergos ISO
 arch-install-scripts
 dosfstools
 libisoburn
+mkinitcpio-nfs-utils
 make
 patch
 squashfs-tools
