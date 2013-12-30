@@ -158,9 +158,6 @@ make_customize_root_image() {
             -r 'useradd -m -g users -G "audio,disk,optical,wheel,network" antergos' \
             run
 
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'amixer -c 0 set Master playback 100% unmute' \
-            run
 
         # Configuring pacman
         cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
@@ -181,7 +178,7 @@ make_customize_root_image() {
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -f enable pacman-init.service gdm.service NetworkManager.service ModemManager.service livecd.service || true' \
+            -r 'systemctl -f enable pacman-init.service lxdm.service NetworkManager.service ModemManager.service livecd.service || true' \
             run
 
         # Fix sudoers
@@ -210,6 +207,9 @@ make_customize_root_image() {
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
+        
+        # LXDM autologin
+        sed -i 's/# autologin=dgod/autologin=antergos/g' ${work_dir}/root-image/etc/lxdm/lxdm.conf
 
 
         : > ${work_dir}/build.${FUNCNAME}
