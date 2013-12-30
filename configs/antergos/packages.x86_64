@@ -125,4 +125,5 @@ nautilus-open-terminal
 # GDM
 
 gdm
+lxdm
 
