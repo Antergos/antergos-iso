@@ -18,8 +18,10 @@ script_path=$(readlink -f ${0%/*})
 setup_workdir() {
     #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
     if [[ autobuild_cache != '' ]];then
+        echo "Cache dir: /var/cache/pacman/pkg_${arch}"
         cache_dirs="/var/cache/pacman/pkg_${arch}"
     else
+        echo "Regular cache dir at /var/cache/pacman/pkg"
         cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
     fi
     mkdir -p "${work_dir}"
