@@ -11,11 +11,17 @@ work_dir=work
 out_dir=out
 verbose=""
 cmd_args=""
+autobuild_cache=""
 
 script_path=$(readlink -f ${0%/*})
 
 setup_workdir() {
-    cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    if [[ autobuild_cache != '' ]];then
+        cache_dirs="/var/cache/pacman/pkg_${arch}"
+    else
+        cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    fi
     mkdir -p "${work_dir}"
     pacman_conf="${work_dir}/pacman.conf"
     sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" \
@@ -327,8 +333,11 @@ if [[ ${EUID} -ne 0 ]]; then
     _usage 1
 fi
 
-while getopts 'N:V:L:D:w:o:vh' arg; do
+while getopts 'C:N:V:L:D:w:o:vh' arg; do
     case "${arg}" in
+        C)
+            autobuild_cache="1"
+            ;;
         N)
             iso_name="${OPTARG}"
             cmd_args+=" -N ${iso_name}"
