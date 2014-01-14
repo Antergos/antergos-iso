@@ -35,6 +35,7 @@ whois
 dnsutils
 netctl
 wget
+linux-firmware
 
 # Filesystems
 
