@@ -1,10 +1,11 @@
 # Intallation
-gummiboot
+grub
+os-prober
+efibootmgr
 haveged
 dmraid
 hwdetect
 hwinfo
-squashfs-tools
 ntp
 libui-sh
 dialog
@@ -42,6 +43,8 @@ btrfs-progs
 ntfs-3g
 dosfstools
 xfsprogs
+squashfs-tools
+f2fs-tools
 
 # Xorg
 
@@ -89,8 +92,7 @@ transmission-cli
 transmission-gtk
 libreoffice-installer
 xnoise
-hotot-gtk3
-shotwell
+gnome-photos
 
 
 # Theme
@@ -122,7 +124,7 @@ gnome-screenshot
 nautilus
 nautilus-open-terminal
 
-# GDM
+# LightDM
 
-gdm
+lightdm-webkit-theme-antergos
 
