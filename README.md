@@ -6,6 +6,7 @@ arch-install-scripts
 dosfstools
 libisoburn
 make
+mkinitcpio-nfs-utils
 patch
 squashfs-tools
 wget

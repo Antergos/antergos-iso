@@ -37,6 +37,7 @@ whois
 dnsutils
 netctl
 wget
+linux-firmware
 
 # Filesystems
 
@@ -93,6 +94,7 @@ transmission-cli
 transmission-gtk
 libreoffice-installer
 xnoise
+eog
 
 
 # Theme

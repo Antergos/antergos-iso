@@ -3,7 +3,7 @@
 set -e -u
 
 iso_name=antergos
-iso_label="ANTERGOS$(date +%Y%m)"
+iso_label="ANTERGOS"
 iso_version=$(date +%Y.%m.%d)
 install_dir=arch
 arch=$(uname -m)
@@ -15,7 +15,8 @@ cmd_args=""
 script_path=$(readlink -f ${0%/*})
 
 setup_workdir() {
-    cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    cache_dirs="/var/cache/pacman/pkg_${arch}"
     mkdir -p "${work_dir}"
     pacman_conf="${work_dir}/pacman.conf"
     sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" \
@@ -217,6 +218,9 @@ make_customize_root_image() {
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
+        
+        # LXDM autologin
+        sed -i 's/# autologin=dgod/autologin=antergos/g' ${work_dir}/root-image/etc/lxdm/lxdm.conf
 
 
         : > ${work_dir}/build.${FUNCNAME}
