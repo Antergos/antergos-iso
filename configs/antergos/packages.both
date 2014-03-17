@@ -1,5 +1,6 @@
 # Intallation
 grub
+gummiboot
 os-prober
 efibootmgr
 haveged
@@ -92,8 +93,6 @@ transmission-cli
 transmission-gtk
 libreoffice-installer
 xnoise
-hotot-gtk3
-gnome-photos
 
 
 # Theme

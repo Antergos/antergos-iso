@@ -126,7 +126,7 @@ make_efiboot() {
             cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
             cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
 
-            umount ${work_dir}/efiboot
+            umount -fl ${work_dir}/efiboot
 
         fi
         : > ${work_dir}/build.${FUNCNAME}
@@ -153,13 +153,17 @@ make_customize_root_image() {
             run
 
         #sed -i 's|^root:|root:liLfqaUhrN8Hs|g' ${work_dir}/root-image/etc/shadow
-
+        
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'useradd -m -g users -G "audio,disk,optical,wheel,network" antergos' \
+            -r 'groupadd -r autologin' \
             run
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'amixer -c 0 set Master playback 100% unmute' \
+            -r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
+            run
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'amixer -c 0 set Master playback 50% unmute' \
             run
 
         # Configuring pacman
@@ -181,7 +185,7 @@ make_customize_root_image() {
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -f enable pacman-init.service gdm.service NetworkManager.service ModemManager.service livecd.service || true' \
+            -r 'systemctl -f enable pacman-init.service lightdm.service NetworkManager.service ModemManager.service livecd.service || true' \
             run
 
         # Fix sudoers
@@ -193,7 +197,10 @@ make_customize_root_image() {
 
         # Configure powerpill
         sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
-
+        
+        # Set our website as Chromium start page
+        sed -i 's@Exec=chromium %U@Exec=chromium --homepage http://antergos.com %U@g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
+        
         # Gsettings changes
         mkdir -p ${work_dir}/root-image/var/run/dbus
         mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
@@ -202,11 +209,11 @@ make_customize_root_image() {
 
         # Set gsettings
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "/usr/bin/set-gsettings" antergos' \
+            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1' \
             run
-        
+            
         rm ${work_dir}/root-image/usr/bin/set-gsettings
-        umount ${work_dir}/root-image/var/run/dbus
+        umount -lf ${work_dir}/root-image/var/run/dbus
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
