@@ -199,9 +199,6 @@ make_customize_root_image() {
         # Configure powerpill
         sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
         
-        # Set our website as Chromium start page
-        sed -i 's@Exec=chromium %U@Exec=chromium --homepage http://antergos.com %U@g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
-        
         # Gsettings changes
         mkdir -p ${work_dir}/root-image/var/run/dbus
         mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
