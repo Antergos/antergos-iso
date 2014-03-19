@@ -31,7 +31,7 @@ make_basefs() {
 
 # Additional packages (root-image)
 make_packages() {
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages.{both,${arch}})" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages.both)" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
@@ -83,6 +83,7 @@ make_efi() {
             cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/iso/loader/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/iso/loader/entries/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
+            cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/iso/EFI
 
             sed "s|%ARCHISO_LABEL%|${iso_label}|g;
                  s|%INSTALL_DIR%|${install_dir}|g" ${script_path}/efiboot/loader/entries/archiso-x86_64-usb.conf > ${work_dir}/iso/loader/entries/archiso-x86_64.conf
@@ -115,7 +116,7 @@ make_efiboot() {
 
             mkdir -p ${work_dir}/efiboot/EFI/boot
             cp ${work_dir}/root-image/usr/lib/gummiboot/gummibootx64.efi ${work_dir}/efiboot/EFI/boot/bootx64.efi
-
+            
             mkdir -p ${work_dir}/efiboot/loader/entries
             cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/efiboot/loader/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/efiboot/loader/entries/
@@ -126,6 +127,8 @@ make_efiboot() {
 
             cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
             cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
+            
+            cp ${work_dir}/iso/EFI/bg.bmp ${work_dir}/efiboot/EFI/
 
             umount -fl ${work_dir}/efiboot
 
@@ -207,7 +210,7 @@ make_customize_root_image() {
 
         # Set gsettings
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1' \
+            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 || true' \
             run
             
         rm ${work_dir}/root-image/usr/bin/set-gsettings
@@ -216,8 +219,6 @@ make_customize_root_image() {
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
         
-        # LXDM autologin
-        sed -i 's/# autologin=dgod/autologin=antergos/g' ${work_dir}/root-image/etc/lxdm/lxdm.conf
 
 
         : > ${work_dir}/build.${FUNCNAME}
@@ -253,7 +254,7 @@ make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" pkglist
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" prepare
-    rm -rf ${work_dir}/root-image
+    #rm -rf ${work_dir}/root-image (Always fails and exits the whole build process)
     # rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
 }
 
