@@ -166,10 +166,6 @@ make_customize_root_image() {
             -r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
             run
 
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'amixer -c 0 set Master playback 50% unmute' \
-            run
-
         # Configuring pacman
         cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
         sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
