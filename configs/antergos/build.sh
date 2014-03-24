@@ -163,7 +163,7 @@ make_customize_root_image() {
             run
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
+            -r 'useradd -p U6aMy0wojraho -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
             run
 
         # Configuring pacman
