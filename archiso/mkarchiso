@@ -78,7 +78,7 @@ _umount_fs() {
     local _dst="${1}"
     _show_space_usage "${_dst}"
     _msg_info "Unmounting '${_dst}'"
-    umount "${_dst}"
+    umount -fl "${_dst}"
     rmdir "${_dst}"
     trap - EXIT HUP INT TERM
 }

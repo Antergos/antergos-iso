@@ -3,7 +3,7 @@
 set -e -u
 
 iso_name=antergos
-iso_label="ANTERGOS$(date +%Y%m)"
+iso_label="ANTERGOS"
 iso_version=$(date +%Y.%m.%d)
 install_dir=arch
 arch=$(uname -m)
@@ -15,7 +15,8 @@ cmd_args=""
 script_path=$(readlink -f ${0%/*})
 
 setup_workdir() {
-    cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    cache_dirs="/var/cache/pacman/pkg_${arch}"
     mkdir -p "${work_dir}"
     pacman_conf="${work_dir}/pacman.conf"
     sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" \
@@ -30,7 +31,7 @@ make_basefs() {
 
 # Additional packages (root-image)
 make_packages() {
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages.{both,${arch}})" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages.both)" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
@@ -82,6 +83,7 @@ make_efi() {
             cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/iso/loader/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/iso/loader/entries/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
+            cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/iso/EFI
 
             sed "s|%ARCHISO_LABEL%|${iso_label}|g;
                  s|%INSTALL_DIR%|${install_dir}|g" ${script_path}/efiboot/loader/entries/archiso-x86_64-usb.conf > ${work_dir}/iso/loader/entries/archiso-x86_64.conf
@@ -114,7 +116,7 @@ make_efiboot() {
 
             mkdir -p ${work_dir}/efiboot/EFI/boot
             cp ${work_dir}/root-image/usr/lib/gummiboot/gummibootx64.efi ${work_dir}/efiboot/EFI/boot/bootx64.efi
-
+            
             mkdir -p ${work_dir}/efiboot/loader/entries
             cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/efiboot/loader/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/efiboot/loader/entries/
@@ -125,8 +127,10 @@ make_efiboot() {
 
             cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
             cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
+            
+            cp ${work_dir}/iso/EFI/bg.bmp ${work_dir}/efiboot/EFI/
 
-            umount ${work_dir}/efiboot
+            umount -fl ${work_dir}/efiboot
 
         fi
         : > ${work_dir}/build.${FUNCNAME}
@@ -153,13 +157,13 @@ make_customize_root_image() {
             run
 
         #sed -i 's|^root:|root:liLfqaUhrN8Hs|g' ${work_dir}/root-image/etc/shadow
-
+        
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'useradd -m -g users -G "audio,disk,optical,wheel,network" antergos' \
+            -r 'groupadd -r autologin' \
             run
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'amixer -c 0 set Master playback 100% unmute' \
+            -r 'useradd -p U6aMy0wojraho -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
             run
 
         # Configuring pacman
@@ -181,7 +185,7 @@ make_customize_root_image() {
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -f enable pacman-init.service gdm.service NetworkManager.service ModemManager.service livecd.service || true' \
+            -r 'systemctl -f enable pacman-init.service lightdm.service NetworkManager.service ModemManager.service livecd.service || true' \
             run
 
         # Fix sudoers
@@ -193,7 +197,7 @@ make_customize_root_image() {
 
         # Configure powerpill
         sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
-
+        
         # Gsettings changes
         mkdir -p ${work_dir}/root-image/var/run/dbus
         mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
@@ -202,14 +206,15 @@ make_customize_root_image() {
 
         # Set gsettings
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "/usr/bin/set-gsettings" antergos' \
+            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 || true' \
             run
-        
+            
         rm ${work_dir}/root-image/usr/bin/set-gsettings
-        umount ${work_dir}/root-image/var/run/dbus
+        umount -lf ${work_dir}/root-image/var/run/dbus
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
+        
 
 
         : > ${work_dir}/build.${FUNCNAME}
@@ -245,7 +250,7 @@ make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" pkglist
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" prepare
-    rm -rf ${work_dir}/root-image
+    #rm -rf ${work_dir}/root-image (Always fails and exits the whole build process)
     # rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
 }
 

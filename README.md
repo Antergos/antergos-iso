@@ -7,6 +7,7 @@ dosfstools
 libisoburn
 mkinitcpio-nfs-utils
 make
+mkinitcpio-nfs-utils
 patch
 squashfs-tools
 wget

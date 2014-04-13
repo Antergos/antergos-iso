@@ -31,7 +31,7 @@ Architecture = auto
 #UseSyslog
 #UseDelta
 #TotalDownload
-Color
+#Color
 # We cannot check disk space from within a chroot environment
 #CheckSpace
 #VerbosePkgLists
@@ -39,7 +39,7 @@ Color
 # By default, pacman accepts packages signed by keys that its local keyring
 # trusts (see pacman-key and its man page), as well as unsigned packages.
 #SigLevel = Optional TrustedOnly
-LocalFileSigLevel = Optional
+#LocalFileSigLevel = Optional
 
 # NOTE: You must run `pacman-key --init` before first using pacman; the local
 # keyring can then be populated with the keys of all official Arch Linux
@@ -73,11 +73,11 @@ LocalFileSigLevel = Optional
 #Include = /etc/pacman.d/mirrorlist
 
 [core]
-SigLevel = PackageRequired
+#SigLevel = PackageRequired
 Include = /etc/pacman.d/mirrorlist
 
 [extra]
-SigLevel = PackageRequired
+#SigLevel = PackageRequired
 Include = /etc/pacman.d/mirrorlist
 
 #[community-testing]
@@ -85,12 +85,12 @@ Include = /etc/pacman.d/mirrorlist
 #Include = /etc/pacman.d/mirrorlist
 
 [community]
-SigLevel = PackageRequired
+#SigLevel = PackageRequired
 Include = /etc/pacman.d/mirrorlist
 
 
 [multilib]
-SigLevel = PackageRequired
+#SigLevel = PackageRequired
 Include = /etc/pacman.d/mirrorlist
 
 # An example of a custom package repository.  See the pacman manpage for
@@ -100,5 +100,5 @@ Include = /etc/pacman.d/mirrorlist
 #Server = file:///home/custompkgs
 
 [antergos]
-SigLevel = PackageRequired
+#SigLevel = PackageRequired
 Include = /etc/pacman.d/antergos-mirrorlist
