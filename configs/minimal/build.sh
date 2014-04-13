@@ -3,7 +3,7 @@
 set -e -u
 
 iso_name=antergos
-iso_label="ANTERGOS$(date +%Y%m)"
+iso_label="ANTERGOS"
 iso_version=$(date +%Y.%m.%d)
 install_dir=arch
 arch=$(uname -m)
@@ -15,7 +15,8 @@ cmd_args=""
 script_path=$(readlink -f ${0%/*})
 
 setup_workdir() {
-    cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    cache_dirs="/var/cache/pacman/pkg_${arch}"
     mkdir -p "${work_dir}"
     pacman_conf="${work_dir}/pacman.conf"
     sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" \
@@ -30,7 +31,7 @@ make_basefs() {
 
 # Additional packages (root-image)
 make_packages() {
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages.{both,${arch}})" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages.both)" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
@@ -82,6 +83,7 @@ make_efi() {
             cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/iso/loader/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/iso/loader/entries/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
+            cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/iso/EFI
 
             sed "s|%ARCHISO_LABEL%|${iso_label}|g;
                  s|%INSTALL_DIR%|${install_dir}|g" ${script_path}/efiboot/loader/entries/archiso-x86_64-usb.conf > ${work_dir}/iso/loader/entries/archiso-x86_64.conf
@@ -126,7 +128,9 @@ make_efiboot() {
             cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
             cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
 
-            umount ${work_dir}/efiboot
+            cp ${work_dir}/iso/EFI/bg.bmp ${work_dir}/efiboot/EFI/
+
+            umount -fl ${work_dir}/efiboot
 
         fi
         : > ${work_dir}/build.${FUNCNAME}
@@ -141,7 +145,6 @@ make_customize_root_image() {
         ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
         chmod 750 ${work_dir}/root-image/etc/sudoers.d
         chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
-        chown root:root -R ${work_dir}/root-image/etc/sudoers.d
         mkdir -p ${work_dir}/root-image/etc/pacman.d
         wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
         sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
@@ -175,7 +178,12 @@ make_customize_root_image() {
             -r 'systemctl -f enable pacman-init.service NetworkManager.service livecd.service || true' \
             run
 
+        # Fix sudoers
+        chown -R root:root ${work_dir}/root-image/etc/
+        chmod 660 ${work_dir}/root-image/etc/sudoers
 
+        # Configure powerpill
+        sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
@@ -219,7 +227,7 @@ make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" pkglist
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" prepare
-    rm -rf ${work_dir}/root-image
+    #rm -rf ${work_dir}/root-image
     # rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
 }
 

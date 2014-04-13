@@ -58,8 +58,8 @@ xf86-video-vmware
 #xf86-video-openchrome
 xf86-video-vesa
 
-
 # System Tools
+powerpill
 sudo
 
 # Fonts (multilingual)
