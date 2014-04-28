@@ -1,6 +1,7 @@
 # Intallation
 grub
 gummiboot
+prebootloader
 os-prober
 efibootmgr
 haveged
@@ -18,6 +19,9 @@ crda
 
 # Cnchi Graphical Installer
 cnchi
+python-mako
+python-mock
+python-lxml
 
 # Network
 
@@ -38,6 +42,7 @@ dnsutils
 netctl
 wget
 linux-firmware
+intel-ucode
 
 # Filesystems
 

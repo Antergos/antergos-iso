@@ -2,5 +2,5 @@
 
 sudo cp /usr/share/cnchi/scripts/testing.sh /tmp/testing.sh
 sudo chmod +x /tmp/testing.sh
-notify-send -a "Cnchi" -i /usr/share/cnchi/data/antergos-icon.png --expire-time=30000 "Updating Cnchi with the latest testing code. Please wait..."
+notify-send -a "Cnchi" -i /usr/share/cnchi/data/antergos-icon.png "Updating Cnchi with the latest testing code. Please wait..."
 sudo -E /tmp/testing.sh ${@}
