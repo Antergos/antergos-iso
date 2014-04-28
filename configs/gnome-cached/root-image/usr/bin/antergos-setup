@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo gnome-terminal --geometry 85x30 -x /arch/setup

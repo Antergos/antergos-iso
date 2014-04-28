@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Change default wallpaper
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/antergos/wallpapers/antergos-wallpaper.png'
+
+# Set favorite apps
+dbus-launch --exit-with-session  gsettings set org.gnome.shell favorite-apps "['Cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'empathy.desktop', 'xnoise.desktop']"
+
+# Disable screensaver
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.screensaver lock-enabled false
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.screensaver idle-activation-enabled false
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.lockdown disable-lock-screen true
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.session idle-delay 0
+
+# Set theme
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface gtk-theme 'Zukitwo'
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.wm.preferences theme 'Zukitwo'
+
+# Set icon theme
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface icon-theme 'Faenza-Dark'
+
+# Not show desktop icons
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.background show-desktop-icons false
+
+# Minimize and close buttons
+dbus-launch --exit-with-session  gsettings set org.gnome.shell.overrides button-layout 'menu:minimize,maximize,close'
+
+# Disable terminal bell
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.wm.preferences audible-bell false
+
+# Configure touchpad
+dbus-launch --exit-with-session  gsettings set org.gnome.settings-daemon.peripherals.touchpad tap-to-click true
+dbus-launch --exit-with-session  gsettings set org.gnome.settings-daemon.peripherals.touchpad touchpad-enabled true
+dbus-launch --exit-with-session  gsettings set org.gnome.settings-daemon.peripherals.touchpad scroll-method 'two-finger-scrolling'
