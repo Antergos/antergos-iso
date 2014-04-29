@@ -175,3 +175,12 @@ xfburn
 xnoise
 zukitwo-themes
 
+# Fonts needed by keyboard_widget from Cnchi
+ttf-aboriginal-sans
+ttf-indic-otf
+ttf-khmer
+ttf-lohit-fonts
+ttf-myanmar3
+ttf-thaana-fonts
+ttf-tlwg
+
