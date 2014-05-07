@@ -183,16 +183,16 @@ make_customize_root_image() {
         
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/locale-gen' \
-            run && touch /tmp/locale_generated
+            run
 
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'groupadd -r autologin' \
-            run && touch /tmp/group_added
+            run
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'useradd -p U6aMy0wojraho -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
-            run && touch /tmp/user_added
+            run
 
 
         # Configuring pacman
