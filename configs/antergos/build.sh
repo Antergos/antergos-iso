@@ -181,30 +181,19 @@ make_customize_root_image() {
         # Download opendesktop-fonts
         wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
         
-		if [[ ! -e /tmp/locale_generated ]]; then
-            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-                -r '/usr/bin/locale-gen' \
-                run && touch /tmp/locale_generated
-        else
-            echo "Locale was previously generated. Skipping..."
-        fi
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r '/usr/bin/locale-gen' \
+            run && touch /tmp/locale_generated
 
-        #sed -i 's|^root:|root:liLfqaUhrN8Hs|g' ${work_dir}/root-image/etc/shadow
-        
-        if [[ ! -e /tmp/group_added ]]; then
-            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-                -r 'groupadd -r autologin' \
-                run && touch /tmp/group_added
-        else
-            echo "Group exists. Skipping..."
-        fi
-        if [[ ! -e /tmp/user_added ]]; then
-            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-                -r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
-                run && touch /tmp/user_added
-        else
-            echo "User exists. Skipping..."
-        fi
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'groupadd -r autologin' \
+            run && touch /tmp/group_added
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'useradd -p U6aMy0wojraho -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
+            run && touch /tmp/user_added
+
 
         # Configuring pacman
         cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
