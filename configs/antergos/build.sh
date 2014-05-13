@@ -5,7 +5,7 @@ set -e -u
 iso_name=antergos
 iso_label="ANTERGOS"
 iso_version=$(date +%Y.%m.%d)
-install_dir=arch
+install_dir="arch"
 arch=$(uname -m)
 work_dir=work
 out_dir=out
@@ -78,7 +78,6 @@ make_syslinux() {
 
 
 make_isolinux() {
-    if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
         mkdir -p ${work_dir}/iso/isolinux
         cp -Lr isolinux ${work_dir}/iso
         cp -R ${work_dir}/root-image/usr/lib/syslinux/bios/* ${work_dir}/iso/isolinux/
@@ -90,13 +89,10 @@ make_isolinux() {
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/isohdpfx.bin ${work_dir}/iso/isolinux/
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${work_dir}/iso/isolinux/
 
-        : > ${work_dir}/build.${FUNCNAME}
-    fi
 }
 
 # Prepare /EFI
 make_efi() {
-    if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
         if [[ ${arch} == "x86_64" ]]; then
 
             mkdir -p ${work_dir}/iso/EFI/boot
@@ -120,13 +116,10 @@ make_efi() {
             wget -O ${work_dir}/iso/EFI/shellx64_v1.efi https://edk2.svn.sourceforge.net/svnroot/edk2/trunk/edk2/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
 
         fi
-        : > ${work_dir}/build.${FUNCNAME}
-    fi
 }
 
 # Prepare efiboot.img::/EFI for "El Torito" EFI boot mode
 make_efiboot() {
-    if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
         if [[ ${arch} == "x86_64" ]]; then
 
             mkdir -p ${work_dir}/iso/EFI/archiso
@@ -160,16 +153,12 @@ make_efiboot() {
             cp ${work_dir}/iso/EFI/bg.bmp ${work_dir}/efiboot/EFI/
 
             umount -fl ${work_dir}/efiboot
-
-        fi
-        : > ${work_dir}/build.${FUNCNAME}
     fi
 }
 
 
 # Customize installation (root-image)
 make_customize_root_image() {
-    if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
         cp -af ${script_path}/root-image ${work_dir}
         ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
         chmod 750 ${work_dir}/root-image/etc/sudoers.d
@@ -181,31 +170,35 @@ make_customize_root_image() {
         # Download opendesktop-fonts
         wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
         
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r '/usr/bin/locale-gen' \
-            run
+	if [[ ! -e ${work_dir}/root-image/tmp/local-generated ]]; then
+        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r '/usr/bin/locale-gen' \
+            	run && touch ${work_dir}/root-image/tmp/local-generated
+	fi
 	
-	group=$(grep -q "autologin" ${work_dir}/root-image/etc/group)
-	user=$(grep -q "antergos" ${work_dir}/root-image/etc/passwd)
+	_group=$(grep -o autologin ${work_dir}/root-image/etc/group)
+	_user=$(grep -o antergos ${work_dir}/root-image/etc/passwd)
 
-	if [[ ! "${group}" ]]; then
-
+	if [[ -z "${_group}" ]]; then
+	echo "Adding autologin group"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'groupadd -r autologin' \
             run
 	fi
 
-	if [[ ! "${user}" ]]; then
+	if [[ -z "${_user}" ]]; then
+	echo "Adding antergos user"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'useradd -p U6aMy0wojraho -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
             run
 	fi
 
         # Configuring pacman
+	echo "Configuring Pacman"
         cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
         sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
         sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${work_dir}/root-image/etc/pacman.conf
-        if [[ ${arch} == 'x86_64' ]];then
+        if [[ ${arch} == 'x86_64' ]]; then
             echo '' >> ${work_dir}/root-image/etc/pacman.conf
             echo '[multilib]' >> ${work_dir}/root-image/etc/pacman.conf
             echo 'SigLevel = PackageRequired' >> ${work_dir}/root-image/etc/pacman.conf
@@ -240,35 +233,41 @@ make_customize_root_image() {
         chmod +x ${work_dir}/root-image/usr/bin/
 
         # Record the highest PID of dbus-launch so we can kill the process that will be spawned by gsettings.
-	started=$(date +%s)
+	started=$(ps -ef | grep "dbus" | awk '{print $2}' | tail -1)
+	echo "Current highest dbus PID is ${started}"
 
         # Set gsettings
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 || true' \
+            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 && true' \
             run
             
         rm ${work_dir}/root-image/usr/bin/set-gsettings
 
 	# Kill all the dbus processes so we can umount
-	killall -y ${started} dbus-launch
+	echo "Killing leftover dbus-launch processes"
+	pids=$(ps -ef | grep "dbus" | awk '{print $2}')
+	${pids} | while read line
+		do
+			if [[ ${line} -gt "${started}" ]]; then
+				kill ${line}
+			fi
+		done
+		
+	killall -y "${started}s" dbus-launch
 
         # Always return true so build will continue even if mount is busy. (Arch bug)
+	echo "Umount /var/dbus"
         umount -lf ${work_dir}/root-image/var/run/dbus || true
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
         
-
-
-        : > ${work_dir}/build.${FUNCNAME}
-    fi
 }
 
 # Split out /usr/lib/modules from root-image (makes more "dual-iso" friendly)
 make_usr_lib_modules() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
         mv ${work_dir}/root-image/usr/lib/modules ${work_dir}/usr-lib-modules
-        : > ${work_dir}/build.${FUNCNAME}
     fi
 }
 
@@ -276,7 +275,6 @@ make_usr_lib_modules() {
 make_usr_share() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
         mv ${work_dir}/root-image/usr/share ${work_dir}/usr-share
-        : > ${work_dir}/build.${FUNCNAME}
     fi
 }
 
@@ -284,7 +282,6 @@ make_usr_share() {
 make_aitab() {
     if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
         sed "s|%ARCH%|${arch}|g" ${script_path}/aitab > ${work_dir}/iso/${install_dir}/aitab
-        : > ${work_dir}/build.${FUNCNAME}
     fi
 }
 
@@ -333,17 +330,17 @@ make_common_single() {
     run_once make_packages
     run_once make_setup_mkinitcpio
     run_once make_customize_root_image
-    make_boot
-    make_boot_extra
+    run_once make_boot
+    run_once make_boot_extra
     run_once make_syslinux
-    make_isolinux
-    make_efi
-    make_efiboot
-    make_aitab
-    make_usr_lib_modules
-    make_usr_share
-    make_prepare
-    make_iso
+    run_once make_isolinux
+    run_once make_efi
+    run_once make_efiboot
+    run_once make_aitab
+    run_once make_usr_lib_modules
+    run_once make_usr_share
+    run_once make_prepare
+    run_once make_iso
 }
 
 _usage ()
