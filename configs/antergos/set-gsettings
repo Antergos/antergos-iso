@@ -17,7 +17,7 @@ dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface gtk-t
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.wm.preferences theme 'Zukitwo'
 
 # Set icon theme
-dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface icon-theme 'Faenza-Dark'
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface icon-theme 'Numix-Square'
 
 # Not show desktop icons
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.background show-desktop-icons false
