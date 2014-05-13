@@ -184,16 +184,22 @@ make_customize_root_image() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/locale-gen' \
             run
+	
+	group=$(grep -q "autologin" ${work_dir}/root-image/etc/group)
+	user=$(grep -q "antergos" ${work_dir}/root-image/etc/passwd)
 
+	if [[ ! "${group}" ]]; then
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'groupadd -r autologin' \
             run
+	fi
 
+	if [[ ! "${user}" ]]; then
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'useradd -p U6aMy0wojraho -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
             run
-
+	fi
 
         # Configuring pacman
         cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
@@ -233,13 +239,20 @@ make_customize_root_image() {
         cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
         chmod +x ${work_dir}/root-image/usr/bin/
 
+        # Record the highest PID of dbus-launch so we can kill the process that will be spawned by gsettings.
+	started=$(date +%s)
+
         # Set gsettings
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 || true' \
             run
             
         rm ${work_dir}/root-image/usr/bin/set-gsettings
-        ## Always return true so build will continue even if umount is busy. (Arch bug)
+
+	# Kill all the dbus processes so we can umount
+	killall -y ${started} dbus-launch
+
+        # Always return true so build will continue even if mount is busy. (Arch bug)
         umount -lf ${work_dir}/root-image/var/run/dbus || true
         
         # Black list floppy

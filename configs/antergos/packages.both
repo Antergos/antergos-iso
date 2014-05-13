@@ -83,6 +83,7 @@ pkgfile
 alsa-utils
 xdg-user-dirs-gtk
 powerpill
+reflector
 
 # Fonts
 
