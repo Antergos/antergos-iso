@@ -264,7 +264,8 @@ make_aitab() {
 make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" pkglist
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" prepare
+    # Use -c parameter to avoid deleting xz packages
+    mkarchiso ${verbose} -c -w "${work_dir}" -D "${install_dir}" prepare
     #rm -rf ${work_dir}/root-image (Always fails and exits the whole build process)
     # rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
 }

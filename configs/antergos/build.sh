@@ -168,30 +168,37 @@ make_customize_root_image() {
         sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
 
         # Download opendesktop-fonts
-        wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
+	if [[ ! -f ${work_dir}/root-image/arch/pkg/opendesktop-fonts-1.4.2-1-any.pkg.tar.xz ]]; then
+	        wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
+	fi
         
-	if [[ ! -e ${work_dir}/root-image/tmp/local-generated ]]; then
+	if [[ ! -f ${work_dir}/root-image/tmp/local-generated ]]; then
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/locale-gen' \
             	run && touch ${work_dir}/root-image/tmp/local-generated
 	fi
-	
-	_group=$(grep -o autologin ${work_dir}/root-image/etc/group)
-	_user=$(grep -o antergos ${work_dir}/root-image/etc/passwd)
 
-	if [[ -z "${_group}" ]]; then
+
+	#AUTOLOGIN_GROUP=$(grep autologin $work_dir/root-image/etc/group)
+	#ANTERGOS_USER=$(grep antergos $work_dir/root-image/etc/passwd)
+
+	echo "Checking group autologin"
+
+	
 	echo "Adding autologin group"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'groupadd -r autologin' \
             run
-	fi
+	
 
-	if [[ -z "${_user}" ]]; then
+	echo "Checking user antergos"
+
+	
 	echo "Adding antergos user"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'useradd -p U6aMy0wojraho -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
             run
-	fi
+	
 
         # Configuring pacman
 	echo "Configuring Pacman"

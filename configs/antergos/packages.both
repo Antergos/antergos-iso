@@ -1,4 +1,4 @@
-# Intallation
+# Installation
 grub
 gummiboot
 prebootloader
@@ -19,6 +19,7 @@ crda
 
 # Cnchi Graphical Installer
 cnchi
+#cnchi-fonts
 python-mako
 python-mock
 python-lxml
@@ -106,6 +107,7 @@ eog
 # Theme
 
 faenza-icon-theme
+numix-icon-theme-square
 gnome-themes-standard
 antergos-wallpapers
 zukitwo-themes
@@ -134,12 +136,3 @@ nautilus
 # LightDM
 
 lightdm-webkit-theme-antergos
-
-# Fonts needed by keyboard_widget from Cnchi
-#ttf-aboriginal-sans
-#ttf-indic-otf
-#ttf-khmer
-#ttf-lohit-fonts
-#ttf-myanmar3
-#ttf-thaana-fonts
-#ttf-tlwg

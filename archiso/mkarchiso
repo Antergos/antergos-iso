@@ -16,6 +16,7 @@ iso_application="Antergos Live/Rescue CD"
 install_dir="arch"
 work_dir="work"
 out_dir="out"
+leave_pacman_packages="n"
 
 # Show an INFO message
 # $1: message string
@@ -133,6 +134,7 @@ _usage ()
     echo "                     Default: '${work_dir}'"
     echo "    -o <out_dir>     Set the output directory"
     echo "                     Default: '${out_dir}'"
+    echo "    -z               Leave xz packages in the iso"
     echo "    -v               Enable verbose output"
     echo "    -h               This message"
     echo " commands:"
@@ -224,10 +226,14 @@ _cleanup () {
     if [[ -d "${work_dir}/root-image/var/lib/pacman/sync" ]]; then
         find "${work_dir}/root-image/var/lib/pacman/sync" -delete
     fi
-    # Delete pacman package cache
-    if [[ -d "${work_dir}/root-image/var/cache/pacman/pkg" ]]; then
-        find "${work_dir}/root-image/var/cache/pacman/pkg" -type f -delete
+
+    if [[ "$leave_pacman_packages" == "n" ]]; then
+        # Delete pacman package cache
+        if [[ -d "${work_dir}/root-image/var/cache/pacman/pkg" ]]; then
+            find "${work_dir}/root-image/var/cache/pacman/pkg" -type f -delete
+        fi
     fi
+
     # Delete all log files, keeps empty dirs.
     if [[ -d "${work_dir}/root-image/var/log" ]]; then
         find "${work_dir}/root-image/var/log" -type f -delete
@@ -506,6 +512,7 @@ while getopts 'p:r:C:L:P:A:D:w:o:vh' arg; do
         p) pkg_list="${pkg_list} ${OPTARG}" ;;
         r) run_cmd="${OPTARG}" ;;
         C) pacman_conf="${OPTARG}" ;;
+	z) leave_pacman_packages="y" ;;
         L) iso_label="${OPTARG}" ;;
         P) iso_publisher="${OPTARG}" ;;
         A) iso_application="${OPTARG}" ;;
