@@ -12,9 +12,13 @@ dbus-launch --exit-with-session  gsettings set org.gnome.desktop.screensaver idl
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.lockdown disable-lock-screen true
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.session idle-delay 0
 
+# Enabled extensions
+dbus-launch --exit-with-session  gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com']"
+
 # Set theme
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface gtk-theme 'Numix Frost Light'
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.wm.preferences theme 'Numix Frost Light'
+dbus-launch --exit-with-session  gsettings set org.gnome.shell.extensions.user-theme name "Numix Frost Light"
 
 # Set icon theme
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface icon-theme 'Numix-Square'

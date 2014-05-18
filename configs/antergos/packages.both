@@ -109,7 +109,8 @@ eog
 numix-icon-theme-square
 gnome-themes-standard
 antergos-wallpapers
-gtk-theme-numix-frost
+gnome-shell-extensions
+numix-frost-themes
 
 # Compression
 
