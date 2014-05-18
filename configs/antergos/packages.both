@@ -106,11 +106,10 @@ eog
 
 # Theme
 
-faenza-icon-theme
 numix-icon-theme-square
 gnome-themes-standard
 antergos-wallpapers
-zukitwo-themes
+gtk-theme-numix-frost
 
 # Compression
 

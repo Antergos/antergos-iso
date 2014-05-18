@@ -13,11 +13,11 @@ dbus-launch --exit-with-session  gsettings set org.gnome.desktop.lockdown disabl
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.session idle-delay 0
 
 # Set theme
-dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface gtk-theme 'Zukitwo'
-dbus-launch --exit-with-session  gsettings set org.gnome.desktop.wm.preferences theme 'Zukitwo'
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface gtk-theme 'Numix Frost Light'
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.wm.preferences theme 'Numix Frost Light'
 
 # Set icon theme
-dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface icon-theme 'Faenza-Dark'
+dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface icon-theme 'Numix-Square'
 
 # Not show desktop icons
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.background show-desktop-icons false
