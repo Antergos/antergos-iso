@@ -11,6 +11,7 @@ work_dir=work
 out_dir=out
 verbose=""
 cmd_args=""
+xz_keep=""
 
 script_path=$(readlink -f ${0%/*})
 
@@ -168,37 +169,23 @@ make_customize_root_image() {
         sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
 
         # Download opendesktop-fonts
-	if [[ ! -f ${work_dir}/root-image/arch/pkg/opendesktop-fonts-1.4.2-1-any.pkg.tar.xz ]]; then
-	        wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
-	fi
+        wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
         
 	if [[ ! -f ${work_dir}/root-image/tmp/local-generated ]]; then
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/locale-gen' \
             	run && touch ${work_dir}/root-image/tmp/local-generated
 	fi
-
-
-	#AUTOLOGIN_GROUP=$(grep autologin $work_dir/root-image/etc/group)
-	#ANTERGOS_USER=$(grep antergos $work_dir/root-image/etc/passwd)
-
-	echo "Checking group autologin"
-
 	
 	echo "Adding autologin group"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'groupadd -r autologin' \
             run
 	
-
-	echo "Checking user antergos"
-
-	
 	echo "Adding antergos user"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'useradd -p U6aMy0wojraho -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
             run
-	
 
         # Configuring pacman
 	echo "Configuring Pacman"
@@ -211,8 +198,6 @@ make_customize_root_image() {
             echo 'SigLevel = PackageRequired' >> ${work_dir}/root-image/etc/pacman.conf
             echo 'Include = /etc/pacman.d/mirrorlist' >> ${work_dir}/root-image/etc/pacman.conf
         fi
-        
-
 
         sed -i 's/#\(Storage=\)auto/\1volatile/' ${work_dir}/root-image/etc/systemd/journald.conf
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
@@ -267,8 +252,7 @@ make_customize_root_image() {
         umount -lf ${work_dir}/root-image/var/run/dbus || true
         
         # Black list floppy
-        echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
-        
+        echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf        
 }
 
 # Split out /usr/lib/modules from root-image (makes more "dual-iso" friendly)
@@ -295,10 +279,12 @@ make_aitab() {
 # Build all filesystem images specified in aitab (.fs .fs.sfs .sfs)
 make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
+
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" pkglist
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" prepare
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" $xz_keep prepare
+
     #rm -rf ${work_dir}/root-image (Always fails and exits the whole build process)
-    # rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
+    #rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
 }
 
 # Build ISO
@@ -306,7 +292,6 @@ make_iso() {
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" checksum
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${iso_name}-${iso_version}-${arch}.iso"
 }
-
 
 purge_single ()
 {
@@ -316,7 +301,6 @@ purge_single ()
             | xargs rm -rf
     fi
 }
-
 
 clean_single ()
 {
@@ -367,6 +351,7 @@ _usage ()
     echo "                        Default: ${work_dir}"
     echo "    -o <out_dir>       Set the output directory"
     echo "                        Default: ${out_dir}"
+    echo "    -z                 Leave xz packages inside iso"
     echo "    -v                 Enable verbose output"
     echo "    -h                 This help message"
     echo
@@ -388,7 +373,7 @@ if [[ ${EUID} -ne 0 ]]; then
     _usage 1
 fi
 
-while getopts 'N:V:L:D:w:o:vh' arg; do
+while getopts 'N:V:L:D:w:o:zvh' arg; do
     case "${arg}" in
         N)
             iso_name="${OPTARG}"
@@ -413,6 +398,10 @@ while getopts 'N:V:L:D:w:o:vh' arg; do
         o)
             out_dir="${OPTARG}"
             cmd_args+=" -o ${out_dir}"
+            ;;
+        z)
+            xz_keep="-z"
+            echo "Will keep pacman cache"
             ;;
         v)
             verbose="-v"

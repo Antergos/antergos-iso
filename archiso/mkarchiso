@@ -16,7 +16,7 @@ iso_application="Antergos Live/Rescue CD"
 install_dir="arch"
 work_dir="work"
 out_dir="out"
-leave_pacman_packages="n"
+keep_pacman_packages="n"
 
 # Show an INFO message
 # $1: message string
@@ -134,7 +134,7 @@ _usage ()
     echo "                     Default: '${work_dir}'"
     echo "    -o <out_dir>     Set the output directory"
     echo "                     Default: '${out_dir}'"
-    echo "    -z               Leave xz packages in the iso"
+    echo "    -z               Keep pacman cache packages in the iso file"
     echo "    -v               Enable verbose output"
     echo "    -h               This message"
     echo " commands:"
@@ -227,11 +227,13 @@ _cleanup () {
         find "${work_dir}/root-image/var/lib/pacman/sync" -delete
     fi
 
-    if [[ "$leave_pacman_packages" == "n" ]]; then
-        # Delete pacman package cache
+    if [[ "$keep_pacman_packages" == "n" ]]; then
+        _msg_info "Delete pacman package cache"
         if [[ -d "${work_dir}/root-image/var/cache/pacman/pkg" ]]; then
             find "${work_dir}/root-image/var/cache/pacman/pkg" -type f -delete
         fi
+    else
+        _msg_info "Keeping pacman cache packages"
     fi
 
     # Delete all log files, keeps empty dirs.
@@ -507,12 +509,12 @@ if [[ ${EUID} -ne 0 ]]; then
     _msg_error "This script must be run as root." 1
 fi
 
-while getopts 'p:r:C:L:P:A:D:w:o:vh' arg; do
+while getopts 'p:r:C:L:P:A:D:w:o:vhz' arg; do
     case "${arg}" in
         p) pkg_list="${pkg_list} ${OPTARG}" ;;
         r) run_cmd="${OPTARG}" ;;
         C) pacman_conf="${OPTARG}" ;;
-	z) leave_pacman_packages="y" ;;
+	    z) keep_pacman_packages="y" ;;
         L) iso_label="${OPTARG}" ;;
         P) iso_publisher="${OPTARG}" ;;
         A) iso_application="${OPTARG}" ;;

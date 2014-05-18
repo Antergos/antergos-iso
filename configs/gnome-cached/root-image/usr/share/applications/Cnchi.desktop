@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Cnchi
-GenericName=Cnchi
-Comment=Antergos Graphical Installer
-Exec=sudo python /usr/share/cnchi/cnchi.py
-Icon=/usr/share/cnchi/data/images/antergos/antergos-icon.png
-StartupNotify=true
-Type=Application
-Categories=GNOME;System;
