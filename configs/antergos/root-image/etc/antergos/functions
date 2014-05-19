@@ -49,15 +49,15 @@ _set_locales ()
 	echo "KEYMAP=${KEYMAP}" > ${DESTDIR}/etc/vconsole.conf
 
 	# set systemwide language
-	echo "LANG=${LOCALE}.utf8" > ${DESTDIR}/etc/locale.conf
+	echo "LANG=${LOCALE}.UTF-8" > ${DESTDIR}/etc/locale.conf
 	echo "LC_NUMERIC=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
 	echo "LC_TIME=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
 	echo "LC_MONETARY=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
 	echo "LC_PAPER=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
 	echo "LC_MEASUREMENT=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
-	echo "LC_COLLATE=C" >> ${DESTDIR}/etc/locale.conf
+	echo "LC_COLLATE=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
 
-	sed -i -r "s/en_US.utf8/${LOCALE}.utf8/g" ${DESTDIR}/var/lib/AccountsService/users/antergos
+	sed -i -r "s/en_US.UTF-8/${LOCALE}.UTF-8/g" ${DESTDIR}/var/lib/AccountsService/users/antergos
 
 	# generate LOCALE
 	local TLANG=${LOCALE%.*} # remove everything after the ., including the dot from LOCALE
