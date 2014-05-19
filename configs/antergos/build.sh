@@ -228,8 +228,10 @@ make_customize_root_image() {
         chmod +x ${work_dir}/root-image/usr/bin/
 
         # Record the highest PID of dbus-launch so we can kill the process that will be spawned by gsettings.
-	started=$(ps -ef | grep "dbus" | awk '{print $2}' | tail -1)
-	echo "Current highest dbus PID is ${started}"
+	pids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
+	echo "${pids}" > /tmp/whitelist
+	#for line in "${pids[@]}"; do  started=("${started[@]}" "${line}"); done
+	#echo "dbus PIDs found: ${started}"
 
         # Set gsettings
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -240,15 +242,12 @@ make_customize_root_image() {
 
 	# Kill all the dbus processes so we can umount
 	echo "Killing leftover dbus-launch processes"
-	pids=$(ps -ef | grep "dbus" | awk '{print $2}')
-	${pids} | while read line
-		do
-			if [[ ${line} -gt "${started}" ]]; then
-				kill ${line}
-			fi
-		done
-		
-	killall -y "${started}s" dbus-launch
+	newpids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
+	echo "${newpids}" > /tmp/greylist
+	grep -F -v -f /tmp/whitelist /tmp/greylist > /tmp/blacklist
+	cat /tmp/blacklist | while read line; do
+		kill "${line}";
+	done
 
         # Always return true so build will continue even if mount is busy. (Arch bug)
 	echo "Umount /var/dbus"
