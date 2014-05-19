@@ -245,9 +245,7 @@ make_customize_root_image() {
 	newpids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
 	echo "${newpids}" > /tmp/greylist
 	grep -F -v -f /tmp/whitelist /tmp/greylist > /tmp/blacklist
-	cat /tmp/blacklist | while read line; do
-		kill "${line}";
-	done
+	pkill -SIGTERM -F /tmp/blacklist || true
 
         # Always return true so build will continue even if mount is busy. (Arch bug)
 	echo "Umount /var/dbus"
