@@ -22,3 +22,9 @@ loadkeys $(cat /etc/vconsole.conf | grep "KEYMAP=" | cut -d= -f2)
 echo ${LOCALE} > /home/antergos/.config/user-dirs.locale
 
 su -c "xdg-user-dirs-update" antergos
+
+# Randomly choose a default wallpaper from antergos-wallpapers
+DIR="/usr/share/antergos/wallpapers"
+PIC=$(ls ${DIR}/* | shuf -n1)
+
+dbus-launch gsettings set org.gnome.desktop.background picture-uri "file://${PIC}"
