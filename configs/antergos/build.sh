@@ -174,6 +174,9 @@ make_customize_root_image() {
 	if [[ ! -f ${work_dir}/root-image/tmp/local-generated ]]; then
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/locale-gen' \
+            	run
+		mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r '/usr/bin/localectl set-locale "LANG=en_US.UTF-8" ' \
             	run && touch ${work_dir}/root-image/tmp/local-generated
 	fi
 	
