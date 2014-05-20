@@ -11,7 +11,7 @@ work_dir=work
 out_dir=out
 verbose=""
 cmd_args=""
-xz_keep=""
+keep_pacman_packages=""
 
 script_path=$(readlink -f ${0%/*})
 
@@ -280,8 +280,8 @@ make_aitab() {
 make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
 
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" pkglist
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" $xz_keep prepare
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" $keep_pacman_packages pkglist
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" $keep_pacman_packages prepare
 
     #rm -rf ${work_dir}/root-image (Always fails and exits the whole build process)
     #rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
@@ -400,7 +400,7 @@ while getopts 'N:V:L:D:w:o:zvh' arg; do
             cmd_args+=" -o ${out_dir}"
             ;;
         z)
-            xz_keep="-z"
+            keep_pacman_packages="-z"
             echo "Will keep pacman cache"
             ;;
         v)
