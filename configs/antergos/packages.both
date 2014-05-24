@@ -15,6 +15,7 @@ gptfdisk
 parted
 gparted
 crda
+linux-headers
 
 
 # Cnchi Graphical Installer
@@ -70,6 +71,7 @@ intel-dri
 ati-dri
 virtualbox-guest-utils
 virtualbox-guest-modules
+virtualbox-guest-dkms
 xf86-video-vmware
 xf86-video-openchrome
 xf86-video-vesa

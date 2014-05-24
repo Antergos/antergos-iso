@@ -28,3 +28,5 @@ DIR="/usr/share/antergos/wallpapers"
 PIC=$(ls ${DIR}/* | shuf -n1)
 
 su -c "dbus-launch gsettings set org.gnome.desktop.background picture-uri file://${PIC}" antergos
+
+modprobe -a vboxguest vboxsf vboxvideo

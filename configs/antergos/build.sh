@@ -208,7 +208,15 @@ make_customize_root_image() {
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -f enable pacman-init.service lightdm.service NetworkManager.service ModemManager.service livecd.service || true' \
+            -r 'systemctl -f enable pacman-init lightdm NetworkManager ModemManager livecd vboxservice || true' \
+            run
+        
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'dkms install vboxguest/4.3.12' \
+            run
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'pacman -Rdd linux-headers dkms --noconfirm' \
             run
 
         # Fix sudoers
