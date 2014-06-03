@@ -1,9 +1,9 @@
 [Desktop Entry]
-Version=0.2
+Version=0.6.8
 Terminal=false
 Icon=/usr/share/antergos/cnchi.png
 Type=Application
-Exec=sudo python /usr/share/cnchi/cnchi.py
+Exec=sudo -E /usr/share/cnchi/cnchi.py -dv
 Name=Cnchi
 GenericName=Cnchi
 Comment=Antergos Graphical Installer

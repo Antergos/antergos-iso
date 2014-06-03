@@ -1,6 +1,6 @@
 [Unit]
 Description=LiveMedia Config Script
-Before=systemd-user-sessions.service
+Before=systemd-user-sessions.service systemd-modules-load.service
 
 [Service]
 Type=oneshot
