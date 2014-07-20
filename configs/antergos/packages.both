@@ -15,7 +15,7 @@ gptfdisk
 parted
 gparted
 crda
-linux-headers
+#linux-headers
 
 
 # Cnchi Graphical Installer
@@ -138,3 +138,4 @@ nautilus
 # LightDM
 
 lightdm-webkit-theme-antergos
+gnome-shell-extension-lockscreen-lightdm

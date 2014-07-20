@@ -9,7 +9,7 @@ install_dir="arch"
 arch=$(uname -m)
 work_dir=work
 out_dir=out
-verbose=""
+verbose="-v"
 cmd_args=""
 keep_pacman_packages=""
 
@@ -208,15 +208,7 @@ make_customize_root_image() {
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -f enable pacman-init lightdm NetworkManager ModemManager livecd vboxservice || true' \
-            run
-        
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'dkms install vboxguest/4.3.12' \
-            run
-
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'pacman -Rdd linux-headers dkms --noconfirm' \
+            -r 'systemctl -fq enable pacman-init lightdm NetworkManager ModemManager livecd vboxservice' \
             run
 
         # Fix sudoers
@@ -245,7 +237,7 @@ make_customize_root_image() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 && true' \
             run
-            
+        sleep 2;
         rm ${work_dir}/root-image/usr/bin/set-gsettings
 
 	# Kill all the dbus processes so we can umount
@@ -257,7 +249,7 @@ make_customize_root_image() {
 
         # Always return true so build will continue even if mount is busy. (Arch bug)
 	echo "Umount /var/dbus"
-        umount -lf ${work_dir}/root-image/var/run/dbus || true
+        umount -Rlf ${work_dir}/root-image/var/run/dbus || true
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf        
