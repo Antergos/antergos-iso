@@ -1,10 +1,3 @@
-Antergos CLI Mode - \r (\l)
-[C]ommand [L]ine [I]nstaller
-
- username = root
-password = n/a
-
-To begin the installation -> Run Command = /arch/setup
-For GUI Installer -> Reboot and then select "Start Antergos Live" from the menu.
+Antergos LIVE ISO - \r (\l)
 
 ############################################
