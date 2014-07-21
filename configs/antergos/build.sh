@@ -222,35 +222,35 @@ make_customize_root_image() {
         sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
         
         # Gsettings changes
-        mkdir -p ${work_dir}/root-image/var/run/dbus
-        mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
+#        mkdir -p ${work_dir}/root-image/var/run/dbus
+#        mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
         cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
         chmod +x ${work_dir}/root-image/usr/bin/
 
         # Record the highest PID of dbus-launch so we can kill the process that will be spawned by gsettings.
-	pids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
-	echo "${pids}" > /tmp/whitelist
+#	pids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
+#	echo "${pids}" > /tmp/whitelist
 	#for line in "${pids[@]}"; do  started=("${started[@]}" "${line}"); done
 	#echo "dbus PIDs found: ${started}"
 
         # Set gsettings
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 && true' \
-            run
-        sleep 2;
-        rm ${work_dir}/root-image/usr/bin/set-gsettings
+#        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+#            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1' \
+#            run
+#        sleep 2;
+#        rm ${work_dir}/root-image/usr/bin/set-gsettings
 
 	# Kill all the dbus processes so we can umount
-	echo "Killing leftover dbus-launch processes"
-	newpids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
-	echo "${newpids}" > /tmp/greylist
-	grep -F -v -f /tmp/whitelist /tmp/greylist > /tmp/blacklist
-	pkill -SIGTERM -F /tmp/blacklist || true
+#	echo "Killing leftover dbus-launch processes"
+#	newpids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
+#	echo "${newpids}" > /tmp/greylist
+#	grep -F -v -f /tmp/whitelist /tmp/greylist > /tmp/blacklist
+#	pkill -SIGTERM -F /tmp/blacklist || true
 
         # Always return true so build will continue even if mount is busy. (Arch bug)
-	echo "Umount /var/dbus"
-        umount -Rlf ${work_dir}/root-image/var/run/dbus || true
-        
+#	echo "Umount /var/dbus"
+#        umount -Rlf ${work_dir}/root-image/var/run/dbus || true
+#        
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf        
 }

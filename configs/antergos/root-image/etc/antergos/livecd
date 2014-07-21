@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # From Manjaroiso to Antergos-iso
 
 source /etc/antergos/functions
@@ -23,10 +23,21 @@ echo ${LOCALE} > /home/antergos/.config/user-dirs.locale
 
 su -c "xdg-user-dirs-update" antergos
 
-# Randomly choose a default wallpaper from antergos-wallpapers
-DIR="/usr/share/antergos/wallpapers"
-PIC=$(ls ${DIR}/* | shuf -n1)
-
-su -c "dbus-launch gsettings set org.gnome.desktop.background picture-uri file://${PIC}" antergos
-depmod -a
 modprobe -a vboxguest vboxsf vboxvideo
+
+# Record the highest PID of dbus-launch so we can kill the process that will be spawned by gsettings.
+pids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
+echo "${pids}" > /tmp/whitelist
+
+# Set gsettings
+su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1
+sleep 2
+rm ${work_dir}/root-image/usr/bin/set-gsettings
+
+# Kill all the dbus processes so we can umount
+echo "Finalizing live session..."
+newpids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
+echo "${newpids}" > /tmp/greylist
+grep -F -v -f /tmp/whitelist /tmp/greylist > /tmp/blacklist
+pkill -SIGTERM -F /tmp/blacklist
+
