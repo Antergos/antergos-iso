@@ -151,8 +151,6 @@ make_efiboot() {
 
             cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
             cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
-            
-            cp ${work_dir}/iso/EFI/bg.bmp ${work_dir}/efiboot/EFI/
 
             umount -l ${work_dir}/efiboot
     fi
