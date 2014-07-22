@@ -1,9 +1,10 @@
 [Unit]
 Description=LiveMedia Config Script
-Before=systemd-user-sessions.service systemd-modules-load.service
+Before=systemd-user-sessions.service
 
 [Service]
 Type=oneshot
+User=root
 ExecStart=/etc/antergos/livecd
 
 [Install]

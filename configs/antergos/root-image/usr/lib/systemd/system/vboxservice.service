@@ -1,10 +1,10 @@
 [Unit]
 Description=VirtualBox Guest Service
 ConditionVirtualization=oracle
-After=systemd-modules-load.service
+After=systemd-modules-load.service livecd.service
 
 [Service]
-ExecStart=/usr/bin/VBoxService -f
+ExecStart=/usr/bin/VBoxService
 
 [Install]
 WantedBy=multi-user.target

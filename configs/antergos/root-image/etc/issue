@@ -1,3 +1,12 @@
-Antergos LIVE ISO - \r (\l)
+#################################################################
 
-############################################
+Antergos CLI Mode - \r (\l)
+[C]ommand [L]ine [I]nstaller
+ 
+	username = root
+	password = n/a
+ 
+To begin the installation -> Type "start"-> Press Enter
+For GUI Installer -> Reboot ->  Select "Start Antergos Live" from the menu.
+  
+#################################################################

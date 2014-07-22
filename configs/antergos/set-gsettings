@@ -1,19 +1,16 @@
 #!/bin/bash
 
-# Change default wallpaper
-dbus-launch --exit-with-session  gsettings set org.gnome.desktop.background picture-uri 'file:///usr/share/antergos/wallpapers/antergos-wallpaper.png'
-
 # Set favorite apps
 dbus-launch --exit-with-session  gsettings set org.gnome.shell favorite-apps "['Cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'empathy.desktop', 'xnoise.desktop']"
 
 # Disable screensaver
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.screensaver lock-enabled false
-dbus-launch --exit-with-session  gsettings set org.gnome.desktop.screensaver idle-activation-enabled false
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.lockdown disable-lock-screen true
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.session idle-delay 0
 
 # Enabled extensions
-dbus-launch --exit-with-session  gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com']"
+dbus-launch --exit-with-session  gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'lockscreen@dev.antergos.com']"
+
 
 # Set theme
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.interface gtk-theme 'Numix Frost Light'

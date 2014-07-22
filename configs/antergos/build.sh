@@ -106,10 +106,10 @@ make_efi() {
             cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/iso/loader/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/iso/loader/entries/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
-            cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/iso/EFI
 
             sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                 s|%INSTALL_DIR%|${install_dir}|g" ${script_path}/efiboot/loader/entries/archiso-x86_64-usb.conf > ${work_dir}/iso/loader/entries/archiso-x86_64.conf
+                 s|%INSTALL_DIR%|${install_dir}|g" \
+                 ${script_path}/efiboot/loader/entries/archiso-x86_64-usb.conf > ${work_dir}/iso/loader/entries/archiso-x86_64.conf
 
             # EFI Shell 2.0 for UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=UEFI_Shell )
             wget -O ${work_dir}/iso/EFI/shellx64_v2.efi https://edk2.svn.sourceforge.net/svnroot/edk2/trunk/edk2/ShellBinPkg/UefiShell/X64/Shell.efi
@@ -146,14 +146,15 @@ make_efiboot() {
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/efiboot/loader/entries/
 
             sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                 s|%INSTALL_DIR%|${install_dir}|g" ${script_path}/efiboot/loader/entries/archiso-x86_64-cd.conf > ${work_dir}/efiboot/loader/entries/archiso-x86_64.conf
+                 s|%INSTALL_DIR%|${install_dir}|g" \
+                 ${script_path}/efiboot/loader/entries/archiso-x86_64-cd.conf > ${work_dir}/efiboot/loader/entries/archiso-x86_64.conf
 
             cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
             cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
             
             cp ${work_dir}/iso/EFI/bg.bmp ${work_dir}/efiboot/EFI/
 
-            umount -fl ${work_dir}/efiboot
+            umount -l ${work_dir}/efiboot
     fi
 }
 
@@ -206,6 +207,13 @@ make_customize_root_image() {
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
+        
+        # Fix gnome keyring so it handles wifi passwords
+        echo "password        optional        pam_gnome_keyring.so" >> ${work_dir}/root-image/etc/pam.d/passwd
+        sed -i '/account/i\ auth       optional     pam_gnome_keyring.so' ${work_dir}/root-image/etc/pam.d/login
+        echo "session    optional     pam_gnome_keyring.so      auto_start" >> ${work_dir}/root-image/etc/pam.d/login
+        
+
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl -fq enable pacman-init lightdm NetworkManager ModemManager livecd vboxservice' \
@@ -221,35 +229,35 @@ make_customize_root_image() {
         # Configure powerpill
         sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
         
-        # Gsettings changes
-        mkdir -p ${work_dir}/root-image/var/run/dbus
-        mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
-        cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
-        chmod +x ${work_dir}/root-image/usr/bin/
+#        # Gsettings changes
+#        mkdir -p ${work_dir}/root-image/var/run/dbus
+#        mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
+#        cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
+#        chmod +x ${work_dir}/root-image/usr/bin/
 
         # Record the highest PID of dbus-launch so we can kill the process that will be spawned by gsettings.
-	pids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
-	echo "${pids}" > /tmp/whitelist
+#	pids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
+#	echo "${pids}" > /tmp/whitelist
 	#for line in "${pids[@]}"; do  started=("${started[@]}" "${line}"); done
 	#echo "dbus PIDs found: ${started}"
 
         # Set gsettings
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 && true' \
-            run
-        sleep 2;
-        rm ${work_dir}/root-image/usr/bin/set-gsettings
+#        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+#            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 && true' \
+#            run
+#        sleep 2;
+#        rm ${work_dir}/root-image/usr/bin/set-gsettings
 
 	# Kill all the dbus processes so we can umount
-	echo "Killing leftover dbus-launch processes"
-	newpids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
-	echo "${newpids}" > /tmp/greylist
-	grep -F -v -f /tmp/whitelist /tmp/greylist > /tmp/blacklist
-	pkill -SIGTERM -F /tmp/blacklist || true
+#	echo "Killing leftover dbus-launch processes"
+#	newpids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
+#	echo "${newpids}" > /tmp/greylist
+#	grep -F -v -f /tmp/whitelist /tmp/greylist > /tmp/blacklist
+#	pkill -SIGTERM -F /tmp/blacklist || true
 
         # Always return true so build will continue even if mount is busy. (Arch bug)
-	echo "Umount /var/dbus"
-        umount -Rlf ${work_dir}/root-image/var/run/dbus || true
+#	echo "Umount /var/dbus"
+#        umount -Rlf ${work_dir}/root-image/var/run/dbus || true
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf        
@@ -332,6 +340,7 @@ make_common_single() {
     run_once make_usr_share
     run_once make_prepare
     run_once make_iso
+    exit 0;
 }
 
 _usage ()
