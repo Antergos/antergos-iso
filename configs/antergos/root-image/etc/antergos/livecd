@@ -29,5 +29,5 @@ ln -s /arch/setup /usr/bin/start
 
 su -c "/arch/set-gsettings" antergos > /dev/null 2>&1
 sleep 4;
-
+echo "LiveCD Configuration Complete"
 exit 0;

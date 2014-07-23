@@ -1,6 +1,7 @@
 [Unit]
 Description=VirtualBox Guest Service
 ConditionVirtualization=oracle
+Requires=systemd-modules-load.service
 After=systemd-modules-load.service livecd.service
 
 [Service]
