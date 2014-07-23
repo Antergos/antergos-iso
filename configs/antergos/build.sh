@@ -206,10 +206,10 @@ make_customize_root_image() {
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
         sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
         
-        # Fix gnome keyring so it handles wifi passwords
-        echo "password        optional        pam_gnome_keyring.so" >> ${work_dir}/root-image/etc/pam.d/passwd
-        sed -i '/account/i\ auth       optional     pam_gnome_keyring.so' ${work_dir}/root-image/etc/pam.d/login
-        echo "session    optional     pam_gnome_keyring.so      auto_start" >> ${work_dir}/root-image/etc/pam.d/login
+#        # Fix gnome keyring so it handles wifi passwords
+#        echo "password        optional        pam_gnome_keyring.so" >> ${work_dir}/root-image/etc/pam.d/passwd
+#        sed -i '/account/i\auth       optional     pam_gnome_keyring.so' ${work_dir}/root-image/etc/pam.d/login
+#        echo "session    optional     pam_gnome_keyring.so      auto_start" >> ${work_dir}/root-image/etc/pam.d/login
         
 
 
