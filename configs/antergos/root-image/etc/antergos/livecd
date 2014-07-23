@@ -71,7 +71,5 @@ set_gsettings() {
 
 ln -s /arch/setup /usr/bin/start
 
-sudo -u  antergos set_gsettings > /home/antergos/.cache/set-gsettings.log 2>&1
-sleep 1;
 echo "LiveCD Configuration Complete"
 exit 0;

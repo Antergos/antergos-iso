@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+set_settings() {
+
 # Change keyboard layaout
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.input-sources sources "[('xkb','us')]"
 
@@ -41,4 +44,9 @@ dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripher
 dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad touchpad-enabled true
 dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad scroll-method 'two-finger-scrolling'
 
+}
+
+echo "Running set-gsettings..."
+sudo -u  antergos set_settings > /tmp/set-gsettings.log 2>&1
+echo "set-gsettings completed."
 exit 0;
