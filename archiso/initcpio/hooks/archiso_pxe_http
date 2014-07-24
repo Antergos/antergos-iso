@@ -51,7 +51,7 @@ archiso_pxe_http_mount_handler () {
     done < "${_aitab_file}"
 
     if [[ "${checksum}" == "y" ]]; then
-        _curl_get "${archiso_http_srv}${archisobasedir}/checksum.${arch}.md5" "/"
+        _curl_get "${archiso_http_srv}${archisobasedir}/root-image.md5" "/"
     fi
 
     mkdir -p "/run/archiso/bootmnt"

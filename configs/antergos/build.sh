@@ -12,7 +12,7 @@ out_dir=out
 verbose="-v"
 cmd_args=""
 keep_pacman_packages=""
-
+pacman_conf=${work_dir}/pacman.conf
 script_path=$(readlink -f ${0%/*})
 
 setup_workdir() {
@@ -27,7 +27,7 @@ setup_workdir() {
 # Base installation (root-image)
 make_basefs() {
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "memtest86+ mkinitcpio-nfs-utils nbd" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "memtest86+ nbd" install
 }
 
 # Additional packages (root-image)
@@ -111,10 +111,10 @@ make_efi() {
                  s|%INSTALL_DIR%|${install_dir}|g" \
                  ${script_path}/efiboot/loader/entries/archiso-x86_64-usb.conf > ${work_dir}/iso/loader/entries/archiso-x86_64.conf
 
-            # EFI Shell 2.0 for UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=UEFI_Shell )
-            wget -O ${work_dir}/iso/EFI/shellx64_v2.efi https://edk2.svn.sourceforge.net/svnroot/edk2/trunk/edk2/ShellBinPkg/UefiShell/X64/Shell.efi
-            # EFI Shell 1.0 for non UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=Efi-shell )
-            wget -O ${work_dir}/iso/EFI/shellx64_v1.efi https://edk2.svn.sourceforge.net/svnroot/edk2/trunk/edk2/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
+           # EFI Shell 2.0 for UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=UEFI_Shell )
+           curl -o ${work_dir}/iso/EFI/shellx64_v2.efi https://svn.code.sf.net/p/edk2/code/trunk/edk2/ShellBinPkg/UefiShell/X64/Shell.efi
+           # EFI Shell 1.0 for non UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=Efi-shell )
+           curl -o ${work_dir}/iso/EFI/shellx64_v1.efi https://svn.code.sf.net/p/edk2/code/trunk/edk2/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
 
         fi
 }
@@ -186,7 +186,7 @@ make_customize_root_image() {
 	
 	echo "Adding antergos user"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'useradd -p U6aMy0wojraho -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
+            -r 'useradd -p "" -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
             run
 
         # Configuring pacman
@@ -227,35 +227,35 @@ make_customize_root_image() {
         # Configure powerpill
         sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
         
-#        # Gsettings changes
-#        mkdir -p ${work_dir}/root-image/var/run/dbus
-#        mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
-#        cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
-#        chmod +x ${work_dir}/root-image/usr/bin/
+        # Gsettings changes
+        mkdir -p ${work_dir}/root-image/var/run/dbus
+        mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
+        cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
+        chmod +x ${work_dir}/root-image/usr/bin/set-gsettings
 
         # Record the highest PID of dbus-launch so we can kill the process that will be spawned by gsettings.
-#	pids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
-#	echo "${pids}" > /tmp/whitelist
+	pids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
+	echo "${pids}" > /tmp/whitelist
 	#for line in "${pids[@]}"; do  started=("${started[@]}" "${line}"); done
 	#echo "dbus PIDs found: ${started}"
 
         # Set gsettings
-#        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-#            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 && true' \
-#            run
-#        sleep 2;
-#        rm ${work_dir}/root-image/usr/bin/set-gsettings
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'su  -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1' \
+            run
+        sleep 2;
+#       rm ${work_dir}/root-image/usr/bin/set-gsettings
 
 	# Kill all the dbus processes so we can umount
-#	echo "Killing leftover dbus-launch processes"
-#	newpids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
-#	echo "${newpids}" > /tmp/greylist
-#	grep -F -v -f /tmp/whitelist /tmp/greylist > /tmp/blacklist
-#	pkill -SIGTERM -F /tmp/blacklist || true
+	echo "Killing leftover dbus-launch processes"
+	newpids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
+	echo "${newpids}" > /tmp/greylist
+	grep -F -v -f /tmp/whitelist /tmp/greylist > /tmp/blacklist
+	pkill -SIGTERM -F /tmp/blacklist
 
         # Always return true so build will continue even if mount is busy. (Arch bug)
-#	echo "Umount /var/dbus"
-#        umount -Rlf ${work_dir}/root-image/var/run/dbus || true
+	echo "Umount /var/dbus"
+        umount -Rl ${work_dir}/root-image/var/run/dbus
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf        
@@ -282,12 +282,12 @@ make_aitab() {
     fi
 }
 
-# Build all filesystem images specified in aitab (.fs .fs.sfs .sfs)
+# Build a single root filesystem
 make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
 
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" $keep_pacman_packages pkglist
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" $keep_pacman_packages prepare
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  pkglist
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  prepare
 
     #rm -rf ${work_dir}/root-image (Always fails and exits the whole build process)
     #rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
@@ -295,7 +295,7 @@ make_prepare() {
 
 # Build ISO
 make_iso() {
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" checksum
+    #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" checksum
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${iso_name}-${iso_version}-${arch}.iso"
 }
 
@@ -333,9 +333,9 @@ make_common_single() {
     run_once make_isolinux
     run_once make_efi
     run_once make_efiboot
-    run_once make_aitab
-    run_once make_usr_lib_modules
-    run_once make_usr_share
+    #run_once make_aitab
+    #run_once make_usr_lib_modules
+    #run_once make_usr_share
     run_once make_prepare
     run_once make_iso
     exit 0;
@@ -407,7 +407,7 @@ while getopts 'N:V:L:D:w:o:zvh' arg; do
             cmd_args+=" -o ${out_dir}"
             ;;
         z)
-            keep_pacman_packages="-z"
+            keep_pacman_packages="y"
             echo "Will keep pacman cache"
             ;;
         v)
