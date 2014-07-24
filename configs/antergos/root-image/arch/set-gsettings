@@ -47,6 +47,6 @@ dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripher
 }
 
 echo "Running set-gsettings..."
-sudo -u  antergos set_settings > /tmp/set-gsettings.log 2>&1
+set_settings > /tmp/set-gsettings.log 2>&1
 echo "set-gsettings completed."
 exit 0;

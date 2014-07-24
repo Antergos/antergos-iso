@@ -1,8 +1,6 @@
 [Unit]
 Description=LiveMedia Config Script
 Before=systemd-user-sessions.service systemd-modules-load.service vboxservice.service
-Requires=dbus.service
-After=dbus.service
 
 [Service]
 Type=oneshot
