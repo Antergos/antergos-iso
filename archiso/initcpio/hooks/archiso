@@ -178,7 +178,7 @@ archiso_mount_handler() {
     fi
     mkdir -p "/run/archiso/cowspace/${cow_directory}"
 
-    _mnt_sfs "/run/archiso/bootmnt/${archisobasedir}/root-image.sfs" "/run/archiso/sfs/airootfs"
+    _mnt_sfs "/run/archiso/bootmnt/${archisobasedir}/root-image.sfs" "/run/archiso/sfs/root-image"
     _mnt_fs "/run/archiso/sfs/root-image/root-image.img" "${newroot}" "/"
 
     if [[ "${copytoram}" == "y" ]]; then
