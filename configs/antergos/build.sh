@@ -38,7 +38,7 @@ make_packages() {
 # Copy mkinitcpio archiso hooks (root-image)
 make_setup_mkinitcpio() {
     local _hook
-    for _hook in archiso archiso_shutdown archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_loop_mnt; do
+    for _hook in archiso archiso_shutdown archiso_loop_mnt; do
         cp /usr/lib/initcpio/hooks/${_hook} ${work_dir}/root-image/usr/lib/initcpio/hooks
         cp /usr/lib/initcpio/install/${_hook} ${work_dir}/root-image/usr/lib/initcpio/install
     done
