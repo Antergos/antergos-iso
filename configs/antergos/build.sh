@@ -166,7 +166,8 @@ make_customize_root_image() {
         mkdir -p ${work_dir}/root-image/etc/pacman.d
         wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
         sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
-
+        mkdir -p ${work_dir}/root-image/var/run/dbus
+        mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
         # Download opendesktop-fonts
         wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
         
@@ -228,8 +229,6 @@ make_customize_root_image() {
         sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
         
         # Gsettings changes
-        mkdir -p ${work_dir}/root-image/var/run/dbus
-        mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
         cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
         chmod +x ${work_dir}/root-image/usr/bin/set-gsettings
 
