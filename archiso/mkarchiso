@@ -386,11 +386,11 @@ _mkrootfs () {
     mkfs.ext4 ${_qflag} -O ^has_journal -E lazy_itable_init=0 -m 0 -F "${work_dir}/root-image.img"
     tune2fs -c 0 -i 0 "${work_dir}/root-image.img" &> /dev/null
     _msg_info "Done!"
-    _mount_airootfs
+    _mount_rootfs
     _msg_info "Copying '${work_dir}/root-image/' to '${work_dir}/mnt/root-image/'..."
     cp -aT "${work_dir}/root-image/" "${work_dir}/mnt/root-image/"
     _msg_info "Done!"
-    _umount_root-image
+    _umount_rootfs
     mkdir -p "${work_dir}/iso/${install_dir}"
     _msg_info "Creating SquashFS image, this may take some time..."
     if [[ "${quiet}" = "y" ]]; then
@@ -491,7 +491,6 @@ command_iso () {
 # create root-image.sfs filesystem, and push it in "iso" directory.
 command_prepare () {
     _show_config prepare
-
     _cleanup
   _mkrootfs
     _mkchecksum
