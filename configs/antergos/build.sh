@@ -254,7 +254,7 @@ make_customize_root_image() {
 
         # Always return true so build will continue even if mount is busy. (Arch bug)
 	echo "Umount /var/run/dbus"
-        umount -Rl ${work_dir}/root-image/var/run/dbus >/dev/null 2>&1
+        umount -Rl ${work_dir}/root-image/var/run/dbus 2>/dev/null || true
         
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf        
