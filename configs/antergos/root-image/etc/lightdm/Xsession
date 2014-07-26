@@ -1,0 +1,101 @@
+#!/bin/sh
+#
+# LightDM wrapper to run around X sessions.
+
+echo "Running X session wrapper"
+
+# Load profile
+for file in "/etc/profile" "$HOME/.profile" "/etc/xprofile" "$HOME/.xprofile"; do
+    if [ -f "$file" ]; then
+        echo "Loading profile from $file";
+        . "$file"
+    fi
+done
+
+# Load resources
+for file in "/etc/X11/Xresources" "$HOME/.Xresources"; do
+    if [ -f "$file" ]; then
+        echo "Loading resource: $file"
+        xrdb -nocpp -merge "$file"
+    fi
+done
+
+# Load keymaps
+for file in "/etc/X11/Xkbmap" "$HOME/.Xkbmap"; do
+    if [ -f "$file" ]; then
+        echo "Loading keymap: $file"
+        setxkbmap `cat "$file"`
+        XKB_IN_USE=yes
+    fi
+done
+
+# Load xmodmap if not using XKB
+if [ -z "$XKB_IN_USE" ]; then
+    for file in "/etc/X11/Xmodmap" "$HOME/.Xmodmap"; do
+        if [ -f "$file" ]; then
+           echo "Loading modmap: $file"
+           xmodmap "$file"
+        fi
+    done
+fi
+
+unset XKB_IN_USE
+
+# Run all system xinitrc shell scripts.
+xinitdir="/etc/X11/xinit/xinitrc.d"
+if [ -d "$xinitdir" ]; then
+    for script in $xinitdir/*; do
+        echo "Loading xinit script $script"
+        if [ -x "$script" -a ! -d "$script" ]; then
+            . "$script"
+        fi
+    done
+fi
+
+# Make sure dbus is available then set gsettings
+export $(dbus-launch)
+
+# Change keyboard layaout
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.input-sources sources "[('xkb','us')]"
+
+# Randomly choose a default wallpaper from antergos-wallpapers
+DIR="/usr/share/antergos/wallpapers"
+PIC=$(ls ${DIR}/* | shuf -n1)
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.background picture-uri file://${PIC}
+
+# Set favorite apps
+dbus-launch --exit-with-session gsettings set org.gnome.shell favorite-apps "['Cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'empathy.desktop', 'xnoise.desktop']"
+
+# Disable screensaver
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.screensaver lock-enabled false
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.lockdown disable-lock-screen true
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.session idle-delay 0
+
+# Enabled extensions
+dbus-launch --exit-with-session gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'lockscreen@dev.antergos.com']"
+
+# Set theme
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface gtk-theme 'Numix Frost Light'
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences theme 'Numix Frost Light'
+dbus-launch --exit-with-session gsettings set org.gnome.shell.extensions.user-theme name "Numix Frost Light"
+
+# Set icon theme
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface icon-theme 'Numix-Square'
+
+# Not show desktop icons
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.background show-desktop-icons false
+
+# Minimize and close buttons
+dbus-launch --exit-with-session gsettings set org.gnome.shell.overrides button-layout 'menu:minimize,maximize,close'
+
+# Disable terminal bell
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences audible-bell false
+
+# Configure touchpad
+dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad tap-to-click true
+dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad touchpad-enabled true
+dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad scroll-method 'two-finger-scrolling'
+
+echo "X session wrapper complete, running session $@"
+
+exec $@
