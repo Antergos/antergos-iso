@@ -239,7 +239,7 @@ make_customize_root_image() {
         # Gsettings changes
         cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
         chmod +x ${work_dir}/root-image/usr/bin/set-gsettings
-        chmod +x /etc/lightdm/Xsession
+        chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
 
         # Record the highest PID of dbus-launch so we can kill the process that will be spawned by gsettings.
 #	pids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
