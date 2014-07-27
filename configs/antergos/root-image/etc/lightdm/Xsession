@@ -53,8 +53,9 @@ if [ -d "$xinitdir" ]; then
 fi
 
 # Make sure dbus is available then set gsettings
-export $(dbus-launch)
+export DISPLAY=:0
 
+set_gsettings() {
 # Change keyboard layaout
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.input-sources sources "[('xkb','us')]"
 
@@ -95,6 +96,11 @@ dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences a
 dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad tap-to-click true
 dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad touchpad-enabled true
 dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad scroll-method 'two-finger-scrolling'
+}
+
+echo "Running set-gsettings..."
+set_gsettings
+echo "set-gsettings complete"
 
 echo "X session wrapper complete, running session $@"
 
