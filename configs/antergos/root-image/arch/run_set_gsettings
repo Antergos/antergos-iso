@@ -1,4 +1,0 @@
-#!/bin/bash
-
-chmod +x /arch/set-gsettings
-sudo -u antergos /arch/set-gsettings && exit 0;

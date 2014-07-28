@@ -96,6 +96,11 @@ dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences a
 dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad tap-to-click true
 dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad touchpad-enabled true
 dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripherals.touchpad scroll-method 'two-finger-scrolling'
+
+# Set fonts
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface font-name 'Lato 11'
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Lato Bold 12'
+dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
 }
 
 echo "Running set-gsettings..."

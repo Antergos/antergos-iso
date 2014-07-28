@@ -236,9 +236,9 @@ make_customize_root_image() {
         # Configure powerpill
         sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
         
-        # Gsettings changes
-        cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
-        chmod +x ${work_dir}/root-image/usr/bin/set-gsettings
+#        # Gsettings changes
+#        cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
+#        chmod +x ${work_dir}/root-image/usr/bin/set-gsettings
         chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
 
         # Record the highest PID of dbus-launch so we can kill the process that will be spawned by gsettings.
