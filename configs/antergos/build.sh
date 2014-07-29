@@ -195,7 +195,7 @@ make_customize_root_image() {
            run
         
         
-        echo "U6aMy0wojraho:antergos" | chpasswd -R ${work_dir}/root-image
+        echo "U6aMy0wojraho:antergos" | chpasswd -R ${work_dir}/root-image/etc
 
         # Configuring pacman
 	echo "Configuring Pacman"
