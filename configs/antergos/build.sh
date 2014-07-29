@@ -194,9 +194,8 @@ make_customize_root_image() {
            -r 'passwd -d antergos' \
            run
         
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-           -r 'chpasswd U6aMy0wojraho:antergos' \
-           run
+        
+        echo "U6aMy0wojraho:antergos" | chpasswd -R ${work_dir}/root-image
 
         # Configuring pacman
 	echo "Configuring Pacman"
