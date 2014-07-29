@@ -12,7 +12,7 @@ out_dir=out
 verbose="-v"
 cmd_args=""
 keep_pacman_packages=""
-
+pacman_conf=${work_dir}/pacman.conf
 script_path=$(readlink -f ${0%/*})
 
 setup_workdir() {
@@ -27,7 +27,7 @@ setup_workdir() {
 # Base installation (root-image)
 make_basefs() {
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "memtest86+ mkinitcpio-nfs-utils nbd" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "memtest86+ nbd" install
 }
 
 # Additional packages (root-image)
@@ -38,7 +38,7 @@ make_packages() {
 # Copy mkinitcpio archiso hooks (root-image)
 make_setup_mkinitcpio() {
     local _hook
-    for _hook in archiso archiso_shutdown archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_loop_mnt; do
+    for _hook in archiso archiso_shutdown archiso_loop_mnt; do
         cp /usr/lib/initcpio/hooks/${_hook} ${work_dir}/root-image/usr/lib/initcpio/hooks
         cp /usr/lib/initcpio/install/${_hook} ${work_dir}/root-image/usr/lib/initcpio/install
     done
@@ -111,10 +111,10 @@ make_efi() {
                  s|%INSTALL_DIR%|${install_dir}|g" \
                  ${script_path}/efiboot/loader/entries/archiso-x86_64-usb.conf > ${work_dir}/iso/loader/entries/archiso-x86_64.conf
 
-            # EFI Shell 2.0 for UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=UEFI_Shell )
-            wget -O ${work_dir}/iso/EFI/shellx64_v2.efi https://edk2.svn.sourceforge.net/svnroot/edk2/trunk/edk2/ShellBinPkg/UefiShell/X64/Shell.efi
-            # EFI Shell 1.0 for non UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=Efi-shell )
-            wget -O ${work_dir}/iso/EFI/shellx64_v1.efi https://edk2.svn.sourceforge.net/svnroot/edk2/trunk/edk2/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
+           # EFI Shell 2.0 for UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=UEFI_Shell )
+           curl -o ${work_dir}/iso/EFI/shellx64_v2.efi https://svn.code.sf.net/p/edk2/code/trunk/edk2/ShellBinPkg/UefiShell/X64/Shell.efi
+           # EFI Shell 1.0 for non UEFI 2.3+ ( http://sourceforge.net/apps/mediawiki/tianocore/index.php?title=Efi-shell )
+           curl -o ${work_dir}/iso/EFI/shellx64_v1.efi https://svn.code.sf.net/p/edk2/code/trunk/edk2/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
 
         fi
 }
@@ -159,106 +159,105 @@ make_efiboot() {
 
 # Customize installation (root-image)
 make_customize_root_image() {
-        cp -af ${script_path}/root-image ${work_dir}
-        ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
-        chmod 750 ${work_dir}/root-image/etc/sudoers.d
-        chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
-        mkdir -p ${work_dir}/root-image/etc/pacman.d
-        wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
-        sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
-
-        # Download opendesktop-fonts
-        wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
+	part_one() {
+        	cp -af ${script_path}/root-image ${work_dir}
+        	ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
+        	chmod 750 ${work_dir}/root-image/etc/sudoers.d
+        	chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
+        	mkdir -p ${work_dir}/root-image/etc/pacman.d
+        	wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
+        	sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
+        	mkdir -p ${work_dir}/root-image/var/run/dbus
+        	mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
+        	# Download opendesktop-fonts
+        	wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
+        	touch /var/tmp/one
+        }
         
-	if [[ ! -f ${work_dir}/root-image/tmp/local-generated ]]; then
+        part_two() {
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/locale-gen' \
             	run
 		mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/localectl set-locale "LANG=en_US.UTF-8" ' \
-            	run && touch ${work_dir}/root-image/tmp/local-generated
-	fi
+            	run
+            	touch /var/tmp/two 
+        }
 	
-	echo "Adding autologin group"
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'groupadd -r autologin' \
-            run
+	part_three() {
+		echo "Adding autologin group"
+        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'groupadd -r autologin' \
+            	run
 	
-	echo "Adding antergos user"
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'useradd -p U6aMy0wojraho -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
-            run
-
-        # Configuring pacman
-	echo "Configuring Pacman"
-        cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
-        sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
-        sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${work_dir}/root-image/etc/pacman.conf
-        if [[ ${arch} == 'x86_64' ]]; then
-            echo '' >> ${work_dir}/root-image/etc/pacman.conf
-            echo '[multilib]' >> ${work_dir}/root-image/etc/pacman.conf
-            echo 'SigLevel = PackageRequired' >> ${work_dir}/root-image/etc/pacman.conf
-            echo 'Include = /etc/pacman.d/mirrorlist' >> ${work_dir}/root-image/etc/pacman.conf
-        fi
-
-        sed -i 's/#\(Storage=\)auto/\1volatile/' ${work_dir}/root-image/etc/systemd/journald.conf
-        sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
-        sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
-        sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
+		echo "Adding antergos user"
+        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
+            	run
         
-        # Fix gnome keyring so it handles wifi passwords
-        echo "password        optional        pam_gnome_keyring.so" >> ${work_dir}/root-image/etc/pam.d/passwd
-        sed -i '/account/i\ auth       optional     pam_gnome_keyring.so' ${work_dir}/root-image/etc/pam.d/login
-        echo "session    optional     pam_gnome_keyring.so      auto_start" >> ${work_dir}/root-image/etc/pam.d/login
+        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+           	-r 'passwd -d antergos' \
+           	run
         
-
-
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -fq enable pacman-init lightdm NetworkManager ModemManager livecd vboxservice' \
-            run
-
-        # Fix sudoers
-        chown -R root:root ${work_dir}/root-image/etc/
-        chmod 660 ${work_dir}/root-image/etc/sudoers
-
-        # Fix QT apps
-        echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${work_dir}/root-image/etc/bash.bashrc
-
-        # Configure powerpill
-        sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
+        	echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
+        	touch /var/tmp/three
+        }
         
-#        # Gsettings changes
-#        mkdir -p ${work_dir}/root-image/var/run/dbus
-#        mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
-#        cp ${script_path}/set-gsettings ${work_dir}/root-image/usr/bin/
-#        chmod +x ${work_dir}/root-image/usr/bin/
+        part_four() {
 
-        # Record the highest PID of dbus-launch so we can kill the process that will be spawned by gsettings.
-#	pids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
-#	echo "${pids}" > /tmp/whitelist
-	#for line in "${pids[@]}"; do  started=("${started[@]}" "${line}"); done
-	#echo "dbus PIDs found: ${started}"
+        	# Configuring pacman
+		echo "Configuring Pacman"
+        	cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
+        	sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
+        	sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${work_dir}/root-image/etc/pacman.conf
+        	if [[ ${arch} == 'x86_64' ]]; then
+            		echo '' >> ${work_dir}/root-image/etc/pacman.conf
+            		echo '[multilib]' >> ${work_dir}/root-image/etc/pacman.conf
+            		echo 'SigLevel = PackageRequired' >> ${work_dir}/root-image/etc/pacman.conf
+            		echo 'Include = /etc/pacman.d/mirrorlist' >> ${work_dir}/root-image/etc/pacman.conf
+        	fi
 
-        # Set gsettings
-#        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-#            -r 'su -c "/usr/bin/set-gsettings" antergos >/dev/null 2>&1 && true' \
-#            run
-#        sleep 2;
-#        rm ${work_dir}/root-image/usr/bin/set-gsettings
-
-	# Kill all the dbus processes so we can umount
-#	echo "Killing leftover dbus-launch processes"
-#	newpids=$(ps -ef | grep "dbus-launch" | awk '{print $2}')
-#	echo "${newpids}" > /tmp/greylist
-#	grep -F -v -f /tmp/whitelist /tmp/greylist > /tmp/blacklist
-#	pkill -SIGTERM -F /tmp/blacklist || true
-
-        # Always return true so build will continue even if mount is busy. (Arch bug)
-#	echo "Umount /var/dbus"
-#        umount -Rlf ${work_dir}/root-image/var/run/dbus || true
+        	sed -i 's/#\(Storage=\)auto/\1volatile/' ${work_dir}/root-image/etc/systemd/journald.conf
+        	sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
+        	sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
+        	sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
+        	touch /var/tmp/four
+        }
         
-        # Black list floppy
-        echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf        
+        part_five() {
+        
+        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'systemctl -fq enable pacman-init lightdm NetworkManager ModemManager livecd vboxservice' \
+            	run
+
+        	# Fix sudoers
+        	chown -R root:root ${work_dir}/root-image/etc/
+        	chmod 660 ${work_dir}/root-image/etc/sudoers
+
+        	# Fix QT apps
+        	echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${work_dir}/root-image/etc/bash.bashrc
+
+        	# Configure powerpill
+        	sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
+        	chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
+
+        	# Always return true so build will continue even if mount is busy. (Arch bug)
+		echo "Umount /var/run/dbus"
+        	umount -Rl ${work_dir}/root-image/var/run/dbus 2>/dev/null || true
+        
+        	# Black list floppy
+        	echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
+        	touch /var/tmp/five
+        }
+        
+        parts=(one two three four five)
+        
+        for part in ${parts[*]}
+        do
+        	if [[ ! -f /var/tmp/${part}; then
+        		part_${part}
+        	fi
+        done
 }
 
 # Split out /usr/lib/modules from root-image (makes more "dual-iso" friendly)
@@ -282,12 +281,12 @@ make_aitab() {
     fi
 }
 
-# Build all filesystem images specified in aitab (.fs .fs.sfs .sfs)
+# Build a single root filesystem
 make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
 
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" $keep_pacman_packages pkglist
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}" $keep_pacman_packages prepare
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  pkglist
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  prepare
 
     #rm -rf ${work_dir}/root-image (Always fails and exits the whole build process)
     #rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
@@ -295,7 +294,7 @@ make_prepare() {
 
 # Build ISO
 make_iso() {
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" checksum
+    #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" checksum
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${iso_name}-${iso_version}-${arch}.iso"
 }
 
@@ -333,9 +332,9 @@ make_common_single() {
     run_once make_isolinux
     run_once make_efi
     run_once make_efiboot
-    run_once make_aitab
-    run_once make_usr_lib_modules
-    run_once make_usr_share
+    #run_once make_aitab
+    #run_once make_usr_lib_modules
+    #run_once make_usr_share
     run_once make_prepare
     run_once make_iso
     exit 0;
@@ -407,7 +406,7 @@ while getopts 'N:V:L:D:w:o:zvh' arg; do
             cmd_args+=" -o ${out_dir}"
             ;;
         z)
-            keep_pacman_packages="-z"
+            keep_pacman_packages="y"
             echo "Will keep pacman cache"
             ;;
         v)

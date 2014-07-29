@@ -1,11 +1,13 @@
 #!/bin/bash
 
 build() {
-    add_module "nfs"
+    #add_module "nfs"
 
-    add_runscript
+    #add_runscript
 
-    add_binary /usr/lib/initcpio/nfsmount /bin/nfsmount
+    #add_binary /usr/lib/initcpio/nfsmount /bin/nfsmount
+    
+    exit 0;
 }
 
 help() {

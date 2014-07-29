@@ -4,5 +4,3 @@
 # Syntax: simple "KEY=VAL" pairs on separate lines
 #
 
-# Work-around for GNOME 3.12 Keyring bug
-GNOME_KEYRING_CONTROL=$XDG_RUNTIME_DIR/keyring

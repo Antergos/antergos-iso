@@ -95,7 +95,7 @@ _mnt_dev() {
 _verify_checksum() {
     local _status
     cd "/run/archiso/bootmnt/${archisobasedir}"
-    md5sum -c checksum.${arch}.md5 > /tmp/checksum.${arch}.log 2>&1
+    md5sum -c root-image.md5 > /tmp/checksum.log 2>&1
     _status=$?
     cd "${OLDPWD}"
     return ${_status}
@@ -114,12 +114,7 @@ run_hook() {
         cowfile_size=${cowfile_size/%}
     fi
 
-    if [[ -z "${aitab}" ]]; then
-        aitab="/run/archiso/bootmnt/${archisobasedir}/aitab"
-    else
-        aitab="/run/archiso/bootmnt/${archisobasedir}/${aitab}"
-    fi
-
+    
     if [[ -n "${cow_label}" ]]; then
         cow_device="/dev/disk/by-label/${cow_label}"
         [[ -z "${cow_persistent}" ]] && cow_persistent="P"
@@ -149,25 +144,19 @@ archiso_mount_handler() {
     fi
 
 
-    if [[ ! -f "${aitab}" ]]; then
-        echo "ERROR: '${aitab}' file does not exist."
-        echo "   Falling back to interactive prompt"
-        echo "   You can try to fix the problem manually, log out when you are finished"
-        launch_interactive_shell
-    fi
-
+   
     if [[ "${checksum}" == "y" ]]; then
-        if [[ -f "/run/archiso/bootmnt/${archisobasedir}/checksum.${arch}.md5" ]]; then
+        if [[ -f "/run/archiso/bootmnt/${archisobasedir}/root-image.md5" ]]; then
             msg -n ":: Self-test requested, please wait..."
             if _verify_checksum; then
                 msg "done. Checksum is OK, continue booting."
             else
                 echo "ERROR: one or more files are corrupted"
-                echo "see /tmp/checksum.${arch}.log for details"
+                echo "see /tmp/checksum.log for details"
                 launch_interactive_shell
             fi
         else
-            echo "ERROR: checksum=y option specified but checksum.${arch}.md5 not found"
+            echo "ERROR: checksum=y option specified but ${archisobasedir}/root-image.md5 not found"
             launch_interactive_shell
         fi
     fi
@@ -189,17 +178,8 @@ archiso_mount_handler() {
     fi
     mkdir -p "/run/archiso/cowspace/${cow_directory}"
 
-    local aitab_img aitab_mnt aitab_arch aitab_sfs_comp aitab_fs_type aitab_fs_size
-    while read aitab_img aitab_mnt aitab_arch aitab_sfs_comp aitab_fs_type aitab_fs_size; do
-        [[ "${aitab_img#\#}" != "${aitab_img}" ]] && continue
-        [[ "${aitab_arch}" != "any" && "${aitab_arch}" != "${arch}" ]] && continue
-        if [[ "${aitab_fs_type}" != "none" ]]; then
-            _mnt_sfs "/run/archiso/bootmnt/${archisobasedir}/${aitab_arch}/${aitab_img}.fs.sfs" "/run/archiso/sfs/${aitab_img}"
-            _mnt_fs "/run/archiso/sfs/${aitab_img}/${aitab_img}.fs" "${newroot}" "${aitab_mnt}"
-        else
-            _mnt_sfs "/run/archiso/bootmnt/${archisobasedir}/${aitab_arch}/${aitab_img}.sfs" "${newroot}${aitab_mnt}"
-        fi
-    done < "${aitab}"
+    _mnt_sfs "/run/archiso/bootmnt/${archisobasedir}/root-image.sfs" "/run/archiso/sfs/root-image"
+    _mnt_fs "/run/archiso/sfs/root-image/root-image.img" "${newroot}" "/"
 
     if [[ "${copytoram}" == "y" ]]; then
         umount /run/archiso/bootmnt
