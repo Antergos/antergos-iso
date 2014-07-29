@@ -195,7 +195,7 @@ make_customize_root_image() {
            run
         
         
-        echo "U6aMy0wojraho:antergos" | chpasswd -R /antergos-iso/configs/antergos/work/root-image/
+        echo "U6aMy0wojraho:antergos" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
 
         # Configuring pacman
 	echo "Configuring Pacman"
