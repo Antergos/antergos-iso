@@ -180,15 +180,15 @@ make_customize_root_image() {
             	run && touch ${work_dir}/root-image/tmp/local-generated
 	fi
 	
-	echo "Adding autologin group"
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'groupadd -r autologin' \
-            run
-	
-	echo "Adding antergos user"
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
-            run
+#	echo "Adding autologin group"
+#        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+#            -r 'groupadd -r autologin' \
+#            run
+#	
+#	echo "Adding antergos user"
+#        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+#            -r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
+#            run
         
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
            -r 'passwd -d antergos' \
