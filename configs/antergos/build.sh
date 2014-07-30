@@ -254,7 +254,7 @@ make_customize_root_image() {
         
         for part in ${parts[*]}
         do
-        	if [[ ! -f /var/tmp/${part}; then
+        	if [[ ! -f /var/tmp/${part} ]]; then
         		part_${part}
         	fi
         done
