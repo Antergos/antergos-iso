@@ -180,7 +180,7 @@ make_customize_root_image() {
             	run
 		mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/localectl set-locale "LANG=en_US.UTF-8" ' \
-            	run
+            	run || true
             	touch /var/tmp/two 
         }
 	
