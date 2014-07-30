@@ -106,7 +106,7 @@ dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.plugins.
 echo "Running set-gsettings..."
 set_gsettings
 echo "set-gsettings complete"
-
+gnome-keyring-daemon -rd
 echo "X session wrapper complete, running session $@"
 
 exec $@
