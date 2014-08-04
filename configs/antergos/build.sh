@@ -251,7 +251,7 @@ make_customize_root_image() {
         }
         
         parts=(one two three four five)
-        
+        touch /var/tmp/three
         for part in ${parts[*]}
         do
         	if [[ ! -f /var/tmp/${part} ]]; then
