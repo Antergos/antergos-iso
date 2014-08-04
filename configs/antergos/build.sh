@@ -198,8 +198,6 @@ make_customize_root_image() {
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
            	-r 'passwd -d antergos' \
            	run
-        
-        	echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
         	touch /var/tmp/three
         }
         
@@ -251,7 +249,6 @@ make_customize_root_image() {
         }
         
         parts=(one two three four five)
-        touch /var/tmp/three
         for part in ${parts[*]}
         do
         	if [[ ! -f /var/tmp/${part} ]]; then
