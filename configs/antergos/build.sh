@@ -203,7 +203,7 @@ make_customize_root_image() {
         
         part_four() {
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-           	-r 'echo "antergos:U6aMy0wojraho" | chpasswd' \
+           	-r 'pwconv && echo "antergos:U6aMy0wojraho" | chpasswd' \
            	run
 		#echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
         	# Configuring pacman
