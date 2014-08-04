@@ -202,9 +202,12 @@ make_customize_root_image() {
         }
         
         part_four() {
+        	cp ${script_path}/set_password ${work_dir}/root-image/usr/bin
+        	chmod + x ${work_dir}/root-image/usr/bin/set_password
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-           	-r 'password=U6aMy0wojraho autopasswd antergos' \
+           	-r '/usr/bin/set_passwd' \
            	run
+           	rm ${work_dir}/root-image/usr/bin/set_password
 		#echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
         	# Configuring pacman
 		echo "Configuring Pacman"
