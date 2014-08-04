@@ -204,7 +204,7 @@ make_customize_root_image() {
         }
         
         part_four() {
-
+		echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
         	# Configuring pacman
 		echo "Configuring Pacman"
         	cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
