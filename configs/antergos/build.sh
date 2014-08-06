@@ -265,6 +265,8 @@ make_customize_root_image() {
         # Downgrade parted to version that does not break pyparted
         cp ${script_path}/parted_fix ${work_dir}/root-image/usr/bin/parted_fix
         chmod +x ${work_dir}/root-image/usr/bin/parted_fix
+        cp ${script_path}/parted_fix_expect ${work_dir}/root-image/usr/bin/parted_fix_expect
+        chmod +x ${work_dir}/root-image/usr/bin/parted_fix_expect
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r 'parted_fix' \
             	run

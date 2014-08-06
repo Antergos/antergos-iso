@@ -6,13 +6,5 @@ pacman -Syy yaourt --noconfirm
 
 yaourt -S downgrader --noconfirm 
 
-VAR=$(expect -c "
-spawn downgrader -q parted
-expect \":: Proceed with installation? [Y/n]\"
-send \"Y\r\"
-")
+/usr/bin/parted_fix_expect
 
-echo "==============="
-echo "$VAR"
-
-exit 0
