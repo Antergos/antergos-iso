@@ -1,0 +1,19 @@
+#!/bin/bash
+
+pacman-key --init && pacman-key --populate archlinux antergos
+
+pacman -Syy yaourt --noconfirm
+
+yaourt -S downgrader --noconfirm 
+
+export HISTIGNORE="expect*";
+ 
+expect -c "
+        spawn downgrader -q parted
+        expect ":: Proceed with installation? [Y/n]"
+        send \"Y\r\"
+        expect eof"
+ 
+export HISTIGNORE="";
+
+exit 0
