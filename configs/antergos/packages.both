@@ -66,9 +66,7 @@ xf86-input-synaptics
 xf86-video-intel
 xf86-video-nouveau
 xf86-video-ati
-nouveau-dri
-intel-dri
-ati-dri
+mesa-dri
 virtualbox-guest-utils
 virtualbox-guest-modules
 virtualbox-guest-dkms
@@ -100,10 +98,12 @@ ttf-baekmuk
 # Desktop
 network-manager-applet
 chromium
+chromium-libpdf
+chromium-pepper-flash
 transmission-cli
 transmission-gtk
 libreoffice-installer
-xnoise
+gnome-music
 eog
 
 

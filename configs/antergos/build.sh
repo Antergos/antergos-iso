@@ -222,9 +222,9 @@ make_customize_root_image() {
         	fi
 
         	sed -i 's/#\(Storage=\)auto/\1volatile/' ${work_dir}/root-image/etc/systemd/journald.conf
-        	sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
-        	sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
-        	sed -i 's|^Exec=|Exec=sudo |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
+        	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
+        	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
+        	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
         	touch /var/tmp/four
         }
         
@@ -263,13 +263,13 @@ make_customize_root_image() {
         done
         
         # Downgrade parted to version that does not break pyparted
-        cp ${script_path}/parted_fix ${work_dir}/root-image/usr/bin/parted_fix
-        chmod +x ${work_dir}/root-image/usr/bin/parted_fix
-        cp ${script_path}/parted_fix_expect ${work_dir}/root-image/usr/bin/parted_fix_expect
-        chmod +x ${work_dir}/root-image/usr/bin/parted_fix_expect
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'parted_fix' \
-            	run
+        #cp ${script_path}/parted_fix ${work_dir}/root-image/usr/bin/parted_fix
+        #chmod +x ${work_dir}/root-image/usr/bin/parted_fix
+        #cp ${script_path}/parted_fix_expect ${work_dir}/root-image/usr/bin/parted_fix_expect
+        #chmod +x ${work_dir}/root-image/usr/bin/parted_fix_expect
+        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        #    	-r 'parted_fix' \
+        #    	run
         
          
 
