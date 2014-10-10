@@ -135,7 +135,11 @@ gnome-system-monitor
 empathy
 gnome-screenshot
 nautilus
+
+# Orca
 orca
+espeak
+libwnck3
 
 # LightDM
 
