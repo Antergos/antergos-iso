@@ -12,6 +12,9 @@ patch
 squashfs-tools
 wget
 
+
+
+
 ## Instructions ##
 
  - sudo make install
