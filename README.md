@@ -2,18 +2,14 @@ Modified version of archiso to build the Antergos ISO
 
 ## Dependencies ##
 
-arch-install-scripts
-dosfstools
-libisoburn
-mkinitcpio-nfs-utils
-make
-mkinitcpio-nfs-utils
-patch
-squashfs-tools
-wget
-
-
-
+- arch-install-scripts
+- dosfstools
+- libisoburn
+- mkinitcpio-nfs-utils
+- make
+- patch
+- squashfs-tools
+- wget
 
 ## Instructions ##
 
