@@ -98,7 +98,6 @@ ttf-baekmuk
 # Desktop
 network-manager-applet
 chromium
-chromium-libpdf
 chromium-pepper-flash
 transmission-cli
 transmission-gtk
