@@ -100,4 +100,4 @@ Include = /etc/pacman.d/mirrorlist
 [antergos]
 #SigLevel = PackageRequired
 #Include = /etc/pacman.d/antergos-mirrorlist
-Server = file:///srv/antergos.info/repo/${repo}/${arch}
+Server = file:///srv/antergos.info/repo/$repo/$arch
