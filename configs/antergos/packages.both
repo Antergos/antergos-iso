@@ -87,6 +87,7 @@ powerpill
 reflector
 expect
 git
+wget
 
 # Fonts
 
