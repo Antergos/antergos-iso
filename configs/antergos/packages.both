@@ -20,7 +20,6 @@ crda
 
 # Cnchi Graphical Installer
 cnchi
-#cnchi-fonts
 python-mako
 python-mock
 python-lxml
@@ -96,6 +95,9 @@ ttf-bitstream-vera
 ttf-freefont
 ttf-arphic-uming
 ttf-baekmuk
+divehi-fonts
+ttf-aboriginal-sans
+
 
 # Desktop
 network-manager-applet
@@ -104,7 +106,6 @@ chromium-pepper-flash
 transmission-cli
 transmission-gtk
 libreoffice-installer
-gnome-music
 eog
 
 
@@ -136,6 +137,7 @@ gnome-system-monitor
 empathy
 gnome-screenshot
 nautilus
+gnome-music
 
 # Orca
 orca

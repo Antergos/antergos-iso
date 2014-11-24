@@ -93,13 +93,13 @@ Include = /etc/pacman.d/mirrorlist
 #SigLevel = PackageRequired
 Include = /etc/pacman.d/mirrorlist
 
+[antergos]
+#SigLevel = PackageRequired
+Include = /etc/pacman.d/antergos-mirrorlist
+
 # An example of a custom package repository.  See the pacman manpage for
 # tips on creating your own repositories.
 #[custom]
 #SigLevel = Optional TrustAll
 #Server = file:///home/custompkgs
 
-[antergos]
-#SigLevel = PackageRequired
-#Include = /etc/pacman.d/antergos-mirrorlist
-Server = file:///srv/antergos.info/repo/$repo/$arch

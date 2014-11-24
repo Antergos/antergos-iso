@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set favorite apps
-dbus-launch --exit-with-session  gsettings set org.gnome.shell favorite-apps "['Cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'empathy.desktop', 'xnoise.desktop']"
+dbus-launch --exit-with-session  gsettings set org.gnome.shell favorite-apps "['Cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'empathy.desktop', 'gnome-music.desktop']"
 
 # Disable screensaver
 dbus-launch --exit-with-session  gsettings set org.gnome.desktop.screensaver lock-enabled false
