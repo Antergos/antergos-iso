@@ -310,7 +310,12 @@ make_prepare() {
 # Build ISO
 make_iso() {
     #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" checksum
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${iso_name}-${iso_version}-${arch}.iso"
+    if [[ -f "${out_dir}/${iso_name}-${iso_version}-${arch}.iso" ]]; then
+        isoName="${iso_name}-${iso_version}-2-${arch}.iso"
+    else
+        isoName="${iso_name}-${iso_version}-${arch}.iso"
+    fi
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${isoName}"
 }
 
 purge_single ()
