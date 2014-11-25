@@ -23,7 +23,7 @@ cnchi
 python-mako
 python-mock
 python-lxml
-python-request
+python-requests
 
 # Network
 
