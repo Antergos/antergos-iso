@@ -225,7 +225,7 @@ make_customize_root_image() {
         	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
         	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
         	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
-        	sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --homepage=http://antergos.com U% |g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
+        	sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --homepage=http://antergos.com http://antergos.com |g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
         	
         	touch /var/tmp/four
         }

@@ -7,6 +7,6 @@ while [[ "$NETWORK_ALIVE" != "" ]];do
 	sleep 10
 done
 
-if [[ NETWORK_ALIVE == '' ]];then
+if [[ ${NETWORK_ALIVE} == '' ]]; then
 	pacman -Syy --noconfirm cnchi
 fi
