@@ -27,7 +27,5 @@ modprobe -a vboxguest vboxsf vboxvideo
 
 ln -s /arch/setup /usr/bin/start
 
-pacman -Sy --noconfirm cnchi
-
 echo "LiveCD Configuration Complete"
 exit 0;

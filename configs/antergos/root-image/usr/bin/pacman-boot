@@ -7,6 +7,14 @@ while [[ "$NETWORK_ALIVE" != "" ]];do
 	sleep 10
 done
 
+notify_user () {
+
+        notify-send -t 10000 -a "Cnchi" -i /usr/share/cnchi/data/antergos-icon.png "$1"
+}
+
 if [[ ${NETWORK_ALIVE} == '' ]]; then
-	pacman -Syy --noconfirm cnchi
+	# make our server the first mirror for latest version of cnchi. (cnchi will run rankmirrors later)
+	sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist
+	killall python && notify_user "Checking for and installing available updates for Cnchi (Antergos Installer)..."
+	pacman -Syy --noconfirm --needed cnchi && notify_user "Update Complete. Restarting Cnchi..."
 fi
