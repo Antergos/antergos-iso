@@ -1,6 +1,6 @@
 [Unit]
 Description=Sync pacman on first boot
-After=pacman-init.service
+After=pacman-init.service systemd-user-sessions.service
 
 [Service]
 Type=simple

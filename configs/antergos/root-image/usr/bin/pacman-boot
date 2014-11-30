@@ -8,6 +8,9 @@ notify_user () {
         notify-send -t 10000 -a "Cnchi" -i /usr/share/cnchi/data/images/antergos/antergos-icon.png "$1"
 }
 
+run_when_connected () {
+
+
 while [[ "$NETWORK_ALIVE" != "" ]];do
 	while [[ ! -f /run/user/1000/dconf/user ]]; do
 		sleep 5
@@ -28,3 +31,7 @@ if [[ ${NETWORK_ALIVE} = '' ]]; then
 	killall python && notify_user "Checking for and installing available updates for Cnchi (Antergos Installer)..."
 	pacman -Syy --noconfirm --needed cnchi && notify_user "Update Complete. Restarting Cnchi..."
 fi
+
+}
+
+run_when_connected > /tmp/pacman-boot.log
