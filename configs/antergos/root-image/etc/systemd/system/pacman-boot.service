@@ -3,6 +3,7 @@ Description=Sync pacman on first boot
 After=pacman-init.service
 
 [Service]
-Type=oneshot
+Type=simple
 RemainAfterExit=yes
 ExecStart=/usr/bin/pacman-boot
+TimeoutStartSec=0
