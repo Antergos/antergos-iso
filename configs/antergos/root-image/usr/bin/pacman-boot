@@ -12,9 +12,6 @@ run_when_connected () {
 
 
 while [[ "$NETWORK_ALIVE" != "" ]];do
-	while [[ ! -f /run/user/1000/dconf/user ]]; do
-		sleep 5
-	done
 	if [[ ${NOTIFIED} = "False" ]]; then
 		notify_user "You must be connected to the internet to install Antergos. Click the network icon in the top bar to configure your connection"
 		NOTIFIED="True"
@@ -29,7 +26,7 @@ if [[ ${NETWORK_ALIVE} = '' ]]; then
 	# make our server the first mirror for latest version of cnchi. (cnchi will run rankmirrors later)
 	sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist
 	killall python
-	notify_user "Checking for and installing available updates for Cnchi (Antergos Installer)..."
+	notify_user "Installing any available updates for Cnchi (Antergos Installer)..."
 	pacman -Syy --noconfirm --needed cnchi
 	notify_user "Update Complete. Restarting Cnchi..."
 	sudo -E cnchi -dv

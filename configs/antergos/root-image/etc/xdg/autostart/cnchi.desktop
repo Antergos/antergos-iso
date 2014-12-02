@@ -1,9 +1,8 @@
 [Desktop Entry]
-Version=0.6.11
 Terminal=false
 Icon=/usr/share/antergos/cnchi.png
 Type=Application
-Exec=sudo -E /usr/share/cnchi/cnchi.py -dv
+Exec=sudo /usr/bin/pacman-boot
 Name=Cnchi
 GenericName=Cnchi
 Comment=Antergos Graphical Installer
