@@ -5,11 +5,10 @@ NOTIFIED="False"
 
 notify_user () {
 
-        notify-send -t 30000 -a "Cnchi" -i "/usr/share/cnchi/data/images/antergos/antergos-icon.png" "$1"
+        notify-send -t 15000 -a "Cnchi" -i "/usr/share/cnchi/data/images/antergos/antergos-icon.png" "$1"
 }
 
 run_when_connected () {
-
 
 while [[ "$NETWORK_ALIVE" != "" ]];do
 	if [[ ${NOTIFIED} = "False" ]]; then
@@ -24,14 +23,16 @@ done
 
 if [[ ${NETWORK_ALIVE} = '' ]]; then
 	# make our server the first mirror for latest version of cnchi. (cnchi will run rankmirrors later)
-	sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist
-	killall python
-	notify_user "Installing any available updates for Cnchi (Antergos Installer)..."
-	pacman -Syy --noconfirm --needed cnchi
-	notify_user "Update Complete. Restarting Cnchi..."
+	sudo sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist
+	sudo killall python
+	notify_user "Installing available updates for Cnchi Installer."
+	sudo pacman -Syy --noconfirm --needed cnchi
+	notify_user "Update Complete. Restarting Cnchi."
 	sudo -E cnchi -dv
 fi
 
 }
+
+
 
 run_when_connected > /tmp/pacman-boot.log 2>&1

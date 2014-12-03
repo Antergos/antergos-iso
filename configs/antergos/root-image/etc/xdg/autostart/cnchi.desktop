@@ -2,7 +2,7 @@
 Terminal=false
 Icon=/usr/share/antergos/cnchi.png
 Type=Application
-Exec=sudo /usr/bin/pacman-boot
+Exec=/usr/bin/pacman-boot
 Name=Cnchi
 GenericName=Cnchi
 Comment=Antergos Graphical Installer
