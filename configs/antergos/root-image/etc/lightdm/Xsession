@@ -65,7 +65,7 @@ PIC=$(ls ${DIR}/* | shuf -n1)
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.background picture-uri file://${PIC}
 
 # Set favorite apps
-dbus-launch --exit-with-session gsettings set org.gnome.shell favorite-apps "['Cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'empathy.desktop', 'gnome-music.desktop']"
+dbus-launch --exit-with-session gsettings set org.gnome.shell favorite-apps "['Cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'pidgin.desktop', 'gnome-music.desktop']"
 
 # Disable screensaver
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.screensaver lock-enabled false
@@ -73,7 +73,13 @@ dbus-launch --exit-with-session gsettings set org.gnome.desktop.lockdown disable
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.session idle-delay 0
 
 # Enabled extensions
-dbus-launch --exit-with-session gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'lockscreen@dev.antergos.com']"
+dbus-launch --exit-with-session gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'lockscreen@dev.antergos.com', 'dash-to-dock@micxgx.gmail.com']"
+
+# Extension - Panel-OSD Settings
+dbus-launch --exit-with-session gsettings gsettings set org.gnome.shell.extensions.panel-osd x-pos 96
+dbus-launch --exit-with-session gsettings gsettings set org.gnome.shell.extensions.panel-osd y-pos 96
+dbus-launch --exit-with-session gsettings gsettings set org.gnome.shell.extensions.panel-osd force-expand true
+
 
 # Set theme
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface gtk-theme 'Numix Frost Light'
@@ -87,7 +93,7 @@ dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface icon-t
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.background show-desktop-icons false
 
 # Minimize and close buttons
-dbus-launch --exit-with-session gsettings set org.gnome.shell.overrides button-layout 'menu:minimize,maximize,close'
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
 
 # Disable terminal bell
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences audible-bell false

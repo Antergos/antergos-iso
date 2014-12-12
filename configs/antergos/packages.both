@@ -116,6 +116,8 @@ numix-icon-theme-square
 gnome-themes-standard
 antergos-wallpapers
 gnome-shell-extensions
+gnome-shell-extension-panel-osd
+gnome-shell-extension-panel-dash-to-dock
 numix-frost-themes
 
 # Compression
@@ -135,7 +137,7 @@ gnome-bluetooth
 gnome-calculator
 gedit
 gnome-system-monitor
-empathy
+pidgin
 gnome-screenshot
 nautilus
 gnome-music
