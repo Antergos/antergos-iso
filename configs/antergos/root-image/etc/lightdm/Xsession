@@ -73,7 +73,8 @@ dbus-launch --exit-with-session gsettings set org.gnome.desktop.lockdown disable
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.session idle-delay 0
 
 # Enabled extensions
-dbus-launch --exit-with-session gsettings set org.gnome.shell enabled-extensions "['user-theme@gnome-shell-extensions.gcampax.github.com', 'lockscreen@dev.antergos.com', 'dash-to-dock@micxgx.gmail.com']"
+dbus-launch --exit-with-session gsettings set org.gnome.shell enabled-extensions \
+	"['user-theme@gnome-shell-extensions.gcampax.github.com', 'lockscreen@dev.antergos.com', 'dash-to-dock@micxgx.gmail.com', 'panel-osd@berend.de.schouwer.gmail.com']"
 
 # Extension - Panel-OSD Settings
 dbus-launch --exit-with-session gsettings gsettings set org.gnome.shell.extensions.panel-osd x-pos 96
