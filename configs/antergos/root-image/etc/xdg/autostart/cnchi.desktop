@@ -6,4 +6,5 @@ Exec=/usr/bin/pacman-boot
 Name=Cnchi
 GenericName=Cnchi
 Comment=Antergos Graphical Installer
+X-GNOME-Autostart-Delay=10
 
