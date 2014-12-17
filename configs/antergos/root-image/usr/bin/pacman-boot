@@ -2,6 +2,7 @@
 
 NETWORK_ALIVE=`ping -c1 google.com 2>&1 | grep unknown`
 NOTIFIED="False"
+FAILED="False"
 
 notify_user () {
 
@@ -15,8 +16,6 @@ while [[ "$NETWORK_ALIVE" != "" ]];do
 	if [[ ${NOTIFIED} = "False" ]]; then
 		notify_user "INSTALLER NOTICE:" "You must be connected to the internet to install Antergos. Click the network icon in the top bar to configure your connection"
 		NOTIFIED="True"
-	elif [[ ${NOTIFIED} = "True" ]]; then
-		sudo -E cnchi -dv &
 	fi
 	NETWORK_ALIVE=`ping -c1 google.com 2>&1 | grep unknown`
 done
@@ -24,27 +23,25 @@ done
 
 
 if [[ ${NETWORK_ALIVE} = '' ]]; then
+	until [[ -f /tmp/.setup-running ]];do
 	sleep 3;
+	done
 	# make our server the first mirror for latest version of cnchi. (cnchi will run rankmirrors later)
-	sudo sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist && \
+	{ sudo sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist && \
 	notify_user "Cnchi Automatic Updates" "Installing available updates for the Antergos Installer." && \
-	{ if [[ -f /tmp/.setup-running ]]; then 
-		sudo killall -s 15 -w python && sleep 3 && sudo rm /tmp/.setup-running
-	else
-		true
-	fi; } && \
+	sudo killall -s 15 -w python && sleep 3 && sudo rm /tmp/.setup-running && \
 	sudo pacman -Syy --noconfirm --needed cnchi && \
 	notify_user "Update Complete" "Updates installed sucessfully. Starting Cnchi." && \
-	sudo -E cnchi -dv &
+	sudo -E cnchi -dv & true; } || FAILED="True"
 fi
 
 }
 
 
 
-sleep 15 && run_when_connected > /tmp/pacman-boot.log 2>&1 && sleep 8 && \
-{ if [[ -f /tmp/.setup-running ]]; then 
+sleep 10 && run_when_connected > /tmp/pacman-boot.log 2>&1 && sleep 8 && \
+{ if [[ ${FAILED} = "False" ]]; then 
 	exit 0;
 else
-	sudo -E cnchi -dv &
+	sudo killall -s 15 -w python; sudo rm /tmp/.setup-running;  sudo -E cnchi -dv &
 fi; } && exit 0;
