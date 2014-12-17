@@ -4,6 +4,13 @@ NETWORK_ALIVE=`ping -c1 google.com 2>&1 | grep unknown`
 NOTIFIED="False"
 FAILED="False"
 
+
+start_cnchi () {
+	sudo -E cnchi -dv & return 0;
+}
+
+start_cnchi
+
 notify_user () {
 
         notify-send -a "Cnchi" -i "/usr/share/cnchi/data/images/antergos/antergos-icon.png" "$1" "$2"
@@ -32,7 +39,7 @@ if [[ ${NETWORK_ALIVE} = '' ]]; then
 	sudo killall -s 15 -w python && sleep 3 && sudo rm /tmp/.setup-running && \
 	sudo pacman -Syy --noconfirm --needed cnchi && \
 	notify_user "Update Complete" "Updates installed sucessfully. Starting Cnchi." && \
-	sudo -E cnchi -dv & true; } || FAILED="True"
+	start_cnchi; } || FAILED="True"
 fi
 
 }
