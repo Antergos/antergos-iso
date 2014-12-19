@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=CLI Installer
 GenericName=Antergos Installer CLI
-Comment=Antergos Installer
+Comment=Antergos Command Line Installer
 Exec=sudo gnome-terminal --geometry 85x30 -x /arch/setup
 Icon=/usr/share/cnchi/data/images/antergos/antergos-icon.png
 Terminal=false
