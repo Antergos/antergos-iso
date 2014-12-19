@@ -94,7 +94,7 @@ dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface icon-t
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.background show-desktop-icons false
 
 # Minimize and close buttons
-dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:maximize,close'
 
 # Disable terminal bell
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences audible-bell false
@@ -108,6 +108,10 @@ dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.peripher
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface font-name 'Lato 11'
 dbus-launch --exit-with-session gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Lato Bold 12'
 dbus-launch --exit-with-session gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
+
+# Turn on automatic date/time
+dbus-launch --exit-with-session gsettings set org.gnome.desktop.datetime automatic-timezone true;
+
 }
 
 echo "Running set-gsettings..."

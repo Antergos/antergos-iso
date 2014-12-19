@@ -5,6 +5,8 @@ NOTIFIED="False"
 FAILED="False"
 CNCHI_STARTED="False"
 CNCHI_RESTARTED="False"
+NO_UPDATES="False"
+CHECK_UPDATES=$(sudo checkupdates)
 
 
 start_cnchi () {
@@ -43,12 +45,17 @@ if [[ ${NETWORK_ALIVE} = '' ]]; then
 		until [[ -f /tmp/.setup-running ]];do
 			sleep 2;
 		done
-		sudo killall -s 15 -w python && sleep 3 && sudo rm /tmp/.setup-running
+		
 	fi
-	notify_user "Cnchi Automatic Updates" "Installing available updates for the Antergos Installer."
-	sudo pacman -Syy --noconfirm --needed cnchi
-	notify_user "Update Complete" "Updates installed sucessfully. Starting Cnchi." 
-	start_cnchi && CNCHI_RESTARTED="True"
+	if { [[ ${CHECK_UPDATES} == *"cnchi"* ]] && ! [[ ${CHECK_UPDATES} == *cnchi-dev* ]]; } || { [[ ${CHECK_UPDATES}/"cnchi-dev" == *cnchi* ]]; }; then
+		sudo killall -s 15 -w python && sudo rm /tmp/.setup-running
+		notify_user "Cnchi Automatic Updates" "Installing available updates for the Antergos Installer."
+		sudo pacman -Syy --noconfirm --needed cnchi
+		notify_user "Update Complete" "Updates installed sucessfully. Starting Cnchi." 
+		start_cnchi && CNCHI_RESTARTED="True"
+	else
+		NO_UPDATES="True"
+	fi
 fi
 
 }
@@ -56,9 +63,7 @@ fi
 
 
 run_when_connected > /tmp/pacman-boot.log 2>&1
-{ if [[ ${CNCHI_RESTARTED} = "True" ]]; then 
-	exit 0;
-elif [[ -f /tmp/.setup-running ]]; then
+{ if [[ ${CNCHI_RESTARTED} = "True" ]] || [[ -f /tmp/.setup-running ]] || [[  ${NO_UPDATES} = "True" ]]; then 
 	exit 0;
 else
 	sudo killall -s 15 -w python; sudo rm /tmp/.setup-running;  sudo -E cnchi -dv &
