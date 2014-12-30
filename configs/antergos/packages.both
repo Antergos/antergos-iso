@@ -54,7 +54,7 @@ dosfstools
 xfsprogs
 squashfs-tools
 f2fs-tools
-
+mtools
 # Xorg
 
 xorg-server
