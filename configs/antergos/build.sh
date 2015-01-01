@@ -27,7 +27,7 @@ setup_workdir() {
 # Base installation (root-image)
 make_basefs() {
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "memtest86+ nbd" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode memtest86+ nbd" install
 }
 
 # Additional packages (root-image)
@@ -40,9 +40,9 @@ make_setup_mkinitcpio() {
     local _hook
     mkdir -p ${work_dir}/root-image/etc/initcpio/hooks
     mkdir -p ${work_dir}/root-image/etc/initcpio/install
-    for _hook in archiso archiso_shutdown archiso_loop_mnt; do
+    for _hook in archiso archiso_shutdown archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_loop_mnt; do
          cp /usr/lib/initcpio/hooks/${_hook} ${work_dir}/root-image/etc/initcpio/hooks
-        cp /usr/lib/initcpio/install/${_hook} ${work_dir}/root-image/etc/initcpio/install
+         cp /usr/lib/initcpio/install/${_hook} ${work_dir}/root-image/etc/initcpio/install
     done
     sed -i "s|/usr/lib/initcpio/|/etc/initcpio/|g" ${work_dir}/root-image/etc/initcpio/install/archiso_shutdown
     cp /usr/lib/initcpio/install/archiso_kms ${work_dir}/root-image/etc/initcpio/install
