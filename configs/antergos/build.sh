@@ -268,12 +268,15 @@ make_customize_root_image() {
         	for f in *.mo
         	do
         		fullname="$(basename ${f})"
+        		echo ${fullname}
         		fname="${fullname}%.*"
-        		dest="${work_dir}/root-image/usr/share/locale/${fname}/LC_MESSAGES/"
+        		echo ${fname}
+        		dest="${work_dir}/root-image/usr/share/locale/${fname}/LC_MESSAGES"
         		if ! [[ -d "${dest}" ]]; then
         			mkdir -p "${dest}";
         		fi
-        		cp ${f} ${work_dir}/root-image/usr/share/locale/${fname}/LC_MESSAGES/CNCHI_UPDATER.mo
+        		mv ${f} ${dest}/CNCHI_UPDATER.mo
+        		sleep 1
         	done
         	
         	touch /var/tmp/five
