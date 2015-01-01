@@ -4,6 +4,7 @@ gummiboot
 prebootloader
 os-prober
 efibootmgr
+refind-efi
 haveged
 dmraid
 hwdetect
