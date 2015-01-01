@@ -269,7 +269,7 @@ make_customize_root_image() {
         	do
         		fullname="$(basename ${f})"
         		echo ${fullname}
-        		fname="${fullname}%.*"
+        		fname="${fullname%.*}"
         		echo ${fname}
         		dest="${work_dir}/root-image/usr/share/locale/${fname}/LC_MESSAGES"
         		if ! [[ -d "${dest}" ]]; then
