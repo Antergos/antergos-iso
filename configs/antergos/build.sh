@@ -14,7 +14,6 @@ cmd_args=""
 keep_pacman_packages=""
 pacman_conf=${work_dir}/pacman.conf
 script_path=$(readlink -f ${0%/*})
-install_dir="arch"
 
 setup_workdir() {
     #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
