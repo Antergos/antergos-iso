@@ -262,8 +262,8 @@ make_customize_root_image() {
         	chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
 
         	# Always return true so build will continue even if mount is busy. (Arch bug)
-		echo "Umount /var/run/dbus"
-        	umount -Rl ${work_dir}/root-image/var/run/dbus 2>/dev/null || true
+		#echo "Umount /var/run/dbus"
+        	#umount -Rl ${work_dir}/root-image/var/run/dbus 2>/dev/null || true
         
         	# Black list floppy
         	echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
@@ -284,6 +284,7 @@ make_customize_root_image() {
         		mv ${f} ${dest}/CNCHI_UPDATER.mo
         		sleep 1
         	done
+        	shopt -u nullglob
         	
         	touch /var/tmp/five
         }
@@ -483,9 +484,6 @@ if [[ $# -lt 1 ]]; then
 fi
 command_name="${1}"
 
-
-
-work_dir=${work_dir}/${arch}
 
 setup_workdir
 
