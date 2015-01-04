@@ -41,9 +41,13 @@ make_setup_mkinitcpio() {
     mkdir -p ${work_dir}/root-image/etc/initcpio/hooks
     mkdir -p ${work_dir}/root-image/etc/initcpio/install
     for _hook in archiso archiso_shutdown archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_loop_mnt; do
+         cp /usr/lib/initcpio/hooks/${_hook} ${work_dir}/root-image/usr/lib/initcpio/hooks
+         cp /usr/lib/initcpio/install/${_hook} ${work_dir}/root-image/usr/lib/initcpio/install
          cp /usr/lib/initcpio/hooks/${_hook} ${work_dir}/root-image/etc/initcpio/hooks
          cp /usr/lib/initcpio/install/${_hook} ${work_dir}/root-image/etc/initcpio/install
     done
+    cp /usr/lib/initcpio/install/archiso_kms ${work_dir}/root-image/usr/lib/initcpio/install
+    cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/usr/lib/initcpio
     sed -i "s|/usr/lib/initcpio/|/etc/initcpio/|g" ${work_dir}/root-image/etc/initcpio/install/archiso_shutdown
     cp /usr/lib/initcpio/install/archiso_kms ${work_dir}/root-image/etc/initcpio/install
     cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/etc/initcpio
@@ -54,6 +58,8 @@ make_setup_mkinitcpio() {
 # Prepare ${install_dir}/boot/
 make_boot() {
     mkdir -p ${work_dir}/iso/${install_dir}/boot/
+    checkdir=$(ls -la ${work_dir}/root-image/boot/)
+    echo "CHECKDIR is ${checkdir}"
     cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
     cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
 }
