@@ -118,6 +118,8 @@ gnome-themes-standard
 antergos-wallpapers
 gnome-shell-extensions
 gnome-shell-extension-panel-osd
+gnome-common
+gnome-tweak-tool
 gnome-shell-extension-dash-to-dock
 numix-frost-themes
 

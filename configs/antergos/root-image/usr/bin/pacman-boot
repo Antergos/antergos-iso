@@ -1,5 +1,5 @@
 #!/bin/bash
-alias GETTEXT='gettext "CNCHI_UPDATER"'
+GETTEXT='gettext "CNCHI_UPDATER"'
 NETWORK_ALIVE=`ping -c1 google.com 2>&1 | grep unknown`
 NOTIFIED="False"
 FAILED="False"
@@ -10,12 +10,12 @@ CHECK_UPDATES=$(sudo checkupdates)
 
 # Translatable Strings
 
-NO_CONNECTION=$(GETTEXT "INSTALLER NOTICE:")
-NO_CONNECTION_SUB=$(GETTEXT "You must be connected to the internet to install Antergos. Click the network icon in the top bar to configure your connection.")
-INSTALLING_UPDATES=$(GETTEXT "Cnchi Automatic Updates")
-INSTALLING_UPDATES_SUB=$(GETTEXT "Installing available updates for the Antergos Installer.")
-UPDATE_COMPLETE=$(GETTEXT "Update Complete")
-UPDATE_COMPLETE_SUB=$(GETTEXT "Updates were installed sucessfully. Starting Cnchi...")
+NO_CONNECTION=$(${GETTEXT} "INSTALLER NOTICE:")
+NO_CONNECTION_SUB=$(${GETTEXT} "You must be connected to the internet to install Antergos. Click the network icon in the top bar to configure your connection.")
+INSTALLING_UPDATES=$(${GETTEXT} "Cnchi Automatic Updates")
+INSTALLING_UPDATES_SUB=$(${GETTEXT} "Installing available updates for the Antergos Installer.")
+UPDATE_COMPLETE=$(${GETTEXT} "Update Complete")
+UPDATE_COMPLETE_SUB=$(${GETTEXT} "Updates were installed sucessfully. Starting Cnchi...")
 
 
 start_cnchi () {

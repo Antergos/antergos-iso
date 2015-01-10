@@ -58,8 +58,7 @@ make_setup_mkinitcpio() {
 # Prepare ${install_dir}/boot/
 make_boot() {
     mkdir -p ${work_dir}/iso/${install_dir}/boot/
-    checkdir=$(ls -la ${work_dir}/root-image/boot/)
-    echo "CHECKDIR is ${checkdir}"
+    sleep 10;
     cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
     cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
 }
@@ -293,7 +292,8 @@ make_customize_root_image() {
         for part in ${parts[*]}
         do
         	if [[ ! -f /var/tmp/${part} ]]; then
-        		part_${part}
+        		part_${part};
+        		sleep 5;
         	fi
         done
         
