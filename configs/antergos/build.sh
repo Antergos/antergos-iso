@@ -189,8 +189,8 @@ make_customize_root_image() {
         	mkdir -p ${work_dir}/root-image/etc/pacman.d
         	wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
         	sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
-        	mkdir -p ${work_dir}/root-image/var/run/dbus
-        	mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
+        	#mkdir -p ${work_dir}/root-image/var/run/dbus
+        	#mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
         	# Download opendesktop-fonts
         	#wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
         	cp /start/opendesktop**.xz ${work_dir}/root-image/arch/pkg
@@ -201,9 +201,9 @@ make_customize_root_image() {
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/locale-gen' \
             	run
-		mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r '/usr/bin/localectl set-locale "LANG=en_US.UTF-8" ' \
-            	run || true
+		#mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            #	-r '/usr/bin/localectl set-locale "LANG=en_US.UTF-8" ' \
+            #	run || true
             	touch /var/tmp/two 
         }
 	
