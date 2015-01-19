@@ -109,6 +109,7 @@ make_efi() {
             mkdir -p ${work_dir}/iso/EFI/boot
             cp ${work_dir}/root-image/usr/lib/prebootloader/PreLoader.efi ${work_dir}/iso/EFI/boot/bootx64.efi
             cp ${work_dir}/root-image/usr/lib/prebootloader/HashTool.efi ${work_dir}/iso/EFI/boot/
+            cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/iso/EFI/
 
             cp ${work_dir}/root-image/usr/lib/gummiboot/gummibootx64.efi ${work_dir}/iso/EFI/boot/loader.efi
 
@@ -149,6 +150,7 @@ make_efiboot() {
             mkdir -p ${work_dir}/efiboot/EFI/boot
             cp ${work_dir}/root-image/usr/lib/prebootloader/PreLoader.efi ${work_dir}/efiboot/EFI/boot/bootx64.efi
             cp ${work_dir}/root-image/usr/lib/prebootloader/HashTool.efi ${work_dir}/efiboot/EFI/boot/
+            cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/efiboot/EFI/
 
             cp ${work_dir}/root-image/usr/lib/gummiboot/gummibootx64.efi ${work_dir}/efiboot/EFI/boot/loader.efi
             
