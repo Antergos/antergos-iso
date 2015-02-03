@@ -91,6 +91,7 @@ git
 wget
 gettext
 libnotify
+expect
 
 # Fonts
 
