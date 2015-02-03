@@ -13,7 +13,6 @@ libui-sh
 dialog
 gptfdisk
 parted
-gparted
 crda
 #linux-headers
 
@@ -37,11 +36,10 @@ b43-fwcutter
 net-tools
 usb_modeswitch
 modemmanager
-networkmanager-openvpn
 networkmanager-pptp
 whois 
 dnsutils
-netctl
+#netctl
 linux-firmware
 intel-ucode
 
@@ -86,7 +84,6 @@ pkgfile
 #xdg-user-dirs-gtk
 #powerpill
 reflector
-#expect
 git
 wget
 gettext
@@ -124,4 +121,4 @@ unrar
 
 # LightDM
 
-lightdm-webkit-theme-antergos
+#lightdm-webkit-theme-antergos

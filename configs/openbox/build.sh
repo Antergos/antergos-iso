@@ -253,7 +253,7 @@ make_customize_root_image() {
         part_five() {
         
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'systemctl -fq enable pacman-init lightdm NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' \
+            	-r 'systemctl -fq enable pacman-init NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' \
             	run
 
         	# Fix sudoers
@@ -263,7 +263,7 @@ make_customize_root_image() {
         	# Fix QT apps
         	echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${work_dir}/root-image/etc/bash.bashrc
 
-        	chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
+        	#chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
 
         	# Always return true so build will continue even if mount is busy. (Arch bug)
 		#echo "Umount /var/run/dbus"
@@ -289,6 +289,11 @@ make_customize_root_image() {
         		sleep 1
         	done
         	shopt -u nullglob
+        	
+        	# Make ISO thinner
+        rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0}
+        rm -rf ${work_dir}/root-image/usr/share/{man,gnome}
+        rm -rf ${work_dir}/root-image/usr/share/icons/{Adwaita,HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest}
         	
         	touch /var/tmp/five
         }
