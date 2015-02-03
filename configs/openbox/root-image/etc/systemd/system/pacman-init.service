@@ -1,0 +1,14 @@
+[Unit]
+Description=Initializes Pacman keyring
+Wants=haveged.service
+After=haveged.service etc-pacman.d-gnupg.mount network.target 
+Requires=etc-pacman.d-gnupg.mount network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/pacman-key --init
+ExecStart=/usr/bin/pacman-key --populate archlinux antergos
+
+[Install]
+WantedBy=multi-user.target

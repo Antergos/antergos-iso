@@ -1,0 +1,79 @@
+#!/bin/bash
+GETTEXT='gettext "CNCHI_UPDATER"'
+NETWORK_ALIVE=`ping -c1 google.com 2>&1 | grep unknown`
+NOTIFIED="False"
+FAILED="False"
+CNCHI_STARTED="False"
+CNCHI_RESTARTED="False"
+NO_UPDATES="False"
+CHECK_UPDATES=$(sudo checkupdates)
+
+# Translatable Strings
+
+NO_CONNECTION=$(${GETTEXT} "INSTALLER NOTICE:")
+NO_CONNECTION_SUB=$(${GETTEXT} "You must be connected to the internet to install Antergos. Click the network icon in the top bar to configure your connection.")
+INSTALLING_UPDATES=$(${GETTEXT} "Cnchi Automatic Updates")
+INSTALLING_UPDATES_SUB=$(${GETTEXT} "Installing available updates for the Antergos Installer.")
+UPDATE_COMPLETE=$(${GETTEXT} "Update Complete")
+UPDATE_COMPLETE_SUB=$(${GETTEXT} "Updates were installed sucessfully. Starting Cnchi...")
+
+
+start_cnchi () {
+	sudo -E cnchi -dv & return 0;
+}
+
+if [[ "$NETWORK_ALIVE" != "" ]]; then
+	start_cnchi && CNCHI_STARTED="True"
+fi
+
+notify_user () {
+
+        notify-send -a "Cnchi" -i "/usr/share/cnchi/data/images/antergos/antergos-icon.png" "$1" "$2"
+}
+
+run_when_connected () {
+
+if [[ "$NETWORK_ALIVE" != "" ]]; then
+
+	while [[ "$NETWORK_ALIVE" != "" ]];do
+		sleep 5;
+		if [[ ${NOTIFIED} = "False" ]]; then
+			notify_user "${NO_CONNECTION}" "${NO_CONNECTION_SUB}"
+			NOTIFIED="True"
+		fi
+		NETWORK_ALIVE=`ping -c1 google.com 2>&1 | grep unknown`
+	done
+fi
+
+
+
+if [[ ${NETWORK_ALIVE} = '' ]]; then
+	sudo sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist
+	
+	if [[ ${CNCHI_STARTED} = "True" ]]; then
+		until [[ -f /tmp/.setup-running ]];do
+			sleep 2;
+		done
+		
+	fi
+	if { [[ ${CHECK_UPDATES} == *"cnchi"* ]] && ! [[ ${CHECK_UPDATES} == *cnchi-dev* ]]; } || { [[ ${CHECK_UPDATES}/"cnchi-dev" == *cnchi* ]]; }; then
+		sudo killall -s 15 -w python && sudo rm /tmp/.setup-running
+		notify_user "${INSTALLING_UPDATES}" "${INSTALLING_UPDATES_SUB}"
+		sudo pacman -Syy --noconfirm --needed cnchi
+		notify_user "${UPDATE_COMPLETE}" "${UPDATE_COMPLETE_SUB}" 
+		start_cnchi && CNCHI_RESTARTED="True"
+	else
+		NO_UPDATES="True"
+	fi
+fi
+
+}
+
+
+
+run_when_connected > /tmp/pacman-boot.log 2>&1
+{ if [[ ${CNCHI_RESTARTED} = "True" ]] || [[ -f /tmp/.setup-running ]] || [[  ${NO_UPDATES} = "True" ]]; then 
+	exit 0;
+else
+	sudo killall -s 15 -w python; sudo rm /tmp/.setup-running;  sudo -E cnchi -dv &
+fi; } && exit 0;

@@ -1,0 +1,126 @@
+# Installation
+grub
+gummiboot
+prebootloader
+os-prober
+efibootmgr
+haveged
+dmraid
+hwdetect
+hwinfo
+ntp
+libui-sh
+dialog
+gptfdisk
+parted
+gparted
+crda
+#linux-headers
+
+
+# Cnchi Graphical Installer
+cnchi
+python-mako
+python-mock
+python-lxml
+python-requests
+
+# Network
+
+ipw2100-fw
+ipw2200-fw
+zd1211-firmware
+wireless_tools
+wpa_actiond
+b43-fwcutter
+#broadcom-wl
+net-tools
+usb_modeswitch
+modemmanager
+networkmanager-openvpn
+networkmanager-pptp
+whois 
+dnsutils
+netctl
+linux-firmware
+intel-ucode
+
+# Filesystems
+
+btrfs-progs
+ntfs-3g
+dosfstools
+xfsprogs
+squashfs-tools
+f2fs-tools
+mtools
+
+# Xorg
+
+xorg-server
+#xorg-server-utils
+xf86-input-synaptics
+xorg-xinit
+
+# Graphical Drivers
+
+xf86-video-intel
+xf86-video-nouveau
+xf86-video-ati
+mesa-dri
+virtualbox-guest-utils
+virtualbox-guest-modules
+virtualbox-guest-dkms
+xf86-video-vmware
+xf86-video-openchrome
+xf86-video-vesa
+
+
+# System Tools
+
+sudo
+#gksu
+#pacmanxg4
+pkgfile
+#alsa-utils
+#xdg-user-dirs-gtk
+#powerpill
+reflector
+#expect
+git
+wget
+gettext
+notify-send
+
+# Fonts
+
+ttf-dejavu
+ttf-bitstream-vera
+ttf-freefont
+ttf-arphic-uming
+ttf-baekmuk
+divehi-fonts
+ttf-aboriginal-sans
+
+
+# Desktop
+network-manager-applet
+openbox
+numix-frost-themes
+#feh
+nitrogen
+
+
+# Theme
+
+numix-icon-theme-square
+#antergos-wallpapers
+
+# Compression
+
+unzip
+unrar
+
+# LightDM
+
+lightdm-webkit-theme-antergos

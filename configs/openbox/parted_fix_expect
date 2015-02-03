@@ -1,0 +1,7 @@
+#!/usr/bin/expect -f
+
+
+spawn downgrader -q parted
+expect *Proceed* 
+send "Y\r"
+expect eof

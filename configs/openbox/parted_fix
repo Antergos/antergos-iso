@@ -1,0 +1,10 @@
+#!/bin/bash
+
+pacman-key --init && pacman-key --populate archlinux antergos
+
+pacman -Syy yaourt --noconfirm
+
+yaourt -S downgrader --noconfirm 
+
+/usr/bin/parted_fix_expect
+

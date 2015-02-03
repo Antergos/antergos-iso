@@ -1,0 +1,106 @@
+#!/bin/bash
+# written by Alex Filgueira <faidoc@gmail.com>
+TEXTDOMAIN=cli_installer
+
+ANSWER="/tmp/.lg"
+TITLE=$"Antergos Language Setting"
+
+if [[ "${1}" = "--setup" ]]; then
+    EXIT=$"Return to Main Menu"
+else
+    EXIT=$"Exit"
+fi
+
+abort()
+{
+    DIALOG --yesno $"Abort Language Setting?" 6 42 || return 0
+    [[ -e /tmp/.lg ]] && rm -f /tmp/.lg
+    [[ -e /tmp/.language ]] && rm -f /tmp/.language
+        [[ -e /tmp/.lg-running ]] && rm /tmp/.lg-running
+    clear
+    exit 1
+}
+
+# DIALOG()
+# an el-cheapo dialog wrapper
+#
+# parameters: see dialog(1)
+# returns: whatever dialog did
+DIALOG() {
+    dialog --backtitle "${TITLE}" --aspect 15 "$@"
+    return $?
+}
+
+error_lgset()
+{
+    DIALOG --msgbox $"An error occured, your current language was not selected." 0 0
+}
+
+dolanguages() {
+    # "Scanning for locales..."
+    LOCALES=
+    for i in $(cat /arch/locale.gen | grep .UTF-8|cut -c 2-12|grep -e '[a-z]*\.UTF-8$'); do
+        LOCALES="${LOCALES} ${i} -"
+    done
+
+    CANCEL=""
+    DIALOG --menu $"Select A Locale" 22 60 16 ${LOCALES} 2>${ANSWER} || CANCEL="1"
+    if [[ "${CANCEL}" = "1" ]]; then
+        S_NEXTITEM="1"
+        return 1
+    fi
+    locale=$(cat ${ANSWER})
+    echo ${locale} > /tmp/.locale
+    if [[ "${locale}" ]]; then
+        cp /arch/locale.gen /tmp/locale.gen
+        sed -i "s/#\(${locale}\)/\1/" /tmp/locale.gen
+        echo "LANG=${locale}" > /tmp/locale.conf
+        echo "LC_COLLATE=C" >> /tmp/locale.conf
+    fi
+S_NEXTITEM=2
+}
+
+
+mainmenu() {
+    if [[ -n "${S_NEXTITEM}" ]]; then
+        DEFAULT="--default-item ${S_NEXTITEM}"
+    else
+        DEFAULT=""
+    fi
+    DIALOG ${DEFAULT} --backtitle "${TITLE}" --title " MAIN MENU " \
+                --menu $"Use the UP and DOWN arrows to navigate menus.\nUse TAB to switch between buttons and ENTER to select." 17 58 13 \
+        "1" $"Set Locale" \
+        "2" "${EXIT}" 2>${ANSWER}
+    case $(cat ${ANSWER}) in
+        "1")
+            dolanguages
+            ;;
+        "2")
+            [[ -e /tmp/.lg-running ]] && rm /tmp/.lg-running
+            clear
+            exit 0 ;;
+        *)
+            abort ;;
+    esac
+}
+
+: >/tmp/.language
+: >/tmp/.lg
+
+
+
+if [[ -e /tmp/.lg-running ]]; then
+    echo "lg already runs on a different console!"
+    echo "Please remove /tmp/.lg-running first to continue!"
+    exit 1
+fi 
+: >/tmp/.lg-running
+
+while true; do
+    mainmenu
+done
+
+clear
+exit 0
+
+# vim: set ts=4 sw=4 et:
