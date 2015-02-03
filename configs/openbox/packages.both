@@ -90,7 +90,7 @@ reflector
 git
 wget
 gettext
-notify-send
+libnotify
 
 # Fonts
 
