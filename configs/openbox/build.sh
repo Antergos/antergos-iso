@@ -245,7 +245,7 @@ make_customize_root_image() {
         	fi
 
         	sed -i 's/#\(Storage=\)auto/\1volatile/' ${work_dir}/root-image/etc/systemd/journald.conf
-        	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
+        	#sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
         	
         	touch /var/tmp/four
         }
@@ -291,9 +291,9 @@ make_customize_root_image() {
         	shopt -u nullglob
         	
         	# Make ISO thinner
-        rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0}
-        rm -rf ${work_dir}/root-image/usr/share/{man,gnome}
-        rm -rf ${work_dir}/root-image/usr/share/icons/{Adwaita,HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest}
+        rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
+        rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
+        rm -rf ${work_dir}/root-image/usr/share/icons/{Adwaita,HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest} || true
         	
         	touch /var/tmp/five
         }
