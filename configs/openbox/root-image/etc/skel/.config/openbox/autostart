@@ -1,4 +1,5 @@
 nitrogen --restore &
 tint2 &
 nm-applet &
+pacman-boot &
 
