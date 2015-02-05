@@ -4,9 +4,7 @@ gummiboot
 prebootloader
 os-prober
 efibootmgr
-haveged
 dmraid
-hwdetect
 hwinfo
 ntp
 libui-sh
@@ -69,9 +67,9 @@ mesa-dri
 virtualbox-guest-utils
 virtualbox-guest-modules
 virtualbox-guest-dkms
-xf86-video-vmware
-xf86-video-openchrome
-xf86-video-vesa
+#xf86-video-vmware
+#xf86-video-openchrome
+#xf86-video-vesa
 
 
 # System Tools
@@ -79,9 +77,9 @@ xf86-video-vesa
 sudo
 #gksu
 #pacmanxg4
-pkgfile
+#pkgfile
 #alsa-utils
-#xdg-user-dirs-gtk
+xdg-user-dirs
 #powerpill
 reflector
 git
@@ -93,12 +91,6 @@ expect
 # Fonts
 
 ttf-dejavu
-ttf-bitstream-vera
-ttf-freefont
-ttf-arphic-uming
-ttf-baekmuk
-divehi-fonts
-ttf-aboriginal-sans
 
 
 # Desktop
@@ -107,6 +99,8 @@ openbox
 numix-frost-themes
 #feh
 nitrogen
+tint2
+xfce4-notifyd
 
 
 # Theme

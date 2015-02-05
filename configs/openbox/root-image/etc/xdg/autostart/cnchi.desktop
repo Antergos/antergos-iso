@@ -1,0 +1,10 @@
+[Desktop Entry]
+Terminal=false
+Icon=/usr/share/antergos/cnchi.png
+Type=Application
+Exec=/usr/bin/pacman-boot
+Name=Cnchi
+GenericName=Cnchi
+Comment=Antergos Graphical Installer
+X-GNOME-Autostart-Delay=10
+

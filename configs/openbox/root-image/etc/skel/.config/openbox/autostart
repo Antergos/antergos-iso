@@ -1,1 +1,4 @@
-nitrogen --no-recurse /arch &
+nitrogen --restore &
+tint2 &
+nm-applet &
+
