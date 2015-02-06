@@ -117,7 +117,7 @@ make_efi() {
             mkdir -p ${work_dir}/iso/EFI/boot
             cp ${work_dir}/root-image/usr/lib/prebootloader/PreLoader.efi ${work_dir}/iso/EFI/boot/bootx64.efi
             cp ${work_dir}/root-image/usr/lib/prebootloader/HashTool.efi ${work_dir}/iso/EFI/boot/
-            cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/iso/EFI/
+            #cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/iso/EFI/
 
             cp ${work_dir}/root-image/usr/lib/gummiboot/gummibootx64.efi ${work_dir}/iso/EFI/boot/loader.efi
 
@@ -158,7 +158,7 @@ make_efiboot() {
             mkdir -p ${work_dir}/efiboot/EFI/boot
             cp ${work_dir}/root-image/usr/lib/prebootloader/PreLoader.efi ${work_dir}/efiboot/EFI/boot/bootx64.efi
             cp ${work_dir}/root-image/usr/lib/prebootloader/HashTool.efi ${work_dir}/efiboot/EFI/boot/
-            cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/efiboot/EFI/
+            #cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/efiboot/EFI/
 
             cp ${work_dir}/root-image/usr/lib/gummiboot/gummibootx64.efi ${work_dir}/efiboot/EFI/boot/loader.efi
             
@@ -253,7 +253,7 @@ make_customize_root_image() {
         part_five() {
         
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'systemctl -fq enable pacman-init NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' \
+            	-r 'systemctl -fq enable pacman-init NetworkManager livecd vboxservice NetworkManager-wait-online' \
             	run
 
         	# Fix sudoers
