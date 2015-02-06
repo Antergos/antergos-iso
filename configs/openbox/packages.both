@@ -1,5 +1,5 @@
 # Installation
-grub
+#grub
 gummiboot
 prebootloader
 os-prober
@@ -31,9 +31,9 @@ wireless_tools
 wpa_actiond
 b43-fwcutter
 #broadcom-wl
-net-tools
+#net-tools
 usb_modeswitch
-modemmanager
+#modemmanager
 networkmanager-pptp
 whois 
 dnsutils
@@ -66,7 +66,7 @@ xf86-video-ati
 mesa-dri
 virtualbox-guest-utils
 virtualbox-guest-modules
-virtualbox-guest-dkms
+#virtualbox-guest-dkms
 #xf86-video-vmware
 #xf86-video-openchrome
 #xf86-video-vesa
@@ -90,7 +90,7 @@ expect
 
 # Fonts
 
-ttf-dejavu
+#ttf-dejavu
 
 
 # Desktop
@@ -111,7 +111,7 @@ numix-icon-theme-square
 # Compression
 
 unzip
-unrar
+#unrar
 
 # LightDM
 

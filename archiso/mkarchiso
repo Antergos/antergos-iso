@@ -375,8 +375,8 @@ _mkrootfs () {
         _msg_error "The path '${work_dir}/root-image' does not exist" 1
     fi
 
-    _msg_info "Creating ext4 image of 10GiB..."
-    truncate -s 10G "${work_dir}/root-image.img"
+    _msg_info "Creating ext4 image of 5GiB..."
+    truncate -s 5G "${work_dir}/root-image.img"
     local _qflag=""
     if [[ ${quiet} == "y" ]]; then
         _qflag="-q"
