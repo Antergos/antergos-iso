@@ -12,6 +12,7 @@ dialog
 gptfdisk
 parted
 crda
+haveged
 #linux-headers
 
 
