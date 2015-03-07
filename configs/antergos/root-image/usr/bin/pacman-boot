@@ -28,7 +28,7 @@ fi
 
 notify_user () {
 
-        notify-send -a "Cnchi" -i "/usr/share/cnchi/data/images/antergos/antergos-icon.png" "$1" "$2"
+        notify-send -a "Cnchi" -i "/usr/share/cnchi/data/images/antergos/antergos-icon.png" -u critical "$1" "$2"
 }
 
 run_when_connected () {
