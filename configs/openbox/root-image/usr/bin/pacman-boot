@@ -7,6 +7,9 @@ CNCHI_STARTED="False"
 CNCHI_RESTARTED="False"
 NO_UPDATES="False"
 CHECK_UPDATES=$(sudo checkupdates)
+TIMEZONE_QUERY=$(wget -qO - http://geoip.ubuntu.com/lookup | sed -n -e 's/.*<TimeZone>\(.*\)<\/TimeZone>.*/\1/p')
+echo "Timezone Detected: ${TIMEZONE_QUERY}"
+sudo timedatectl set-timezone ${TIMEZONE_QUERY}
 
 # Translatable Strings
 
