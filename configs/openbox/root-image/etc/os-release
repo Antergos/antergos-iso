@@ -1,9 +1,10 @@
-NAME=Antergos
+NAME="Antergos Linux"
+VERSION="2015.03-ISO-Rolling"
 ID=antergos
 ID_LIKE=arch
-PRETTY_NAME=Antergos
+PRETTY_NAME="Antergos Linux"
 ANSI_COLOR="1;34;40"
 HOME_URL="http://www.antergos.com/"
 SUPPORT_URL="http://forum.antergos.com/"
-BUG_REPORT_URL="http://github.com/antergos/"
+BUG_REPORT_URL="http://github.com/antergos"
 
