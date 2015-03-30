@@ -34,7 +34,7 @@ zd1211-firmware
 wireless_tools
 wpa_actiond
 b43-fwcutter
-#broadcom-wl
+broadcom-wl
 net-tools
 usb_modeswitch
 modemmanager
@@ -43,7 +43,6 @@ networkmanager-pptp
 whois 
 dnsutils
 netctl
-wget
 linux-firmware
 intel-ucode
 
@@ -67,7 +66,7 @@ xf86-input-synaptics
 xf86-video-intel
 xf86-video-nouveau
 xf86-video-ati
-mesa-dri
+mesa
 virtualbox-guest-utils
 virtualbox-guest-modules
 virtualbox-guest-dkms
@@ -80,7 +79,7 @@ xf86-video-vesa
 
 sudo
 gksu
-pacmanxg4
+pamac
 pkgfile
 alsa-utils
 xdg-user-dirs-gtk
@@ -89,6 +88,7 @@ reflector
 expect
 git
 wget
+plymouth
 
 # Fonts
 
