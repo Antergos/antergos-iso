@@ -57,6 +57,7 @@ make_setup_mkinitcpio() {
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~COPYING PLYMOUTH INITCPIO INSTALL~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     cp "${script_path}/plymouth.initcpio_install" "${work_dir}/root-image/usr/lib/initcpio/install/"
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~SETTING PLYMOUTH THEME~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
+    cp -R ${script_path}/root-image/usr/share/plymouth/themes/Antergos-Simple ${work_dir}/root-image/usr/share/plymouth/themes/
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~DONE WITH PLYMOUTH~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
