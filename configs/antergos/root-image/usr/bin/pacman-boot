@@ -59,6 +59,7 @@ if [[ ${NETWORK_ALIVE} = '' ]]; then
 	if { [[ ${CHECK_UPDATES} == *"cnchi"* ]] && ! [[ ${CHECK_UPDATES} == *cnchi-dev* ]]; } || { [[ ${CHECK_UPDATES}/"cnchi-dev" == *cnchi* ]]; }; then
 		sudo killall -s 15 -w python && sudo rm /tmp/.setup-running
 		notify_user "${INSTALLING_UPDATES}" "${INSTALLING_UPDATES_SUB}"
+		sudo rm /var/lib/pacman/db.lck
 		sudo pacman -Syy --noconfirm --needed cnchi
 		notify_user "${UPDATE_COMPLETE}" "${UPDATE_COMPLETE_SUB}" 
 		start_cnchi && CNCHI_RESTARTED="True"
@@ -71,7 +72,7 @@ fi
 
 
 
-run_when_connected > /tmp/pacman-boot.log 2>&1
+run_when_connected > /tmp/pacman-boot.log 2>&1 && \
 { if [[ ${CNCHI_RESTARTED} = "True" ]] || [[ -f /tmp/.setup-running ]] || [[  ${NO_UPDATES} = "True" ]]; then 
 	exit 0;
 else

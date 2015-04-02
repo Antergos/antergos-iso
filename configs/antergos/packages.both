@@ -20,7 +20,7 @@ crda
 
 
 # Cnchi Graphical Installer
-cnchi
+cnchi-dev
 python-mako
 python-mock
 python-lxml
@@ -73,6 +73,7 @@ virtualbox-guest-dkms
 xf86-video-vmware
 xf86-video-openchrome
 xf86-video-vesa
+v86d
 
 
 # System Tools

@@ -63,6 +63,14 @@ if [[ -z "$DBUS_SESSION_BUS_ADDRESS" ]]; then
 fi
 # Change keyboard layaout
 gsettings set org.gnome.desktop.input-sources sources "[('xkb','us')]"
+# Enabled extensions
+gsettings set org.gnome.shell enabled-extensions \
+	"['user-theme@gnome-shell-extensions.gcampax.github.com', 'lockscreen@dev.antergos.com', 'dash-to-dock@micxgx.gmail.com', 'panel-osd@berend.de.schouwer.gmail.com']"
+	
+# Extension - Panel-OSD Settings
+ gsettings set org.gnome.shell.extensions.panel-osd x-pos 96.0
+ gsettings set org.gnome.shell.extensions.panel-osd y-pos 96.0
+ gsettings set org.gnome.shell.extensions.panel-osd force-expand true
 
 # Randomly choose a default wallpaper from antergos-wallpapers
 DIR="/usr/share/antergos/wallpapers"
@@ -77,15 +85,6 @@ gsettings set org.gnome.shell favorite-apps "['Cnchi.desktop', 'nautilus.desktop
 gsettings set org.gnome.desktop.screensaver lock-enabled false
 gsettings set org.gnome.desktop.lockdown disable-lock-screen true
 gsettings set org.gnome.desktop.session idle-delay 0
-
-# Enabled extensions
-gsettings set org.gnome.shell enabled-extensions \
-	"['user-theme@gnome-shell-extensions.gcampax.github.com', 'lockscreen@dev.antergos.com', 'dash-to-dock@micxgx.gmail.com', 'panel-osd@berend.de.schouwer.gmail.com']"
-
-# Extension - Panel-OSD Settings
- gsettings set org.gnome.shell.extensions.panel-osd x-pos 96.0
- gsettings set org.gnome.shell.extensions.panel-osd y-pos 96.0
- gsettings set org.gnome.shell.extensions.panel-osd force-expand true
 
 
 # Set theme
