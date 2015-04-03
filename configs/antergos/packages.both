@@ -73,8 +73,6 @@ virtualbox-guest-dkms
 xf86-video-vmware
 xf86-video-openchrome
 xf86-video-vesa
-nvidia
-nvidia-libgl
 
 
 # System Tools
