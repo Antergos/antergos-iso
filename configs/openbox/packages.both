@@ -17,7 +17,7 @@ haveged
 
 
 # Cnchi Graphical Installer
-cnchi
+cnchi-dev
 python-mako
 python-mock
 python-lxml
@@ -31,7 +31,7 @@ zd1211-firmware
 wireless_tools
 wpa_actiond
 b43-fwcutter
-#broadcom-wl
+broadcom-wl
 #net-tools
 usb_modeswitch
 #modemmanager

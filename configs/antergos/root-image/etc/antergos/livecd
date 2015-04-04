@@ -25,7 +25,5 @@ sudo -u antergos xdg-user-dirs-update
 depmod -a
 modprobe -a vboxguest vboxsf vboxvideo
 
-ln -s /arch/setup /usr/bin/start
-
 echo "LiveCD Configuration Complete"
 exit 0;

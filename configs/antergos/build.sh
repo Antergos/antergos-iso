@@ -11,7 +11,7 @@ work_dir=work
 out_dir=out
 verbose="-v"
 cmd_args=""
-keep_pacman_packages=""
+keep_pacman_packages="y"
 pacman_conf=${work_dir}/pacman.conf
 script_path=$(readlink -f ${0%/*})
 
@@ -52,12 +52,12 @@ make_setup_mkinitcpio() {
     cp /usr/lib/initcpio/install/archiso_kms ${work_dir}/root-image/etc/initcpio/install
     cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/etc/initcpio
     cp ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
-    cp "${script_path}/plymouth.initcpio_hook"    "${work_dir}/root-image/usr/lib/initcpio/hooks/"
-    cp "${script_path}/plymouth.initcpio_install" "${work_dir}/root-image/usr/lib/initcpio/install/"
-    cp "${script_path}/root-image/etc/os-release" "${work_dir}/root-image/etc"
-    cp -R ${script_path}/root-image/usr/share/plymouth/themes/Antergos-Simple ${work_dir}/root-image/usr/share/plymouth/themes/
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
-    echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
+#    cp "${script_path}/plymouth.initcpio_hook"    "${work_dir}/root-image/usr/lib/initcpio/hooks/"
+#    cp "${script_path}/plymouth.initcpio_install" "${work_dir}/root-image/usr/lib/initcpio/install/"
+#    cp "${script_path}/root-image/etc/os-release" "${work_dir}/root-image/etc"
+#    cp -R ${script_path}/root-image/usr/share/plymouth/themes/Antergos-Simple ${work_dir}/root-image/usr/share/plymouth/themes/
+#    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
+#    echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2&>1
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~MKINITCPIO DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
@@ -263,7 +263,10 @@ make_customize_root_image() {
         part_five() {
         
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'systemctl -fq enable pacman-init lightdm-plymouth NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' \
+            	-r 'systemctl -fq enable pacman-init lightdm NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' \
+            	run
+            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'systemctl -fq disable pamac' \
             	run
 
         	# Fix sudoers

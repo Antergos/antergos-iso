@@ -1,156 +1,170 @@
 # Installation
+
+crda
+dialog
+dmraid
+efibootmgr
+gparted
+gptfdisk
 grub
 gummiboot
-prebootloader
-os-prober
-efibootmgr
-refind-efi
 haveged
-dmraid
 hwdetect
 hwinfo
-ntp
 libui-sh
-dialog
-gptfdisk
+ntp
+os-prober
 parted
-gparted
-crda
-#linux-headers
+prebootloader
+refind-efi
 
 
 # Cnchi Graphical Installer
+
 cnchi-dev
+python-lxml
 python-mako
 python-mock
-python-lxml
 python-requests
 
 # Network
 
-ipw2100-fw
-ipw2200-fw
-zd1211-firmware
-wireless_tools
-wpa_actiond
 b43-fwcutter
 broadcom-wl
-net-tools
-usb_modeswitch
+dnsutils
+intel-ucode
+ipw2100-fw
+ipw2200-fw
+linux-firmware
 modemmanager
+netctl
+net-tools
 networkmanager-openvpn
 networkmanager-pptp
+usb_modeswitch
 whois 
-dnsutils
-netctl
-linux-firmware
-intel-ucode
+wireless_tools
+wpa_actiond
+zd1211-firmware
 
 # Filesystems
 
 btrfs-progs
-ntfs-3g
 dosfstools
-xfsprogs
-squashfs-tools
 f2fs-tools
 mtools
-# Xorg
+ntfs-3g
+squashfs-tools
+xfsprogs
 
-xorg-server
-xorg-server-utils
+# Xorg & Graphics Drivers
+
+mesa
+mesa-vdpau
+virtualbox-guest-dkms
+virtualbox-guest-modules
+virtualbox-guest-utils
 xf86-input-synaptics
-
-# Graphical Drivers
-
+xf86-video-ati
+xf86-video-fbdev
 xf86-video-intel
 xf86-video-nouveau
-xf86-video-ati
-mesa
-virtualbox-guest-utils
-virtualbox-guest-modules
-virtualbox-guest-dkms
-xf86-video-vmware
 xf86-video-openchrome
 xf86-video-vesa
+xf86-video-vmware
+xorg-server
+xorg-server-utils
 
 
 # System Tools
 
-sudo
+alsa-utils
+expect
+git
 gksu
 pamac
 pkgfile
-alsa-utils
-xdg-user-dirs-gtk
 powerpill
 reflector
-expect
-git
+sudo
+unzip
+unrar
 wget
-plymouth
+xdg-user-dirs-gtk
 
 # Fonts
 
-ttf-dejavu
-ttf-bitstream-vera
-ttf-freefont
-ttf-arphic-uming
-ttf-baekmuk
 divehi-fonts
 ttf-aboriginal-sans
+ttf-arphic-uming
+ttf-baekmuk
+ttf-bitstream-vera
+ttf-dejavu
+ttf-freefont
 
 
 # Desktop
-network-manager-applet
+
+antergos-wallpapers
+baobab
+bijiben
+brasero
+cdrkit
 chromium
 chromium-pepper-flash
-transmission-cli
-transmission-gtk
-libreoffice-installer
 eog
-
-
-# Theme
-
-numix-icon-theme-square
-gnome-themes-standard
-antergos-wallpapers
-gnome-shell-extensions
-gnome-shell-extension-panel-osd
-gnome-common
-gnome-tweak-tool
-gnome-shell-extension-dash-to-dock
-numix-frost-themes
-
-# Compression
-
-unzip
-unrar
-
-# Gnome
-
-gnome-shell
-gnome-control-center
-gnome-keyring
-gnome-terminal
-file-roller
+espeak
 evince
+file-roller
+gedit
+gnome-backgrounds
 gnome-bluetooth
 gnome-calculator
-gedit
-gnome-system-monitor
-pidgin
-gnome-screenshot
-nautilus
+gnome-common
+gnome-contacts
+gnome-control-center
+gnome-disk-utility
+gnome-documents
+gnome-keyring
+gnome-logs
+gnome-maps
 gnome-music
-
-# Orca
-orca
-espeak
+gnome-photos
+gnome-screenshot
+gnome-shell
+gnome-shell-extension-dash-to-dock
+gnome-shell-extension-lockscreen-lightdm
+gnome-shell-extension-panel-osd
+gnome-shell-extensions
+gnome-sound-recorder
+gnome-system-monitor
+gnome-terminal
+gnome-themes-standard
+gnome-tweak-tool
+gnome-weather
+gst-libav
+gst-plugins-bad
+gst-plugins-base
+gst-plugins-good
+gst-plugins-ugly
+gstreamer0.10-plugins
+gstreamer-vaapi
+gvfs-mtp
+libgnomeui
+libreoffice-installer
 libwnck3
+nautilus
+network-manager-applet
+numix-frost-themes
+numix-icon-theme-square
+orca
+pidgin
+totem
+transmission-cli
+transmission-gtk
+xdg-user-dirs-gtk
+xscreensaver
 
 # LightDM
 
 lightdm-webkit-theme-antergos
-gnome-shell-extension-lockscreen-lightdm
