@@ -263,7 +263,7 @@ make_customize_root_image() {
         	# Fix QT apps
         	echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${work_dir}/root-image/etc/bash.bashrc
 
-        	chmod +x ${work_dir}/usr/share/cnchi/cnchi/info.py
+        	#chmod +x ${work_dir}/usr/share/cnchi/cnchi/info.py
 
         	# Always return true so build will continue even if mount is busy. (Arch bug)
 		#echo "Umount /var/run/dbus"
