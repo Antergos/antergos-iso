@@ -5,7 +5,7 @@ prebootloader
 os-prober
 efibootmgr
 dmraid
-hwinfo
+#hwinfo
 ntp
 libui-sh
 dialog
@@ -64,9 +64,9 @@ xorg-xinit
 xf86-video-intel
 xf86-video-nouveau
 xf86-video-ati
-mesa-dri
-virtualbox-guest-utils
-virtualbox-guest-modules
+mesa
+#virtualbox-guest-utils
+#virtualbox-guest-modules
 #virtualbox-guest-dkms
 #xf86-video-vmware
 #xf86-video-openchrome
@@ -106,7 +106,7 @@ xfce4-notifyd
 
 # Theme
 
-numix-icon-theme-square
+numix-icon-theme
 #antergos-wallpapers
 
 # Compression

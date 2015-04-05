@@ -7,9 +7,6 @@ CNCHI_STARTED="False"
 CNCHI_RESTARTED="False"
 NO_UPDATES="False"
 CHECK_UPDATES=$(sudo checkupdates)
-TIMEZONE_QUERY=$(wget -qO - http://geoip.ubuntu.com/lookup | sed -n -e 's/.*<TimeZone>\(.*\)<\/TimeZone>.*/\1/p')
-echo "Timezone Detected: ${TIMEZONE_QUERY}"
-sudo timedatectl set-timezone ${TIMEZONE_QUERY}
 
 # Translatable Strings
 
@@ -52,6 +49,18 @@ fi
 
 if [[ ${NETWORK_ALIVE} = '' ]]; then
 	sudo sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist
+	sudo pacman -Syy
+	CNCHI_REPO_VER=$(sudo pacman -Ss '^cnchi$' | cut -s -d ' ' -f 2)
+	CNCHI_DEV_VER=$(sudo /usr/share/cnchi/cnchi/info.py)
+	CNCHI_DEV_VER=${CNCHI_DEV_VER:2:3}
+	echo $CNCHI_DEV_VER $CNCHI_REPO_VER
+	
+	if [[ ${CNCHI_REPO_VER} -gt ${CNCHI_DEV_VER} ]]; then
+		INSTALL_CNCHI="True"
+	else
+		INSTALL_CNCHI="False"
+	fi
+	
 	
 	if [[ ${CNCHI_STARTED} = "True" ]]; then
 		until [[ -f /tmp/.setup-running ]];do
@@ -59,10 +68,16 @@ if [[ ${NETWORK_ALIVE} = '' ]]; then
 		done
 		
 	fi
-	if { [[ ${CHECK_UPDATES} == *"cnchi"* ]] && ! [[ ${CHECK_UPDATES} == *cnchi-dev* ]]; } || { [[ ${CHECK_UPDATES}/"cnchi-dev" == *cnchi* ]]; }; then
+	if { [[ ${CHECK_UPDATES} == *"cnchi"* ]] && ! [[ ${CHECK_UPDATES} == *cnchi-dev* ]]; } \
+		|| { [[ ${CHECK_UPDATES}/"cnchi-dev" == *cnchi* ]]; } || { [[ ${INSTALL_CNCHI} = "True"]]; }; then
+		
 		sudo killall -s 15 -w python && sudo rm /tmp/.setup-running
 		notify_user "${INSTALLING_UPDATES}" "${INSTALLING_UPDATES_SUB}"
-		sudo pacman -Syy --noconfirm --needed cnchi
+		sudo rm /var/lib/pacman/db.lck
+		if [[ ${INSTALL_CNCHI} = "True" ]]; then
+			sudo pacman -R cnchi-dev --noconfirm
+		fi
+		sudo pacman -S --noconfirm cnchi
 		notify_user "${UPDATE_COMPLETE}" "${UPDATE_COMPLETE_SUB}" 
 		start_cnchi && CNCHI_RESTARTED="True"
 	else
@@ -74,9 +89,11 @@ fi
 
 
 
-run_when_connected > /tmp/pacman-boot.log 2>&1
+run_when_connected > /tmp/pacman-boot.log 2>&1 && \
 { if [[ ${CNCHI_RESTARTED} = "True" ]] || [[ -f /tmp/.setup-running ]] || [[  ${NO_UPDATES} = "True" ]]; then 
 	exit 0;
 else
 	sudo killall -s 15 -w python; sudo rm /tmp/.setup-running;  sudo -E cnchi -dv &
 fi; } && exit 0;
+
+exit 1;
