@@ -11,7 +11,7 @@ work_dir=work
 out_dir=out
 verbose="-v"
 cmd_args=""
-keep_pacman_packages="y"
+keep_pacman_packages="${KEEP_PACMAN_PACKAGES}"
 pacman_conf=${work_dir}/pacman.conf
 script_path=$(readlink -f ${0%/*})
 
@@ -190,6 +190,7 @@ make_efiboot() {
 make_customize_root_image() {
 	part_one() {
         	cp -af ${script_path}/root-image ${work_dir}
+        	rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop
         	ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
         	chmod 750 ${work_dir}/root-image/etc/sudoers.d
         	chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel

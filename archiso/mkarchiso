@@ -16,7 +16,7 @@ iso_application="Antergos Live/Rescue CD"
 install_dir="arch"
 work_dir="work"
 out_dir="out"
-keep_pacman_packages="y"
+keep_pacman_packages="${KEEP_PACMAN_PACKAGES}"
 sfs_comp="xz"
 
 # Show an INFO message
@@ -246,7 +246,7 @@ _cleanup () {
         find "${work_dir}/root-image/var/lib/pacman/sync" -delete
     fi
 
-    if [[ "$KEEP_PACMAN_PACKAGES" = "n" ]]; then
+    if [[ ${keep_pacman_packages} = "n" ]]; then
         _msg_info "Delete pacman package cache"
         find "${work_dir}/root-image/var/cache/pacman/pkg" -type f -delete
     else

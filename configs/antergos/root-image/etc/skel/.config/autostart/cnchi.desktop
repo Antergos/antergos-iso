@@ -1,5 +1,5 @@
 [Desktop Entry]
-Terminal=true
+Terminal=false
 Icon=/usr/share/antergos/cnchi.png
 Type=Application
 Exec=/usr/bin/pacman-boot
