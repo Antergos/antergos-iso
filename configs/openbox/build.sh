@@ -11,7 +11,7 @@ work_dir=work
 out_dir=../antergos/out
 verbose="-v"
 cmd_args=""
-keep_pacman_packages=""
+keep_pacman_packages="n"
 pacman_conf=${work_dir}/pacman.conf
 script_path=$(readlink -f ${0%/*})
 

@@ -246,7 +246,7 @@ _cleanup () {
         find "${work_dir}/root-image/var/lib/pacman/sync" -delete
     fi
 
-    if [[ "$keep_pacman_packages" = "n" ]]; then
+    if [[ "$KEEP_PACMAN_PACKAGES" = "n" ]]; then
         _msg_info "Delete pacman package cache"
         find "${work_dir}/root-image/var/cache/pacman/pkg" -type f -delete
     else
