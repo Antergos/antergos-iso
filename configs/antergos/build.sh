@@ -190,7 +190,7 @@ make_efiboot() {
 make_customize_root_image() {
 	part_one() {
         	cp -af ${script_path}/root-image ${work_dir}
-        	rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop
+        	rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop || true
         	ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
         	chmod 750 ${work_dir}/root-image/etc/sudoers.d
         	chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
