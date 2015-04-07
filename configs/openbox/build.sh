@@ -178,9 +178,10 @@ make_efiboot() {
     fi
 }
 remove_extra_icons() {
-
+	if [[ -d "${work_dir}/root-image/usr/share/icons" ]]; then
 	cd ${work_dir}/root-image/usr/share/icons
         find . ! -name '**image-missing.svg**' ! -name '**emblem-default.svg**' ! -name '**dialog-warning.svg**' ! -name '**edit-undo**' ! -name '**list-add**' ! -name '**list-remove**' ! -name '**system-run**' ! -name '**edit-clear-all**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-yes.svg**' ! -name '**gtk-yes.svg**' ! -name '**gtk-no.svg**' ! -name '**stock_no.svg**' ! -name '**nm-signal-00**' ! -name '**nm-signal-25**' ! -name '**nm-signal-50**' ! -name '**nm-signal-75**' ! -name '**nm-signal-100**' ! -name '**nm-signal-00-secure**' ! -name '**nm-signal-25-secure**' ! -name '**nm-signal-50-secure**' ! -name '**nm-signal-75-secure**' ! -name '**nm-signal-100-secure**' ! -name '**network***symbol****' ! -name '**nm-**' -type f -delete
+        fi
 
 }
 
@@ -411,7 +412,7 @@ make_common_single() {
     #run_once make_aitab
     #run_once make_usr_lib_modules
     #run_once make_usr_share
-    run_once make_prepare
+     make_prepare
     run_once make_iso
     exit 0;
 }
