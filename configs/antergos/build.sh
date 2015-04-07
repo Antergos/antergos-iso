@@ -17,7 +17,7 @@ script_path=$(readlink -f ${0%/*})
 
 setup_workdir() {
     #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
-    cache_dirs="/var/cache/pacman/pkg_${arch}"
+    cache_dirs="/var/cache/pacman/pkg"
     mkdir -p "${work_dir}"
     pacman_conf="${work_dir}/pacman.conf"
     sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" \
