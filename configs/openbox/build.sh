@@ -177,7 +177,12 @@ make_efiboot() {
             umount -l ${work_dir}/efiboot
     fi
 }
+remove_extra_icons() {
 
+	cd ${work_dir}/root-image/usr/share/icons
+        find . ! -name '**image-missing.svg**' ! -name '**emblem-default.svg**' ! -name '**dialog-warning.svg**' ! -name '**edit-undo**' ! -name '**list-add**' ! -name '**list-remove**' ! -name '**system-run**' ! -name '**edit-clear-all**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-yes.svg**' ! -name '**gtk-yes.svg**' ! -name '**gtk-no.svg**' ! -name '**stock_no.svg**' ! -name '**nm-signal-00**' ! -name '**nm-signal-25**' ! -name '**nm-signal-50**' ! -name '**nm-signal-75**' ! -name '**nm-signal-100**' ! -name '**nm-signal-00-secure**' ! -name '**nm-signal-25-secure**' ! -name '**nm-signal-50-secure**' ! -name '**nm-signal-75-secure**' ! -name '**nm-signal-100-secure**' ! -name '**network***symbol****' ! -name '**nm-**' -type f -delete
+
+}
 
 # Customize installation (root-image)
 make_customize_root_image() {
@@ -295,8 +300,7 @@ make_customize_root_image() {
         rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
         rm -rf ${work_dir}/root-image/usr/share/icons/{Adwaita,HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest} || true
         
-        cd ${work_dir}/root-image/usr/share/icons
-        find . ! -name '**image-missing.svg**' ! -name '**emblem-default.svg**' ! -name '**dialog-warning.svg**' ! -name '**edit-undo**' ! -name '**list-add**' ! -name '**list-remove**' ! -name '**system-run**' ! -name '**edit-clear-all**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-yes.svg**' ! -name '**gtk-yes.svg**' ! -name '**gtk-no.svg**' ! -name '**stock_no.svg**' ! -name '**nm-signal-00**' ! -name '**nm-signal-25**' ! -name '**nm-signal-50**' ! -name '**nm-signal-75**' ! -name '**nm-signal-100**' ! -name '**nm-signal-00-secure**' ! -name '**nm-signal-25-secure**' ! -name '**nm-signal-50-secure**' ! -name '**nm-signal-75-secure**' ! -name '**nm-signal-100-secure**' -type f -delete
+		remove_extra_icons
         	
         	touch /var/tmp/five
         }
@@ -346,7 +350,11 @@ make_aitab() {
 
 # Build a single root filesystem
 make_prepare() {
+	rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
+        rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
+        rm -rf ${work_dir}/root-image/usr/share/icons/{Adwaita,HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest} || true
     cp -a -l -f ${work_dir}/root-image ${work_dir}
+    remove_extra_icons
 
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  pkglist
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  prepare
