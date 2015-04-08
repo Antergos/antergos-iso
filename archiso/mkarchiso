@@ -215,12 +215,20 @@ _show_config () {
 _pacman ()
 {
     _msg_info "Installing packages to '${work_dir}/root-image/'..."
-
-    if [[ "${quiet}" = "y" ]]; then
-        pacstrap -C "${pacman_conf}" -d -G -M "${work_dir}/root-image" $* &> /dev/null
+    if [[ ${keep_pacman_packages} = "y" ]]; then
+        if [[ "${quiet}" = "y" ]]; then
+            pacstrap -C "${pacman_conf}" -d -G -M "${work_dir}/root-image" $* &> /dev/null
+        else
+            pacstrap -C "${pacman_conf}" -d -G -M "${work_dir}/root-image" $*
+        fi
     else
-        pacstrap -C "${pacman_conf}" -d -G -M "${work_dir}/root-image" $*
+        if [[ "${quiet}" = "y" ]]; then
+            pacstrap -C "${pacman_conf}" -c -d -G -M "${work_dir}/root-image" $* &> /dev/null
+        else
+            pacstrap -C "${pacman_conf}" -c -d -G -M "${work_dir}/root-image" $*
+        fi
     fi
+    
 
     _msg_info "Packages installed successfully!"
 }

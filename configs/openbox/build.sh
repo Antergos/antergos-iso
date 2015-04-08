@@ -11,7 +11,7 @@ work_dir=/antergos-iso/configs/openbox/work
 out_dir=/antergos-iso/configs/antergos/out
 verbose="-v"
 cmd_args=""
-export keep_pacman_packages="${KEEP_PACMAN_PACKAGES}"
+keep_pacman_packages="n"
 pacman_conf=${work_dir}/pacman.conf
 script_path=/antergos-iso/configs/antergos/
 
