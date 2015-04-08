@@ -7,13 +7,13 @@ iso_label="ANTERGOS"
 iso_version=$(date +%Y.%m.%d)
 install_dir="arch"
 arch=$(uname -m)
-work_dir=work
-out_dir=../antergos/out
+work_dir=/antergos-iso/configs/openbox/work
+out_dir=/antergos-iso/configs/antergos/out
 verbose="-v"
 cmd_args=""
 export keep_pacman_packages="${KEEP_PACMAN_PACKAGES}"
 pacman_conf=${work_dir}/pacman.conf
-script_path=$(readlink -f ${0%/*})
+script_path=/antergos-iso/configs/antergos/
 
 setup_workdir() {
     #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
