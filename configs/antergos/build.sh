@@ -58,7 +58,7 @@ make_setup_mkinitcpio() {
 #    cp -R ${script_path}/root-image/usr/share/plymouth/themes/Antergos-Simple ${work_dir}/root-image/usr/share/plymouth/themes/
 #    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
 #    echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
-    sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
+    #sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2&>1
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~MKINITCPIO DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     if [[ -f ${work_dir}/root-image/boot/archiso.img ]]; then
@@ -73,9 +73,12 @@ make_setup_mkinitcpio() {
 # Prepare ${install_dir}/boot/
 make_boot() {
     mkdir -p ${work_dir}/iso/${install_dir}/boot/
-    sleep 10;
-    cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
-    cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
+    if [[ -f ${work_dir}/root-image/boot/archiso.img ]]; then
+    	cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
+    	cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
+    else
+    	echo "@@@@@@@@@@@@@@@@@@@~~~~~~~~~work_dir is ${work_dir}~~~~~~~~~@@@@@@@@@@@@@@@@@@@"
+    	ls ${work_dir}/root-image/boot/
 }
 
 make_boot_extra() {

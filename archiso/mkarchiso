@@ -512,7 +512,7 @@ command_install () {
     _show_config install
 
     
-        _pacman "${pkg_list}"
+        _pacman "--needed ${pkg_list}"
  
 }
 
