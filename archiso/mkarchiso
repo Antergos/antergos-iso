@@ -254,11 +254,11 @@ _cleanup () {
         find "${work_dir}/root-image/var/lib/pacman/sync" -delete
     fi
 
-    if [[ ${keep_pacman_packages} = "n" ]]; then
+    if [[ ${keep_pacman_packages} = "y" ]]; then
+        _msg_info "Keeping pacman package cache"
+    else
         _msg_info "Delete pacman package cache"
         find "${work_dir}/root-image/var/cache/pacman/pkg" -type f -delete
-    else
-        _msg_info "Keeping pacman package cache"
     fi
 
     # Delete all log files, keeps empty dirs.
