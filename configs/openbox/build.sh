@@ -27,7 +27,7 @@ setup_workdir() {
 # Base installation (root-image)
 make_basefs() {
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "intel-ucode" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode memtest86+ nbd" install
 }
 
 # Additional packages (root-image)
@@ -53,7 +53,8 @@ make_setup_mkinitcpio() {
     cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/etc/initcpio
     cp ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
     #sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2&>1
+    echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~MKINITCPIO DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     if [[ -f ${work_dir}/root-image/boot/archiso.img ]]; then
     		echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~archiso.img EXISTS!!!~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     else
@@ -66,9 +67,13 @@ make_setup_mkinitcpio() {
 # Prepare ${install_dir}/boot/
 make_boot() {
     mkdir -p ${work_dir}/iso/${install_dir}/boot/
-    sleep 10;
-    cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
-    cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
+    if [[ -f ${work_dir}/root-image/boot/archiso.img ]]; then
+    	cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
+    	cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
+    else
+    	echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~work_dir is'; echo ${work_dir}; echo '~~~~~~~~~@@@@@@@@@@@@@@@@@@@'
+    	ls ${work_dir} && ls ${work_dir}/root-image/ && ls ${work_dir}/root-image/boot/
+    fi
 }
 
 make_boot_extra() {
@@ -385,8 +390,8 @@ run_once() {
 }
 
 make_common_single() {
-    make_basefs
-    make_packages
+    run_once make_basefs
+    run_once make_packages
     make_setup_mkinitcpio
     run_once make_customize_root_image
     run_once make_boot
