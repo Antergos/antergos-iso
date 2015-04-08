@@ -11,7 +11,7 @@ work_dir=work
 out_dir=out
 verbose="-v"
 cmd_args=""
-keep_pacman_packages="${KEEP_PACMAN_PACKAGES}"
+export keep_pacman_packages="${KEEP_PACMAN_PACKAGES}"
 pacman_conf=${work_dir}/pacman.conf
 script_path=$(readlink -f ${0%/*})
 
