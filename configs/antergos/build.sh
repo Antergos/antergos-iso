@@ -77,7 +77,7 @@ make_boot() {
     	cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
     	cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
     else
-    	echo "@@@@@@@@@@@@@@@@@@@~~~~~~~~~work_dir is ${work_dir}~~~~~~~~~@@@@@@@@@@@@@@@@@@@"
+    	echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~work_dir is'; echo ${work_dir}; echo '~~~~~~~~~@@@@@@@@@@@@@@@@@@@'
     	ls ${work_dir}/root-image/boot/
 }
 
