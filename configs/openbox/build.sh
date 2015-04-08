@@ -279,22 +279,8 @@ make_customize_root_image() {
         	echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
         	
         	# Install translations for updater script messages that are shown when ISO boots
-        	shopt -s nullglob
-        	cd ${out_dir}/trans
-        	for f in *.mo
-        	do
-        		fullname="$(basename ${f})"
-        		echo ${fullname}
-        		fname="${fullname%.*}"
-        		echo ${fname}
-        		dest="${work_dir}/root-image/usr/share/locale/${fname}/LC_MESSAGES"
-        		if ! [[ -d "${dest}" ]]; then
-        			mkdir -p "${dest}";
-        		fi
-        		mv ${f} ${dest}/CNCHI_UPDATER.mo
-        		sleep 1
-        	done
-        	shopt -u nullglob
+        	translations="$(${script_path}/translations.sh ${out_dir} ${work_dir})"
+        	echo "${translations}"
         	
         	# Make ISO thinner
         rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
