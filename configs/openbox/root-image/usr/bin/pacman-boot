@@ -51,6 +51,7 @@ if [[ ${NETWORK_ALIVE} = '' ]]; then
 	sudo sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist
 	sudo rm /var/lib/pacman/db.lck || true
 	sudo chmod +x /usr/share/cnchi/cnchi/info.py
+	sudo reflector -l 15 -f 10 --save /etc/pacman.d/mirrorlist
 	sudo pacman -Syy
 	CNCHI_REPO_VER="$(sudo pacman -Ss '^cnchi$' | cut -s -d ' ' -f 2)"
 	CNCHI_REPO_VER="${CNCHI_REPO_VER:2:1}"
