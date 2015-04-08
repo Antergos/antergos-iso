@@ -79,6 +79,7 @@ make_boot() {
     else
     	echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~work_dir is'; echo ${work_dir}; echo '~~~~~~~~~@@@@@@@@@@@@@@@@@@@'
     	ls ${work_dir}/root-image/boot/
+    fi
 }
 
 make_boot_extra() {
