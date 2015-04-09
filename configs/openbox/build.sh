@@ -12,7 +12,7 @@ out_dir=/antergos-iso/configs/antergos/out
 verbose="-v"
 cmd_args=""
 keep_pacman_packages="n"
-pacman_conf=${work_dir}/pacman.conf
+pacman_conf="${work_dir}/pacman.conf"
 script_path=/antergos-iso/configs/antergos/
 
 setup_workdir() {

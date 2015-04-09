@@ -16,7 +16,7 @@ iso_application="Antergos Live/Rescue CD"
 install_dir="arch"
 work_dir="work"
 out_dir="out"
-keep_pacman_packages="${KEEP_PACMAN_PACKAGES}"
+keep_pacman_packages="n"
 sfs_comp="xz"
 
 # Show an INFO message
@@ -258,7 +258,7 @@ _cleanup () {
         _msg_info "Keeping pacman package cache"
     else
         _msg_info "Delete pacman package cache"
-        find "${work_dir}/root-image/var/cache/pacman/pkg" -type f -delete
+        find "${work_dir}/root-image/var/cache/pacman/" -type f -delete
     fi
 
     # Delete all log files, keeps empty dirs.
