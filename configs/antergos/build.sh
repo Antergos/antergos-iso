@@ -11,8 +11,8 @@ work_dir=work
 out_dir=out
 verbose="-v"
 cmd_args=""
-export keep_pacman_packages="${KEEP_PACMAN_PACKAGES}"
-pacman_conf=${work_dir}/pacman.conf
+keep_pacman_packages="y"
+pacman_conf="${work_dir}/pacman.conf"
 script_path=$(readlink -f ${0%/*})
 
 setup_workdir() {
@@ -26,13 +26,13 @@ setup_workdir() {
 
 # Base installation (root-image)
 make_basefs() {
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode memtest86+ nbd" install
+    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
+    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode memtest86+ nbd" install
 }
 
 # Additional packages (root-image)
 make_packages() {
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages.both)" install
+    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages.both)" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
@@ -346,8 +346,8 @@ make_aitab() {
 make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
 
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  pkglist
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  prepare
+    mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}"  pkglist
+    mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}"  prepare
 
     #rm -rf ${work_dir}/root-image (Always fails and exits the whole build process)
     #rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
@@ -361,7 +361,7 @@ make_iso() {
     else
         isoName="${iso_name}-${iso_version}-${arch}.iso"
     fi
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${isoName}"
+    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${isoName}"
 }
 
 purge_single ()
