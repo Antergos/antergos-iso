@@ -97,6 +97,7 @@ expect
 # Desktop
 network-manager-applet
 openbox
+compton
 numix-frost-themes
 #feh
 nitrogen
@@ -107,6 +108,7 @@ xfce4-notifyd
 # Theme
 
 numix-icon-theme
+adwaita-icon-theme
 #antergos-wallpapers
 
 # Compression
