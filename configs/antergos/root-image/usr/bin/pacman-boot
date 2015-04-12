@@ -72,8 +72,8 @@ if [[ ${NETWORK_ALIVE} = '' ]]; then
 		done
 		
 	fi
-	if { [[ ${CHECK_UPDATES} == *"cnchi"* ]] && ! [[ ${CHECK_UPDATES} == *cnchi-dev* ]]; } \
-		|| { [[ ${CHECK_UPDATES}/"cnchi-dev" == *cnchi* ]]; } || { [[ ${INSTALL_CNCHI} = "True" ]]; }; then
+	if { [[ ${CHECK_UPDATES} = *"cnchi"* ]] && ! [[ ${CHECK_UPDATES} = *"cnchi-dev"* ]]; } \
+		|| { [[ ${CHECK_UPDATES}/"cnchi-dev" = *"cnchi"* ]]; } || { [[ ${INSTALL_CNCHI} = "True" ]]; }; then
 		
 		sudo killall -s 15 -w python && sudo rm /tmp/.setup-running
 		notify_user "${INSTALLING_UPDATES}" "${INSTALLING_UPDATES_SUB}"
