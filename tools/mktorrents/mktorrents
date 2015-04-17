@@ -3,17 +3,20 @@
 # Alexandre Filgueira Sánchez <faidoc@gmail.com>
 
 iso_version=$(date +%Y.%m.%d)
-iso_name='antergos'
 
-for arch in i686 x86_64; do 
-	echo
-	echo "### Generating $iso_name-$iso_version-netinstall-$arch.torrent ..."
-	echo
-	mktorrent -a udp://tracker.openbittorrent.com:80 \
-			  -n "$iso_name-$iso_version-$arch.iso" \
-			  -o $iso_name-$iso_version-$arch.torrent \
-			  -w http://mirrors.antergos.com/iso/$iso_version/$iso_name-$iso_version-$arch.iso \
-			  $iso_name-$iso_version-$arch.iso
+for iso_name in antergos antergos-minimal; do
+
+	for arch in i686 x86_64; do 
+		echo
+		echo "### Generating $iso_name-$iso_version-netinstall-$arch.torrent ..."
+		echo
+		mktorrent -a udp://tracker.openbittorrent.com:80,udp://tracker.coppersurfer.tk:6969, \
+				 udp://tracker.leechers-paradise.org:6969,udp://open.demonii.com:1337 \
+				  -n "$iso_name-$iso_version-$arch.iso" \
+				  -o $iso_name-$iso_version-$arch.torrent \
+				  -w http://mirrors.antergos.com/iso/release/$iso_name-$iso_version-$arch.iso \
+				  $iso_name-$iso_version-$arch.iso
+	done
 done
 
 

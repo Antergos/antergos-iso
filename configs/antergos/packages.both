@@ -21,7 +21,7 @@ refind-efi
 
 # Cnchi Graphical Installer
 
-cnchi-dev
+cnchi
 python-lxml
 python-mako
 python-mock

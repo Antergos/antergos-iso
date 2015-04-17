@@ -17,7 +17,7 @@ haveged
 
 
 # Cnchi Graphical Installer
-cnchi-dev
+cnchi
 python-mako
 python-mock
 python-lxml
