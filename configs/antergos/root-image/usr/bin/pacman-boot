@@ -1,6 +1,6 @@
 #!/bin/bash
 GETTEXT='gettext "CNCHI_UPDATER"'
-NETWORK_ALIVE=$(ping -c1 8.8.8.8 2>&1 | grep "0 received")
+NETWORK_ALIVE=$(ping -c1 8.8.8.8 >/dev/null 2>&1; echo $?)
 NOTIFIED="False"
 FAILED="False"
 CNCHI_STARTED="False"
@@ -26,32 +26,29 @@ start_cnchi () {
 
 notify_user () {
 
-        notify-send -a "Cnchi" -i "/usr/share/cnchi/data/images/antergos/antergos-icon.png" -u critical "$1" "$2"
+        notify-send -a "Cnchi" -i "/usr/share/cnchi/data/images/antergos/antergos-icon.png" -u critical -t 15000 "$1" "$2"
 }
-
-if [[ "$NETWORK_ALIVE" != "" ]]; then
-	start_cnchi && CNCHI_STARTED="True"
-fi
-
 
 
 run_when_connected () {
 
-if [[ "$NETWORK_ALIVE" != "" ]]; then
+if [[ "$NETWORK_ALIVE" != 0 ]]; then
 
-	while [[ "$NETWORK_ALIVE" != "" ]];do
+	start_cnchi && CNCHI_STARTED="True"
+
+	while [[ "$NETWORK_ALIVE" != 0 ]];do
 		if [[ ${NOTIFIED} = "False" ]]; then
 			notify_user "${NO_CONNECTION}" "${NO_CONNECTION_SUB}"
 			NOTIFIED="True"
 		fi
-		NETWORK_ALIVE=$(ping -c1 8.8.8.8 2>&1 | grep "0 received")
-		sleep 5;
+		NETWORK_ALIVE=$(ping -c1 8.8.8.8 >/dev/null 2>&1; echo $?)
+		sleep 3;
 	done
 fi
 
 
 
-if [[ ${NETWORK_ALIVE} = '' ]]; then
+if [[ ${NETWORK_ALIVE} = 0 ]]; then
 	if [[ ${CNCHI_STARTED} = "True" ]]; then
 		until [[ -f /tmp/.setup-running ]];do
 			sleep 2;
@@ -67,16 +64,16 @@ if [[ ${NETWORK_ALIVE} = '' ]]; then
 	CNCHI_REPO_VER_FULL="$(sudo pacman -Ss '^cnchi$' | cut -s -d ' ' -f 2)"
 	CNCHI_REPO_VER="${CNCHI_REPO_VER_FULL:2:1}"
 	CNCHI_REPO_MINOR="${CNCHI_REPO_VER_FULL:4:1}"
-	CNCHI_DEV_VER_FULL="$(sudo /usr/share/cnchi/cnchi/info.py)"
-	CNCHI_DEV_VER="${CNCHI_DEV_VER_FULL:2:1}"
-	CNCHI_DEV_MINOR="${CNCHI_DEV_VER_FULL:4:1}"
-	echo "$CNCHI_DEV_VER $CNCHI_REPO_VER | $CNCHI_REPO_MINOR $CNCHI_DEV_MINOR"
+	CNCHI_ISO_VER_FULL="$(sudo /usr/share/cnchi/cnchi/info.py)"
+	CNCHI_ISO_VER="${CNCHI_ISO_VER_FULL:2:1}"
+	CNCHI_ISO_MINOR="${CNCHI_ISO_VER_FULL:4:1}"
+	echo "$CNCHI_ISO_VER $CNCHI_REPO_VER | $CNCHI_REPO_MINOR $CNCHI_ISO_MINOR"
 	
 	INSTALL_CNCHI="False"
 	
-	if [[ ${CNCHI_REPO_VER} -gt ${CNCHI_DEV_VER} ]]; then
+	if [[ ${CNCHI_REPO_VER} -gt ${CNCHI_ISO_VER} ]]; then
 		INSTALL_CNCHI="True"
-	elif [[ ${CNCHI_REPO_MINOR} -gt ${CNCHI_DEV_MINOR} ]]; then
+	elif [[ ${CNCHI_REPO_VER} -eq ${CNCHI_ISO_VER} ]] && [[ ${CNCHI_REPO_MINOR} -gt ${CNCHI_ISO_MINOR} ]]; then
 		INSTALL_CNCHI="True"
 	fi
 	
@@ -98,11 +95,11 @@ fi
 
 
 run_when_connected > /tmp/pacman-boot.log 2>&1 && \
-if [[ ${CNCHI_RESTARTED} = "True" ]] || [[ -f /tmp/.setup-running ]] || [[  ${NO_UPDATES} = "True" ]]; then 
+{ if [[ ${CNCHI_RESTARTED} = "True" ]] || [[ -f /tmp/.setup-running ]] || [[  ${NO_UPDATES} = "True" ]]; then 
 	exit 0;
 else
 	sudo killall -s 15 -w python; sudo rm /tmp/.setup-running;  sudo -E cnchi -dv &
-fi
+fi; } && exit 0
 
 
 exit 1;
