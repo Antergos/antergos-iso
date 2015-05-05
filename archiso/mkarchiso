@@ -74,7 +74,7 @@ _mount_rootfs() {
 
 _umount_rootfs() {
     _msg_info "Unmounting '${work_dir}/mnt/root-image'"
-    umount "${work_dir}/mnt/root-image"
+    umount -d "${work_dir}/mnt/root-image"
     _msg_info "Done!"
     rmdir "${work_dir}/mnt/root-image"
     trap - EXIT HUP INT TERM

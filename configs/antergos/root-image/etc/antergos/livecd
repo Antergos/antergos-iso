@@ -18,7 +18,7 @@ fi
 # load keys
 loadkeys $(cat /etc/vconsole.conf | grep "KEYMAP=" | cut -d= -f2)
 
-echo ${LOCALE} > /home/antergos/.config/user-dirs.locale
+sudo -u antergos echo ${LOCALE} > /home/antergos/.config/user-dirs.locale
 
 sudo -u antergos xdg-user-dirs-update
 
