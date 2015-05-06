@@ -2,7 +2,7 @@
 Name=Cnchi
 GenericName=Cnchi
 Comment=Antergos Graphical Installer
-Exec=sudo -E cnchi -dv
+Exec=sudo -E cnchi -d -v
 Icon=/usr/share/cnchi/data/images/antergos/antergos-icon.png
 StartupNotify=true
 Type=Application

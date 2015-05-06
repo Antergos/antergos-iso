@@ -105,9 +105,9 @@ gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:maximize,c
 gsettings set org.gnome.desktop.wm.preferences audible-bell false
 
 # Configure touchpad
-dbus-launch gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
-dbus-launch gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
-dbus-launch gsettings set org.gnome.desktop.peripherals.touchpad scroll-method 'two-finger-scrolling'
+gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
+gsettings set org.gnome.desktop.peripherals.touchpad scroll-method 'two-finger-scrolling'
 
 # Set fonts
 gsettings set org.gnome.desktop.interface font-name 'Lato 11'
