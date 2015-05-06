@@ -233,6 +233,9 @@ make_customize_root_image() {
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
            	-r 'passwd -d antergos' \
            	run
+           	
+           	rm /etc/xdg/autostart/vboxclient
+           	
         	touch /var/tmp/three
         }
         

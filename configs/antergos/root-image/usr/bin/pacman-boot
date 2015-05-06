@@ -35,20 +35,21 @@ CHECK_UPDATES=$(sudo checkupdates)
 
 # Translatable Strings
 
-NO_CONNECTION=$(GETTEXT "INSTALLER NOTICE:")
-NO_CONNECTION_SUB=$(GETTEXT "You must be connected to the internet to install Antergos. Click the network icon in the top bar to configure your connection.")
-INSTALLING_UPDATES=$(GETTEXT "Installing Updates")
-INSTALLING_UPDATES_SUB=$(GETTEXT "Installing available updates.")
-UPDATE_COMPLETE=$(GETTEXT "Update Complete")
-UPDATE_COMPLETE_SUB=$(GETTEXT "Updates were installed sucessfully. Starting Cnchi...")
-CHECKING_UPDATES=$(GETTEXT "Cnchi Automatic Updates")
-CHECKING_UPDATES_SUB=$(GETTEXT "Checking for available updates for the Antergos Installer.")
-NO_UPDATES=$(GETTEXT "Check was sucessful.")
-NO_UPDATES_SUB=$(GETTEXT "You have the latest version. You can proceed with your installation!")
+NO_CONNECTION=$(${GETTEXT} "INSTALLER NOTICE:")
+NO_CONNECTION_SUB=$(${GETTEXT} "You must be connected to the internet to install Antergos. Click the network icon in the top bar to configure your connection.")
+INSTALLING_UPDATES=$(${GETTEXT} "Installing Updates")
+INSTALLING_UPDATES_SUB=$(${GETTEXT} "Installing available updates.")
+UPDATE_COMPLETE=$(${GETTEXT} "Update Complete")
+UPDATE_COMPLETE_SUB=$(${GETTEXT} "Updates were installed sucessfully. Starting Cnchi...")
+CHECKING_UPDATES=$(${GETTEXT} "Cnchi Automatic Updates")
+CHECKING_UPDATES_SUB=$(${GETTEXT} "Checking for available updates for the Antergos Installer.")
+NO_UPDATES=$(${GETTEXT} "Check was sucessful.")
+NO_UPDATES_SUB=$(${GETTEXT} "You have the latest version. You can proceed with your installation!")
 
 
 start_cnchi () {
-	sudo -E cnchi -d -v & return 0;
+	sudo -E cnchi -d -v & 
+	return 0;
 }
 
 notify_user () {
@@ -63,7 +64,7 @@ if [[ "$NETWORK_ALIVE" != 0 ]]; then
 
 	start_cnchi && CNCHI_STARTED="True"
 
-	while [[ "$NETWORK_ALIVE" != 0 ]];do
+	while [[ "$NETWORK_ALIVE" != 0 ]]; do
 		if [[ ${NOTIFIED} = "False" ]]; then
 			notify_user "${NO_CONNECTION}" "${NO_CONNECTION_SUB}"
 			NOTIFIED="True"
