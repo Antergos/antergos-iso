@@ -234,7 +234,7 @@ make_customize_root_image() {
            	-r 'passwd -d antergos' \
            	run
            	
-           	rm ${work_dir}/root-image/etc/xdg/autostart/vboxclient
+           	rm ${work_dir}/root-image/etc/xdg/autostart/vboxclient.desktop
            	
         	touch /var/tmp/three
         }
