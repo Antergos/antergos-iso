@@ -32,6 +32,8 @@ CNCHI_STARTED="False"
 CNCHI_RESTARTED="False"
 NO_UPDATES="False"
 CHECK_UPDATES=$(sudo checkupdates)
+LAST_SENT=''
+CNCHI_ICON="/usr/share/cnchi/data/images/antergos/antergos-icon.png"
 
 # Translatable Strings
 
@@ -43,8 +45,8 @@ UPDATE_COMPLETE=$(${GETTEXT} "Update Complete")
 UPDATE_COMPLETE_SUB=$(${GETTEXT} "Updates were installed sucessfully. Starting Cnchi...")
 CHECKING_UPDATES=$(${GETTEXT} "Cnchi Automatic Updates")
 CHECKING_UPDATES_SUB=$(${GETTEXT} "Checking for available updates for the Antergos Installer.")
-NO_UPDATES=$(${GETTEXT} "Check was sucessful.")
-NO_UPDATES_SUB=$(${GETTEXT} "You have the latest version. You can proceed with your installation!")
+NO_UPDATES_CN=$(${GETTEXT} "Check was sucessful.")
+NO_UPDATES_CN_SUB=$(${GETTEXT} "You have the latest version. You can proceed with your installation!")
 
 
 start_cnchi () {
@@ -54,7 +56,13 @@ start_cnchi () {
 
 notify_user () {
 
-        notify-send -a "Cnchi" -i "/usr/share/cnchi/data/images/antergos/antergos-icon.png" -u critical -t 15000 "$1" "$2"
+	if [[ ${LAST_SENT} != '' ]]; then
+		LAST_SENT=$(notify-send.sh -a "Cnchi" -i "${CNCHI_ICON}" -u critical -p -r "${LAST_SENT}" "$1" "$2")
+	else
+		LAST_SENT=$(notify-send.sh -a "Cnchi" -i "${CNCHI_ICON}" -u critical -p "$1" "$2")
+	fi
+
+	echo "${LAST_SENT}"
 }
 
 
@@ -89,7 +97,7 @@ if [[ ${NETWORK_ALIVE} = 0 ]]; then
 	sudo chmod +x /usr/share/cnchi/cnchi/info.py
 	sudo reflector -p http -l 50 -f 20 --save /etc/pacman.d/mirrorlist
 	sudo pacman -Syy
-	if [[ ${CHECKING_UPDATES} != '' ]]; then
+	if [[ ${CHECK_UPDATES} != '' ]]; then
 		CNCHI_REPO_VER_FULL="$(sudo pacman -Ss '^cnchi$' | cut -s -d ' ' -f 2)"
 		CNCHI_REPO_VER="${CNCHI_REPO_VER_FULL:2:1}"
 		CNCHI_REPO_MINOR="${CNCHI_REPO_VER_FULL:4:3}"
@@ -117,7 +125,7 @@ if [[ ${NETWORK_ALIVE} = 0 ]]; then
 		start_cnchi > /dev/null && CNCHI_RESTARTED="True"
 	else
 		NO_UPDATES="True"
-		notify_user "${NO_UPDATES}" "${NO_UPDATES_SUB}"
+		notify_user "${NO_UPDATES_CN}" "${NO_UPDATES_CN_SUB}"
 	fi
 	sudo sed -i '1d' /etc/pacman.d/antergos-mirrorlist
 fi
