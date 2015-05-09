@@ -85,12 +85,7 @@ fi
 
 
 if [[ ${NETWORK_ALIVE} = 0 ]]; then
-	if [[ ${CNCHI_STARTED} = "True" ]]; then
-		until [[ -f /tmp/.setup-running ]];do
-			sleep 2;
-		done
-		
-	fi
+
 	notify_user "${CHECKING_UPDATES}" "${CHECKING_UPDATES_SUB}"
 	sudo sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist
 	sudo rm /var/lib/pacman/db.lck > /dev/null || true
