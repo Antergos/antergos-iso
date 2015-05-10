@@ -184,8 +184,8 @@ make_efiboot() {
 }
 remove_extra_icons() {
 	if [[ -d "${work_dir}/root-image/usr/share/icons" ]]; then
-	cd ${work_dir}/root-image/usr/share/icons/Numix
-        find . ! -name '**image-missing.svg**' ! -name '**emblem-default.svg**' ! -name '**dialog-warning.svg**' ! -name '**edit-undo**' ! -name '**list-add**' ! -name '**list-remove**' ! -name '**system-run**' ! -name '**edit-clear-all**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-yes.svg**' ! -name '**gtk-yes.svg**' ! -name '**gtk-no.svg**' ! -name '**stock_no.svg**' ! -name '**nm-signal-00**' ! -name '**nm-signal-25**' ! -name '**nm-signal-50**' ! -name '**nm-signal-75**' ! -name '**nm-signal-100**' ! -name '**nm-signal-00-secure**' ! -name '**nm-signal-25-secure**' ! -name '**nm-signal-50-secure**' ! -name '**nm-signal-75-secure**' ! -name '**nm-signal-100-secure**' ! -name '**network***symbol****' ! -name '**nm-**' ! -name '**system-software-install**' ! -name '**bluetooth**' ! -name '**printer**' ! -name '**firefox**' ! -name '**network-server**' ! -name '**preferences-desktop-font**' ! -name '**applications-accessories**' ! -name '**accessories-text-editor**' ! -name '**gnome-mime-x-directory-smb-share**' ! -name '**video-display**' ! -name '**go-next-symbolic**' ! -name '**go-previous-symbolic**' ! -name '**dialog-**' ! -name 'nm-**' -type f -delete
+	cd ${work_dir}/root-image/usr/share/icons
+        find . ! -name '**image-missing.svg**' ! -name '**emblem-default.svg**' ! -name '**dialog-warning.svg**' ! -name '**edit-undo**' ! -name '**list-add**' ! -name '**list-remove**' ! -name '**system-run**' ! -name '**edit-clear-all**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-yes.svg**' ! -name '**gtk-yes.svg**' ! -name '**gtk-no.svg**' ! -name '**stock_no.svg**' ! -name '**nm-signal-00**' ! -name '**nm-signal-25**' ! -name '**nm-signal-50**' ! -name '**nm-signal-75**' ! -name '**nm-signal-100**' ! -name '**nm-signal-00-secure**' ! -name '**nm-signal-25-secure**' ! -name '**nm-signal-50-secure**' ! -name '**nm-signal-75-secure**' ! -name '**nm-signal-100-secure**' ! -name '**network***symbol****' ! -name '**nm-**' ! -name '**system-software-install**' ! -name '**bluetooth**' ! -name '**printer**' ! -name '**firefox**' ! -name '**network-server**' ! -name '**preferences-desktop-font**' ! -name '**applications-accessories**' ! -name '**accessories-text-editor**' ! -name '**gnome-mime-x-directory-smb-share**' ! -name '**video-display**' ! -name '**go-next-symbolic**' ! -name '**go-previous-symbolic**' ! -name '**dialog-**' ! -name 'nm-**' ! -path '**cursors**' -type f -delete
         fi
 
 }
@@ -265,6 +265,10 @@ make_customize_root_image() {
         
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r 'systemctl -fq enable pacman-init NetworkManager livecd NetworkManager-wait-online systemd-networkd' \
+            	run
+            
+            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'chown -R antergos:users /home/antergos' \
             	run
 
         	# Fix sudoers

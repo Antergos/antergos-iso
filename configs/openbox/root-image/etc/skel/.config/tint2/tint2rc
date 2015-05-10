@@ -24,6 +24,7 @@ border_color = #ffffff 70
 # PANEL
 #---------------------------------------------
 panel_monitor = all
+panel_items = LTSBC
 panel_position = top center horizontal
 panel_size = 100% 30
 panel_margin = 0 0
@@ -33,6 +34,16 @@ panel_background_id = 1
 wm_menu = 1
 panel_dock = 0
 panel_layer = bottom
+
+#---------------------------------------------
+# Launchers
+#---------------------------------------------
+launcher_icon_theme = Numix-Square
+launcher_padding = 5 0 10
+launcher_background_id = 1
+launcher_icon_size = 24
+launcher_item_app = ~/.local/applications/Cnchi.desktop
+launcher_item_app = /usr/share/roxterm.desktop
 
 #---------------------------------------------
 # TASKBAR

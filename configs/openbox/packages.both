@@ -1,5 +1,5 @@
 # Installation
-#grub
+grub
 gummiboot
 prebootloader
 os-prober
@@ -88,6 +88,7 @@ wget
 gettext
 libnotify
 expect
+gnome-keyring
 
 # Fonts
 
@@ -103,11 +104,12 @@ numix-frost-themes
 nitrogen
 tint2
 xfce4-notifyd
+roxterm
 
 
 # Theme
 
-numix-icon-theme
+numix-icon-theme-square
 adwaita-icon-theme
 #antergos-wallpapers
 
