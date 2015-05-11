@@ -68,9 +68,9 @@ notify_user () {
 
 run_when_connected () {
 
-if [[ "$NETWORK_ALIVE" != 0 ]]; then
+start_cnchi > /tmp/cnchi-output-alt.log && CNCHI_STARTED="True"
 
-	start_cnchi > /tmp/cnchi-output-alt.log && CNCHI_STARTED="True"
+if [[ "$NETWORK_ALIVE" != 0 ]]; then
 
 	while [[ "$NETWORK_ALIVE" != 0 ]]; do
 		if [[ ${NOTIFIED} = "False" ]]; then
