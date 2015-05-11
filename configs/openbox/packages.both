@@ -89,6 +89,7 @@ gettext
 libnotify
 expect
 gnome-keyring
+librsvg
 
 # Fonts
 
