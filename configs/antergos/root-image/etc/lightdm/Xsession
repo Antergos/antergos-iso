@@ -72,12 +72,15 @@ gsettings set org.gnome.shell enabled-extensions \
  gsettings set org.gnome.shell.extensions.panel-osd y-pos 96.0
  gsettings set org.gnome.shell.extensions.panel-osd force-expand true
 
+# Add minimize and maximize
+ gsettings set org.gnome.desktop.wm.preferences button-layout appmenu:minimize,maximize,close
+
 # Extension - dash-to-dock Settings
- dbus-launch gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
- dbus-launch gsettings set org.gnome.shell.extensions.dash-to-dock opaque-background true
- dbus-launch gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.5
- dbus-launch gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots true
- dbus-launch gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink true
+ gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
+ gsettings set org.gnome.shell.extensions.dash-to-dock opaque-background true
+ gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.5
+ gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots true
+ gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink true
 
 # Randomly choose a default wallpaper from antergos-wallpapers
 DIR="/usr/share/antergos/wallpapers"
