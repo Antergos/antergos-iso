@@ -42,8 +42,9 @@ launcher_icon_theme = Numix-Square
 launcher_padding = 5 0 10
 launcher_background_id = 1
 launcher_icon_size = 24
-launcher_item_app = ~/.local/applications/Cnchi.desktop
-launcher_item_app = /usr/share/roxterm.desktop
+launcher_item_app = /usr/share/applications/shutdown.desktop
+launcher_item_app = /usr/share/applications/Cnchi.desktop
+launcher_item_app = /usr/share/applications/roxterm.desktop
 
 #---------------------------------------------
 # TASKBAR

@@ -185,7 +185,7 @@ make_efiboot() {
 remove_extra_icons() {
 	if [[ -d "${work_dir}/root-image/usr/share/icons" ]]; then
 	cd ${work_dir}/root-image/usr/share/icons
-        find . ! -name '**image-missing.svg**' ! -name '**emblem-default.svg**' ! -name '**dialog-warning.svg**' ! -name '**edit-undo**' ! -name '**list-add**' ! -name '**list-remove**' ! -name '**system-run**' ! -name '**edit-clear-all**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-cancel**' ! -name '**dialog-apply**' ! -name '**dialog-yes.svg**' ! -name '**gtk-yes.svg**' ! -name '**gtk-no.svg**' ! -name '**stock_no.svg**' ! -name '**nm-signal-00**' ! -name '**nm-signal-25**' ! -name '**nm-signal-50**' ! -name '**nm-signal-75**' ! -name '**nm-signal-100**' ! -name '**nm-signal-00-secure**' ! -name '**nm-signal-25-secure**' ! -name '**nm-signal-50-secure**' ! -name '**nm-signal-75-secure**' ! -name '**nm-signal-100-secure**' ! -name '**network***symbol****' ! -name '**nm-**' ! -name '**system-software-install**' ! -name '**bluetooth**' ! -name '**printer**' ! -name '**firefox**' ! -name '**network-server**' ! -name '**preferences-desktop-font**' ! -name '**applications-accessories**' ! -name '**accessories-text-editor**' ! -name '**gnome-mime-x-directory-smb-share**' ! -name '**video-display**' ! -name '**go-next-symbolic**' ! -name '**go-previous-symbolic**' ! -name '**dialog-**' ! -name 'nm-**' ! -name 'index.theme' ! -path '**cursors**' -type f -delete
+        find . ! -iname '**Cnchi**' ! -name '**image-missing.svg**' ! -name '**emblem-default.svg**' ! -name '**dialog-warning.svg**' ! -name '**edit-undo**' ! -name '**list-add**' ! -name '**list-remove**' ! -name '**system-run**' ! -name '**edit-clear-all**' ! -name 'dialog-***' ! -name '**-yes.svg**' ! -name '**_yes.svg**' ! -name '**-no.svg**' ! -name '**stock_no.svg**' ! -name 'nm-***' ! -name '**system-software-install**' ! -name '***bluetooth***' ! -name '***printer***' ! -name '***firefox***' ! -name '**network-server**' ! -name '***preferences-desktop-font***' ! -name '**applications-accessories**' ! -name '**accessories-text-editor**' ! -name '**gnome-mime-x-directory-smb-share**' ! -name '**video-display**' ! -name '**go-next-symbolic**' ! -name '**go-previous-symbolic**' ! -name '**_close**' ! -name '**-close**' ! -name '**dialog-**' ! -name 'nm-**' ! -name 'index.theme' ! -name '**system-shutdown**' ! -name '**roxterm**' ! -path '**cursors**' -type f -delete
         fi
 
 }
@@ -266,7 +266,8 @@ make_customize_root_image() {
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r 'systemctl -fq enable pacman-init NetworkManager livecd NetworkManager-wait-online systemd-networkd' \
             	run
-            
+            	
+            # Fix /home permissions
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r 'chown -R antergos:users /home/antergos' \
             	run
@@ -278,11 +279,6 @@ make_customize_root_image() {
         	# Fix QT apps
         	echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${work_dir}/root-image/etc/bash.bashrc
 
-        	#chmod +x ${work_dir}/usr/share/cnchi/cnchi/info.py
-
-        	# Always return true so build will continue even if mount is busy. (Arch bug)
-		#echo "Umount /var/run/dbus"
-        	#umount -Rl ${work_dir}/root-image/var/run/dbus 2>/dev/null || true
         
         	# Black list floppy
         	echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
@@ -309,6 +305,8 @@ make_customize_root_image() {
         		sleep 5;
         	fi
         done
+        
+        
         
         # Downgrade parted to version that does not break pyparted
         #cp ${script_path}/parted_fix ${work_dir}/root-image/usr/bin/parted_fix

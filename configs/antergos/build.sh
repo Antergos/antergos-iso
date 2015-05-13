@@ -276,6 +276,11 @@ make_customize_root_image() {
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r 'systemctl -fq disable pamac' \
             	run
+            
+            # Fix /home permissions
+        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'chown -R antergos:users /home/antergos' \
+            	run
 
         	# Fix sudoers
         	chown -R root:root ${work_dir}/root-image/etc/
@@ -287,10 +292,6 @@ make_customize_root_image() {
         	# Configure powerpill
         	sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
         	chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
-
-        	# Always return true so build will continue even if mount is busy. (Arch bug)
-		#echo "Umount /var/run/dbus"
-        	#umount -Rl ${work_dir}/root-image/var/run/dbus 2>/dev/null || true
         
         	# Black list floppy
         	echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
