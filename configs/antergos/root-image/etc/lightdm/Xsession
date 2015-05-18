@@ -72,15 +72,12 @@ gsettings set org.gnome.shell enabled-extensions \
  gsettings set org.gnome.shell.extensions.panel-osd y-pos 96.0
  gsettings set org.gnome.shell.extensions.panel-osd force-expand true
 
-# Add minimize and maximize
- gsettings set org.gnome.desktop.wm.preferences button-layout appmenu:minimize,maximize,close
-
 # Extension - dash-to-dock Settings
  gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
  gsettings set org.gnome.shell.extensions.dash-to-dock opaque-background true
  gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.5
- gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots true
- gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink true
+ gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots false
+ gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink false
 
 # Randomly choose a default wallpaper from antergos-wallpapers
 DIR="/usr/share/antergos/wallpapers"
@@ -109,7 +106,7 @@ gsettings set org.gnome.desktop.interface icon-theme 'Numix-Square'
 gsettings set org.gnome.desktop.background show-desktop-icons false
 
 # Minimize and close buttons
-gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:maximize,close'
+gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
 
 # Disable terminal bell
 gsettings set org.gnome.desktop.wm.preferences audible-bell false
