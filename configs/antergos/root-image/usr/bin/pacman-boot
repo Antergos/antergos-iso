@@ -130,10 +130,10 @@ fi
 
 
 run_when_connected > /tmp/pacman-boot.log 2>&1 && \
-{ if [[ -f /tmp/.setup-running ]] || [[  ${NO_UPDATES} = "True" ]]; then 
+{ if [[ -f /tmp/.setup-running ]]; then 
 	exit 0;
 else
-	sudo killall -s 15 -w python; sudo rm /tmp/.setup-running;  sudo -E cnchi -d -v &
+	sudo killall -s 15 -w python; sudo -E cnchi -d -v &
 fi; } && exit 0
 
 
