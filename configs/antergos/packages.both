@@ -112,6 +112,7 @@ brasero
 cdrkit
 chromium
 chromium-pepper-flash
+dconf-editor
 eog
 espeak
 evince
@@ -169,3 +170,5 @@ xscreensaver
 # LightDM
 
 lightdm-webkit-theme-antergos
+light-locker
+light-locker-settings
