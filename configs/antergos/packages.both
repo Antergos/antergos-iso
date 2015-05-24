@@ -31,6 +31,7 @@ python-requests
 
 b43-fwcutter
 broadcom-wl
+b43-firmware
 dnsutils
 intel-ucode
 ipw2100-fw
