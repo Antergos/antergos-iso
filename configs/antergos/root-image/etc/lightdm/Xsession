@@ -127,10 +127,11 @@ gsettings set org.gnome.desktop.datetime automatic-timezone true;
 }
 
 echo "Running set-gsettings..."
-set_gsettings
+set_gsettings > /tmp/.set_gsettings 2>&1;
 echo "set-gsettings complete"
 gnome-keyring-daemon -rd
 light-locker &
+sleep 4;
 echo "X session wrapper complete, running session $@"
 
 exec $@

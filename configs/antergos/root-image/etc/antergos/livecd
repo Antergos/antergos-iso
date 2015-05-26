@@ -3,6 +3,8 @@
 
 source /etc/antergos/functions
 
+sudo depmod -a
+
 LOCALE=$(get_country)
 KEYMAP=$(get_keyboard)
 KBLAYOUT=$(get_layout)
