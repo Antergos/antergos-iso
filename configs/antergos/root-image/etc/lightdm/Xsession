@@ -130,6 +130,7 @@ echo "Running set-gsettings..."
 set_gsettings
 echo "set-gsettings complete"
 gnome-keyring-daemon -rd
+light-locker &
 echo "X session wrapper complete, running session $@"
 
 exec $@
