@@ -17,7 +17,7 @@ os-prober
 parted
 prebootloader
 refind-efi
-
+arch-install-scripts
 
 # Cnchi Graphical Installer
 

@@ -44,7 +44,7 @@ launcher_background_id = 0
 launcher_icon_size = 24
 launcher_item_app = /usr/share/applications/shutdown.desktop
 launcher_item_app = /usr/share/applications/cnchi.desktop
-launcher_item_app = /usr/share/applications/roxterm.desktop
+launcher_item_app = /usr/share/applications/lxterminal.desktop
 
 #---------------------------------------------
 # TASKBAR

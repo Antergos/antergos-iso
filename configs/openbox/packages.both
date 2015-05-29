@@ -14,7 +14,7 @@ parted
 crda
 haveged
 #linux-headers
-
+arch-install-scripts
 
 # Cnchi Graphical Installer
 cnchi
@@ -106,8 +106,8 @@ numix-frost-themes
 nitrogen
 tint2-git
 xfce4-notifyd
-roxterm
-
+#roxterm
+lxterminal
 
 # Theme
 
