@@ -167,7 +167,7 @@ archiso_mount_handler() {
     _mnt_fs "/run/archiso/sfs/root-image/root-image.img" "${newroot}" "/"
 
     if [[ "${copytoram}" == "y" ]]; then
-        umount /run/archiso/bootmnt
+        umount -d /run/archiso/bootmnt
     fi
 }
 
