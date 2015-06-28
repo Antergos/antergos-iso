@@ -1,6 +1,5 @@
 # Installation
 grub
-gummiboot
 prebootloader
 os-prober
 efibootmgr

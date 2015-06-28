@@ -1,5 +1,4 @@
 # Installation
-
 crda
 dialog
 dmraid
@@ -7,7 +6,6 @@ efibootmgr
 gparted
 gptfdisk
 grub
-gummiboot
 haveged
 hwdetect
 hwinfo
@@ -16,7 +14,6 @@ ntp
 os-prober
 parted
 prebootloader
-refind-efi
 arch-install-scripts
 
 # Cnchi Graphical Installer
