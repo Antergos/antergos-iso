@@ -1,5 +1,5 @@
 NAME="Antergos Linux"
-VERSION="2015.07-ISO-Rolling"
+VERSION="2015.08-ISO-Rolling"
 ID=antergos
 ID_LIKE=arch
 PRETTY_NAME="Antergos Linux"

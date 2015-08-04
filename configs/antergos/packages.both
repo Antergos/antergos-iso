@@ -23,6 +23,8 @@ python-lxml
 python-mako
 python-mock
 python-requests
+python-raven
+python-bugsnag
 
 # Network
 

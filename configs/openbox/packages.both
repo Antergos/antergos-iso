@@ -21,6 +21,8 @@ python-mako
 python-mock
 python-lxml
 python-requests
+python-raven
+python-bugsnag
 
 # Network
 
