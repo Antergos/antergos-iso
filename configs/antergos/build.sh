@@ -263,7 +263,7 @@ make_customize_root_image() {
         	#sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
         	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
         	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
-        	sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=http://antergos.com http://antergos.com |g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
+        	sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=http://antergos.com|g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
         	
         	touch /var/tmp/four
         }
@@ -311,39 +311,7 @@ make_customize_root_image() {
         		sleep 5;
         	fi
         done
-        
-        # Downgrade parted to version that does not break pyparted
-        #cp ${script_path}/parted_fix ${work_dir}/root-image/usr/bin/parted_fix
-        #chmod +x ${work_dir}/root-image/usr/bin/parted_fix
-        #cp ${script_path}/parted_fix_expect ${work_dir}/root-image/usr/bin/parted_fix_expect
-        #chmod +x ${work_dir}/root-image/usr/bin/parted_fix_expect
-        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        #    	-r 'parted_fix' \
-        #    	run
-        
-         
 
-}
-
-# Split out /usr/lib/modules from root-image (makes more "dual-iso" friendly)
-make_usr_lib_modules() {
-    if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        mv ${work_dir}/root-image/usr/lib/modules ${work_dir}/usr-lib-modules
-    fi
-}
-
-# Split out /usr/share from root-image (makes more "dual-iso" friendly)
-make_usr_share() {
-    if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        mv ${work_dir}/root-image/usr/share ${work_dir}/usr-share
-    fi
-}
-
-# Process aitab
-make_aitab() {
-    if [[ ! -e ${work_dir}/build.${FUNCNAME} ]]; then
-        sed "s|%ARCH%|${arch}|g" ${script_path}/aitab > ${work_dir}/iso/${install_dir}/aitab
-    fi
 }
 
 # Build a single root filesystem
@@ -402,9 +370,6 @@ make_common_single() {
     run_once make_isolinux
     run_once make_efi
     run_once make_efiboot
-    #run_once make_aitab
-    #run_once make_usr_lib_modules
-    #run_once make_usr_share
     run_once make_prepare
     run_once make_iso
     exit 0;
