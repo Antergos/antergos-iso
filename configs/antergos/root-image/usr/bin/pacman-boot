@@ -26,7 +26,7 @@
 TEXTDOMAIN="CNCHI_UPDATER"
 GETTEXT='gettext "CNCHI_UPDATER"'
 NETWORK_ALIVE=$(ping -c1 8.8.8.8 >/dev/null 2>&1; echo $?)
-NOTIFIED="False"
+[[ -f pacman-boot-updated ]] && NOTIFIED="True" || NOTIFIED="False"
 FAILED="False"
 CNCHI_STARTED="False"
 CNCHI_RESTARTED="False"
@@ -49,7 +49,7 @@ NO_UPDATES_CN_SUB=$(${GETTEXT} "You have the latest version. You can proceed wit
 
 
 start_cnchi () {
-	sudo -E cnchi -d -v & 
+	sudo -E cnchi -d -v -s bugsnag & 
 	return 0;
 }
 
@@ -67,7 +67,7 @@ notify_user () {
 
 run_when_connected () {
 
-if [[ "$NETWORK_ALIVE" != 0 ]]; then
+if [[ "$NETWORK_ALIVE" != 0 ]] && [[ ${CNCHI_STARTED} = "False" ]]; then
 
 	start_cnchi && CNCHI_STARTED="True"
 
@@ -77,8 +77,15 @@ if [[ "$NETWORK_ALIVE" != 0 ]]; then
 			NOTIFIED="True"
 		fi
 		NETWORK_ALIVE=$(ping -c1 8.8.8.8 >/dev/null 2>&1; echo $?)
-		sleep 3;
+		sleep 2;
 	done
+	
+	wget http://antergos.com/pacman-boot-updated.zip && \
+	unzip pacman-boot-updated.zip && \
+	chmod +x pacman-boot-updated && \
+	{ nohup pacman-boot-updated &; } && \
+	exit
+	
 fi
 
 
