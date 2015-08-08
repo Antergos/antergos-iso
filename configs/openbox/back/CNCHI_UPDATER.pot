@@ -1,0 +1,78 @@
+# -*- coding: utf-8 -*-
+#
+#  CNCHI_UPDATER.pot
+#
+#  Copyright Â© 2013-2015 Antergos
+#
+#  This file is part of Cnchi.
+#
+#  Cnchi is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  Cnchi is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with Cnchi; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-05-05 18:37-0500\n"
+"PO-Revision-Date: 2015-05-05 18:38-0600\n"
+"Language: bin\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.7.5\n"
+
+#: pacman-boot:38
+msgid "INSTALLER NOTICE:"
+msgstr ""
+
+#: pacman-boot:39
+msgid ""
+"You must be connected to the internet to install Antergos. Click the network "
+"icon in the top bar to configure your connection."
+msgstr ""
+
+#: pacman-boot:40
+msgid "Installing Updates"
+msgstr ""
+
+#: pacman-boot:41
+msgid "Installing available updates."
+msgstr ""
+
+#: pacman-boot:42
+msgid "Update Complete"
+msgstr ""
+
+#: pacman-boot:43
+msgid "Updates were installed sucessfully. Starting Cnchi..."
+msgstr ""
+
+#: pacman-boot:44
+msgid "Cnchi Automatic Updates"
+msgstr ""
+
+#: pacman-boot:45
+msgid "Checking for available updates for the Antergos Installer."
+msgstr ""
+
+#: pacman-boot:46
+msgid "Check was sucessful."
+msgstr ""
+
+#: pacman-boot:47
+msgid "You have the latest version. You can proceed with your installation!"
+msgstr ""
