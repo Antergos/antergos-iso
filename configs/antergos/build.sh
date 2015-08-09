@@ -224,10 +224,15 @@ make_customize_root_image() {
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r 'groupadd -r autologin' \
             	run
+            
+            echo "Adding nopasswdlogin group"
+        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'groupadd -r nopasswdlogin' \
+            	run
 	
 		echo "Adding antergos user"
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' \
+            	-r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin,nopasswdlogin" antergos' \
             	run
         
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
