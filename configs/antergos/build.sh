@@ -87,6 +87,9 @@ make_boot_extra() {
     cp ${work_dir}/root-image/usr/share/licenses/common/GPL2/license.txt ${work_dir}/iso/${install_dir}/boot/memtest.COPYING
     cp ${work_dir}/root-image/boot/intel-ucode.img ${work_dir}/iso/${install_dir}/boot/intel_ucode.img
     cp ${work_dir}/root-image/usr/share/licenses/intel-ucode/LICENSE ${work_dir}/iso/${install_dir}/boot/intel_ucode.LICENSE
+    # Install translations for gfxboot
+    isolinux_translations="$(${script_path}/translations.sh ${out_dir} ${script_path} gfxboot)"
+    echo "${isolinux_translations}"
 }
 
 # Prepare /${install_dir}/boot/syslinux
@@ -303,7 +306,7 @@ make_customize_root_image() {
         	echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
         	
         	# Install translations for updater script messages that are shown when ISO boots
-        	translations="$(${script_path}/translations.sh ${out_dir} ${work_dir})"
+        	translations="$(${script_path}/translations.sh ${out_dir} ${work_dir} cnchi_updater)"
         	echo "${translations}"
         	
         	touch /var/tmp/five
