@@ -32,8 +32,8 @@ _trans_for="$3"
 		  	done
 		  	cd ${_work_dir}/isolinux
 		  	rm -f bootlogo
-		  	find . | cpio -o > ../bootlogo
-		  	mv ../bootlogo .
+		  	find . | cpio -o > ${_work_dir}/bootlogo
+		  	mv ${_work_dir}/bootlogo .
 
 		fi
         	
