@@ -2,7 +2,8 @@
 Description=VirtualBox Guest Service
 ConditionVirtualization=oracle
 Requires=systemd-modules-load.service livecd.service
-After=systemd-modules-load.service livecd.service
+Before=display-manager.service
+After=dkms.service systemd-modules-load.service livecd.service
 
 [Service]
 ExecStart=/usr/bin/VBoxService -f

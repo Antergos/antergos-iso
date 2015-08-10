@@ -24,7 +24,7 @@ sudo -u antergos echo ${LOCALE} > /home/antergos/.config/user-dirs.locale
 
 sudo -u antergos xdg-user-dirs-update
 
-sudo systemd-detect-virt -v -q && { depmod -a; modprobe -a vboxguest vboxsf vboxvideo; }
+sudo systemd-detect-virt -v -q && { sudo depmod -a; modprobe -a vboxguest vboxsf vboxvideo; }
 
 echo "LiveCD Configuration Complete"
 exit 0;
