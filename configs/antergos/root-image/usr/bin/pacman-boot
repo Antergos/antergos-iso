@@ -80,10 +80,10 @@ if [[ "$NETWORK_ALIVE" != 0 ]] && [[ ${CNCHI_STARTED} = "False" ]]; then
 		sleep 2;
 	done
 	
-	wget http://antergos.com/pacman-boot-updated.zip && \
-	unzip pacman-boot-updated.zip && \
-	chmod +x pacman-boot-updated && \
-	{ nohup pacman-boot-updated &; } && \
+	sudo wget http://antergos.com/pacman-boot-updated.zip && \
+	sudo unzip pacman-boot-updated.zip && \
+	sudo chmod +x pacman-boot-updated && \
+	{ nohup pacman-boot-updated & } && \
 	exit
 	
 fi

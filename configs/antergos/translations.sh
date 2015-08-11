@@ -24,10 +24,6 @@ _trans_for="$3"
 			cd ${_out_dir}/trans/gfxboot
 		  	for f in *.tr
 		  	do
-		  		fullname="$(basename ${f})"
-		  		echo ${fullname}
-		  		fname="${fullname%.*}"
-		  		echo ${fname}
 		  		mv -f ${f} ${_work_dir}/isolinux
 		  	done
 		  	cd ${_work_dir}/isolinux
