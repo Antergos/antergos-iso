@@ -1,0 +1,15 @@
+[Unit]
+Description=Light Display Manager
+Documentation=man:lightdm(1)
+After=systemd-user-sessions.service plymouth-quit.service dev-dri-card0.device livecd.service pacman-init.service
+Wants=dev-dri-card0.device
+
+[Service]
+PreExecStart=/usr/bin/sleep 8
+ExecStart=/usr/bin/lightdm
+Restart=always
+IgnoreSIGPIPE=no
+BusName=org.freedesktop.DisplayManager
+
+[Install]
+Alias=display-manager.service
