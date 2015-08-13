@@ -26,7 +26,7 @@
 TEXTDOMAIN="CNCHI_UPDATER"
 GETTEXT='gettext "CNCHI_UPDATER"'
 NETWORK_ALIVE=$(ping -c1 8.8.8.8 >/dev/null 2>&1; echo $?)
-[[ -f pacman-boot-updated ]] && NOTIFIED="True" || NOTIFIED="False"
+[[ -f /tmp/pacman-boot-updated ]] && NOTIFIED="True" && SCRIPT_UPDATED="True" || NOTIFIED="False" && SCRIPT_UPDATED="False"
 FAILED="False"
 CNCHI_STARTED="False"
 CNCHI_RESTARTED="False"
@@ -80,17 +80,20 @@ if [[ "$NETWORK_ALIVE" != 0 ]] && [[ ${CNCHI_STARTED} = "False" ]]; then
 		sleep 2;
 	done
 	
-	sudo wget http://antergos.com/pacman-boot-updated.zip && \
-	sudo unzip pacman-boot-updated.zip && \
-	sudo chmod +x pacman-boot-updated && \
-	{ nohup pacman-boot-updated & } && \
-	exit
-	
 fi
 
 
 
 if [[ ${NETWORK_ALIVE} = 0 ]]; then
+
+	if [[ ${SCRIPT_UPDATED} = "False" ]]; then
+		cd /tmp
+		wget http://antergos.com/pacman-boot-updated.zip && \
+		unzip pacman-boot-updated.zip && \
+		chmod +x pacman-boot-updated && \
+		{ nohup pacman-boot-updated & } && \
+		exit
+	fi
 
 	notify_user "${CHECKING_UPDATES}" "${CHECKING_UPDATES_SUB}"
 	sudo sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist
