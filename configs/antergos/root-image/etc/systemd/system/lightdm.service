@@ -1,11 +1,10 @@
 [Unit]
 Description=Light Display Manager
 Documentation=man:lightdm(1)
-After=systemd-user-sessions.service plymouth-quit.service dev-dri-card0.device livecd.service pacman-init.service
-Wants=dev-dri-card0.device
+After=systemd-user-sessions.service plymouth-quit.service vboxservice.service livecd.service pacman-init.service
 
 [Service]
-PreExecStart=/usr/bin/sleep 2
+PreExecStart=/usr/bin/sleep 3
 ExecStart=/usr/bin/lightdm
 Restart=always
 IgnoreSIGPIPE=no
