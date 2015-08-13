@@ -5,11 +5,13 @@ After=systemd-user-sessions.service plymouth-quit.service dev-dri-card0.device l
 Wants=dev-dri-card0.device
 
 [Service]
-PreExecStart=/usr/bin/sleep 5
+PreExecStart=/usr/bin/sleep 2
 ExecStart=/usr/bin/lightdm
 Restart=always
 IgnoreSIGPIPE=no
 BusName=org.freedesktop.DisplayManager
+StartLimitAction=none
+RestartSec=1
 
 [Install]
 Alias=display-manager.service
