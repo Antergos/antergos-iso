@@ -1,0 +1,70 @@
+#!/bin/bash
+
+
+# kernel_cmdline <param> <default>
+# Looks for a parameter on the kernel's boot-time command line.
+#
+# returns: 0 if param was found. Also prints its value if it was a K=V param.
+#          1 if it was not. Also prints value passed as <default>
+#
+kernel_cmdline ()
+{
+	for param in $(/bin/cat /proc/cmdline); do
+		case "${param}" in
+			$1=*) echo "${param##*=}"; return 0 ;;
+			$1) return 0 ;;
+			*) continue ;;
+		esac
+	done
+	[ -n "${2}" ] && echo "${2}"
+	return 1
+}
+
+get_country() {
+  local COUNTRY=$(kernel_cmdline lang)
+  echo $COUNTRY
+}
+
+get_keyboard() {
+  local KEYBOARD=$(kernel_cmdline keytable)
+  echo $KEYBOARD
+}
+
+get_layout() {
+  local LAYOUT=$(kernel_cmdline layout)
+  echo $LAYOUT
+}
+
+
+_set_locales ()
+{
+	# set a default value, in case something goes wrong, or a language doesn't have
+	# good defult settings
+	[ -n "$LOCALE" ] || LOCALE="en_US"
+	[ -n "$KEYMAP" ] || KEYMAP="us"
+	[ -n "$KBLAYOUT" ] || KBLAYOUT="us"
+
+	# set kblayout and keymap
+	sed -i "s#Identifier \"evdev keyboard catchall\".*#&\n        Option \"XkbLayout\" \"${KBLAYOUT}\"#"       ${DESTDIR}/etc/X11/xorg.conf.d/10-evdev.conf
+	echo "KEYMAP=${KEYMAP}" > ${DESTDIR}/etc/vconsole.conf
+
+	# set systemwide language
+	echo "LANG=${LOCALE}.UTF-8" > ${DESTDIR}/etc/locale.conf
+	echo "LC_NUMERIC=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
+	echo "LC_TIME=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
+	echo "LC_MONETARY=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
+	echo "LC_PAPER=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
+	echo "LC_MEASUREMENT=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
+	echo "LC_COLLATE=${LOCALE}.UTF-8" >> ${DESTDIR}/etc/locale.conf
+
+	sed -i -r "s/en_US.UTF-8/${LOCALE}.UTF-8/g" ${DESTDIR}/var/lib/AccountsService/users/antergos
+
+	# generate LOCALE
+	local TLANG=${LOCALE%.*} # remove everything after the ., including the dot from LOCALE
+	sed -i -r "s/#(.*${TLANG}.*UTF-8)/\1/g" ${DESTDIR}/etc/locale.gen
+	# add also American English as safe default
+	sed -i -r "s/#(en_US.*UTF-8)/\1/g" ${DESTDIR}/etc/locale.gen
+
+	sed -i "s/'us'/'${KBLAYOUT}'/" /etc/lightdm/Xsession
+}
+

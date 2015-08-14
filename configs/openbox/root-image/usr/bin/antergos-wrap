@@ -1,0 +1,6 @@
+#!/bin/bash
+
+su -c "/usr/bin/gnome-terminal --geometry 85x30 -x antergos-setup" antergos > /dev/null &2>1
+
+exit 0;
+
