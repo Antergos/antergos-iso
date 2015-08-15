@@ -106,7 +106,7 @@ make_syslinux() {
 
 make_isolinux() {
         mkdir -p ${work_dir}/iso/isolinux
-        cp -Lr isolinux ${work_dir}/iso
+        cp -Lr ${script_dir}/isolinux ${work_dir}/iso
         cp -R ${work_dir}/root-image/usr/lib/syslinux/bios/* ${work_dir}/iso/isolinux/
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/*.c32 ${work_dir}/iso/isolinux/
         sed "s|%ARCHISO_LABEL%|${iso_label}|g;
