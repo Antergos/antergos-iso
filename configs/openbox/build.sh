@@ -51,7 +51,7 @@ make_setup_mkinitcpio() {
     sed -i "s|/usr/lib/initcpio/|/etc/initcpio/|g" ${work_dir}/root-image/etc/initcpio/install/archiso_shutdown
     cp /usr/lib/initcpio/install/archiso_kms ${work_dir}/root-image/etc/initcpio/install
     cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/etc/initcpio
-    cp ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
+    cp -L ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
     #sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2&>1
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~MKINITCPIO DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
@@ -130,9 +130,9 @@ make_efi() {
             cp ${work_dir}/root-image/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${work_dir}/iso/EFI/boot/loader.efi
 
             mkdir -p ${work_dir}/iso/loader/entries
-            cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/iso/loader/
-            cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/iso/loader/entries/
-            cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
+            cp -L ${script_path}/efiboot/loader/loader.conf ${work_dir}/iso/loader/
+            cp -L ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/iso/loader/entries/
+            cp -L ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
 
             sed "s|%ARCHISO_LABEL%|${iso_label}|g;
                  s|%INSTALL_DIR%|${install_dir}|g" \
@@ -172,9 +172,9 @@ make_efiboot() {
             cp ${work_dir}/root-image/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${work_dir}/efiboot/EFI/boot/loader.efi
             
             mkdir -p ${work_dir}/efiboot/loader/entries
-            cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/efiboot/loader/
-            cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/efiboot/loader/entries/
-            cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/efiboot/loader/entries/
+            cp -L ${script_path}/efiboot/loader/loader.conf ${work_dir}/efiboot/loader/
+            cp -L ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/efiboot/loader/entries/
+            cp -L ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/efiboot/loader/entries/
 
             sed "s|%ARCHISO_LABEL%|${iso_label}|g;
                  s|%INSTALL_DIR%|${install_dir}|g" \
@@ -197,7 +197,7 @@ remove_extra_icons() {
 # Customize installation (root-image)
 make_customize_root_image() {
 	part_one() {
-        	cp -af ${script_path}/root-image ${work_dir}
+        	cp -afL ${script_path}/root-image ${work_dir}
         	ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
         	chmod 750 ${work_dir}/root-image/etc/sudoers.d
         	chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
@@ -240,7 +240,7 @@ make_customize_root_image() {
         }
         
         part_four() {
-        	cp ${script_path}/set_password ${work_dir}/root-image/usr/bin
+        	cp -L ${script_path}/set_password ${work_dir}/root-image/usr/bin
         	chmod +x ${work_dir}/root-image/usr/bin/set_password
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
            	-r '/usr/bin/set_password' \
