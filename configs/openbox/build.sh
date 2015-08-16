@@ -81,9 +81,6 @@ make_boot_extra() {
     cp ${work_dir}/root-image/usr/share/licenses/common/GPL2/license.txt ${work_dir}/iso/${install_dir}/boot/memtest.COPYING
     cp ${work_dir}/root-image/boot/intel-ucode.img ${work_dir}/iso/${install_dir}/boot/intel_ucode.img
     cp ${work_dir}/root-image/usr/share/licenses/intel-ucode/LICENSE ${work_dir}/iso/${install_dir}/boot/intel_ucode.LICENSE
-    # Install translations for gfxboot
-    isolinux_translations="$(${script_path}/translations.sh ${out_dir} ${script_path} gfxboot)"
-    echo "${isolinux_translations}"
 }
 
 # Prepare /${install_dir}/boot/syslinux
@@ -105,8 +102,8 @@ make_syslinux() {
 
 
 make_isolinux() {
-        mkdir -p ${work_dir}/iso/isolinux
-        cp -Lr ${script_path}/isolinux ${work_dir}/iso
+        #mkdir -p ${work_dir}/iso/isolinux
+        cp -LR ${script_path}/isolinux ${work_dir}/iso
         cp -R ${work_dir}/root-image/usr/lib/syslinux/bios/* ${work_dir}/iso/isolinux/
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/*.c32 ${work_dir}/iso/isolinux/
         sed "s|%ARCHISO_LABEL%|${iso_label}|g;
@@ -115,6 +112,9 @@ make_isolinux() {
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/isolinux.bin ${work_dir}/iso/isolinux/
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/isohdpfx.bin ${work_dir}/iso/isolinux/
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${work_dir}/iso/isolinux/
+         # Install translations for gfxboot
+    ( isolinux_translations="$(${script_path}/translations.sh ${out_dir} ${script_path} gfxboot)"
+    echo "${isolinux_translations}" ) 2&>1
 
 }
 
@@ -197,7 +197,7 @@ remove_extra_icons() {
 # Customize installation (root-image)
 make_customize_root_image() {
 	part_one() {
-        	cp -afL ${script_path}/root-image ${work_dir}
+        	cp -afLR ${script_path}/root-image ${work_dir}
         	ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
         	chmod 750 ${work_dir}/root-image/etc/sudoers.d
         	chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
@@ -288,8 +288,8 @@ make_customize_root_image() {
         	echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
         	
         	# Install translations for updater script messages that are shown when ISO boots
-        	translations="$(${script_path}/translations.sh ${out_dir} ${work_dir} cnchi_updater)"
-        	echo "${translations}"
+        	( translations="$(${script_path}/translations.sh ${out_dir} ${work_dir} cnchi_updater)"
+        	echo "${translations}" ) 2&>1
         	
         	# Make ISO thinner
         rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
