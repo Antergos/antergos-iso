@@ -114,7 +114,7 @@ make_isolinux() {
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${work_dir}/iso/isolinux/
          # Install translations for gfxboot
     ( isolinux_translations="$(${script_path}/translations.sh ${out_dir} ${script_path} gfxboot)"
-    echo "${isolinux_translations}" ) 2&>1
+    echo "${isolinux_translations}" )
 
 }
 
@@ -289,7 +289,7 @@ make_customize_root_image() {
         	
         	# Install translations for updater script messages that are shown when ISO boots
         	( translations="$(${script_path}/translations.sh ${out_dir} ${work_dir} cnchi_updater)"
-        	echo "${translations}" ) 2&>1
+        	echo "${translations}" )
         	
         	# Make ISO thinner
         rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
