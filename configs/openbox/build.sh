@@ -91,7 +91,7 @@ make_syslinux() {
              s|%INSTALL_DIR%|${install_dir}|g;
              s|%ARCH%|${arch}|g" ${_cfg} > ${work_dir}/iso/${install_dir}/boot/syslinux/${_cfg##*/}
     done
-    cp -Lr isolinux ${work_dir}/iso/${install_dir}/boot/syslinux
+    cp -LR ${script_path}/isolinux ${work_dir}/iso/${install_dir}/boot/syslinux
     cp ${work_dir}/root-image/usr/lib/syslinux/bios/*.c32 ${work_dir}/iso/${install_dir}/boot/syslinux
     cp ${work_dir}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${work_dir}/iso/${install_dir}/boot/syslinux
     cp ${work_dir}/root-image/usr/lib/syslinux/bios/memdisk ${work_dir}/iso/${install_dir}/boot/syslinux
