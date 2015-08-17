@@ -100,23 +100,23 @@ if [[ ${NETWORK_ALIVE} = 0 ]]; then
 	sudo rm /var/lib/pacman/db.lck > /dev/null 2&>1
 	sudo pacman -Syy fakeroot --noconfirm
 	CHECK_UPDATES=$(sudo checkupdates)
-	if [[ ${CHECK_UPDATES} != '' ]]; then
-		sudo chmod +x /usr/share/cnchi/cnchi/info.py
-		CNCHI_REPO_VER_FULL="$(sudo pacman -Ss '^cnchi$' | cut -s -d ' ' -f 2)"
-		CNCHI_REPO_VER="${CNCHI_REPO_VER_FULL:2:1}"
-		CNCHI_REPO_MINOR="${CNCHI_REPO_VER_FULL:4:3}"
-		CNCHI_ISO_VER_FULL="$(sudo /usr/share/cnchi/cnchi/info.py)"
-		CNCHI_ISO_VER="${CNCHI_ISO_VER_FULL:2:1}"
-		CNCHI_ISO_MINOR="${CNCHI_ISO_VER_FULL:4:3}"
-		echo "$CNCHI_ISO_VER $CNCHI_REPO_VER | $CNCHI_REPO_MINOR $CNCHI_ISO_MINOR"
+	if [[ ${CHECK_UPDATES} = *'cnchi'* ]]; then
+#		sudo chmod +x /usr/share/cnchi/cnchi/info.py
+#		CNCHI_REPO_VER_FULL="$(sudo pacman -Ss '^cnchi$' | cut -s -d ' ' -f 2)"
+#		CNCHI_REPO_VER="${CNCHI_REPO_VER_FULL:2:1}"
+#		CNCHI_REPO_MINOR="${CNCHI_REPO_VER_FULL:4:3}"
+#		CNCHI_ISO_VER_FULL="$(sudo /usr/share/cnchi/cnchi/info.py)"
+#		CNCHI_ISO_VER="${CNCHI_ISO_VER_FULL:2:1}"
+#		CNCHI_ISO_MINOR="${CNCHI_ISO_VER_FULL:4:3}"
+#		echo "$CNCHI_ISO_VER $CNCHI_REPO_VER | $CNCHI_REPO_MINOR $CNCHI_ISO_MINOR"
 	
-		INSTALL_CNCHI="False"
+		INSTALL_CNCHI="True"
 	
-		if [[ ${CNCHI_REPO_VER} -gt ${CNCHI_ISO_VER} ]]; then
-			INSTALL_CNCHI="True"
-		elif [[ ${CNCHI_REPO_VER} -eq ${CNCHI_ISO_VER} ]] && [[ ${CNCHI_REPO_MINOR} -gt ${CNCHI_ISO_MINOR} ]]; then
-			INSTALL_CNCHI="True"
-		fi
+#		if [[ ${CNCHI_REPO_VER} -gt ${CNCHI_ISO_VER} ]]; then
+#			INSTALL_CNCHI="True"
+#		elif [[ ${CNCHI_REPO_VER} -eq ${CNCHI_ISO_VER} ]] && [[ ${CNCHI_REPO_MINOR} -gt ${CNCHI_ISO_MINOR} ]]; then
+#			INSTALL_CNCHI="True"
+#		fi
 	else
 		INSTALL_CNCHI="False"
 	fi
