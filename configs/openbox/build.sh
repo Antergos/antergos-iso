@@ -112,9 +112,9 @@ make_isolinux() {
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/isolinux.bin ${work_dir}/iso/isolinux/
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/isohdpfx.bin ${work_dir}/iso/isolinux/
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${work_dir}/iso/isolinux/
-         # Install translations for gfxboot
-    ( isolinux_translations="$(${script_path}/translations.sh ${out_dir} ${script_path} gfxboot)"
-    echo "${isolinux_translations}" )
+#         # Install translations for gfxboot
+#    ( isolinux_translations="$(${script_path}/translations.sh ${out_dir} ${script_path} gfxboot)"
+#    echo "${isolinux_translations}" )
 
 }
 
