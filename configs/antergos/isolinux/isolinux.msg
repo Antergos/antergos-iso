@@ -6,7 +6,6 @@ To start the system enter 'start and press <return>
 
 Available boot options:
 start                    - Start Antergos Live System
-harddisk                 - Boot From Local Hard Disk
-startpxe                 - Boot From Network Disk (PXE)
+harddisk                 - Local boot from hard disk
 hdt                      - Run Hardware Detection Tool
 memtest                  - Run Memory Test
