@@ -58,13 +58,13 @@ make_setup_mkinitcpio() {
     #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
    #sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2&>1
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2>&1
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~MKINITCPIO DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     if [[ -f ${work_dir}/root-image/boot/archiso.img ]]; then
     		echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~archiso.img EXISTS!!!~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     else
     		echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~CANNOT FIND archiso.img!!!~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
-    		arch-chroot "${work_dir}/root-image" 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' 2&>1
+    		arch-chroot "${work_dir}/root-image" 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' 2>&1
     fi
     		
 }
