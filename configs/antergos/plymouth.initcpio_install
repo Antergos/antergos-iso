@@ -5,8 +5,8 @@ build() {
 
 	DATADIR="/usr/share"
 	PLYMOUTH_LOGO_FILE="${DATADIR}/plymouth/antergos-logo.png"
-	PLYMOUTH_THEME_NAME="$(/usr/bin/plymouth-set-default-theme)"
-	PLYMOUTH_MODULE_NAME="$(grep "ModuleName *= *" ${DATADIR}/plymouth/themes/${PLYMOUTH_THEME_NAME}/${PLYMOUTH_THEME_NAME}.plymouth | sed 's/ModuleName *= *//')"
+	PLYMOUTH_THEME_NAME="antergos"
+	PLYMOUTH_MODULE_NAME="script"
 	PLYMOUTH_PLUGIN_PATH="$(plymouth --get-splash-plugin-path)"
 
 	add_binary /usr/bin/plymouthd
@@ -20,7 +20,7 @@ build() {
 	add_file "${PLYMOUTH_LOGO_FILE}"
 	add_file /etc/os-release
 	add_file /etc/plymouth/plymouthd.conf
-    add_file ${DATADIR}/plymouth/plymouthd.defaults
+	add_file ${DATADIR}/plymouth/plymouthd.defaults
 
 	if [ ! -f ${PLYMOUTH_PLUGIN_PATH}/${PLYMOUTH_MODULE_NAME}.so ]; then
 	    echo "The default plymouth plugin (${PLYMOUTH_MODULE_NAME}) doesn't exist" > /dev/stderr

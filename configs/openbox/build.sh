@@ -52,7 +52,9 @@ make_setup_mkinitcpio() {
     cp /usr/lib/initcpio/install/archiso_kms ${work_dir}/root-image/etc/initcpio/install
     cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/etc/initcpio
     cp -L ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
-    cp ${script_path}/plymouthd.conf ${work_dir}/root-image/etc/plymouth
+    cp -L ${script_path}/plymouthd.conf ${work_dir}/root-image/etc/plymouth
+    cp -L ${script_path}/plymouth.initcpio_hook ${work_dir}/root-image/etc/initcpio/hooks
+    cp -L ${script_path}/plymouth.initcpio_install ${work_dir}/root-image/etc/initcpio/install
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     #sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2&>1
