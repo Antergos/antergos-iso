@@ -4,7 +4,7 @@ shopt -s nullglob
 
 _out_dir="$1"
 _work_dir="$2"
-_trans_for="$3"
+_script_dir="$3"
         	
         	if [[ ${_trans_for} = "cnchi_updater" ]]; then
 		  	cd ${_out_dir}/trans/cnchi_updater
@@ -21,15 +21,14 @@ _trans_for="$3"
 		  		mv ${f} ${dest}/CNCHI_UPDATER.mo
 		  	done
 		else
-			cd ${_out_dir}/trans/gfxboot
-		  	for f in *.tr
+			cd ${_out_dir}/trans/antergos-gfxboot
+		  	for f in *.po
 		  	do
-		  		mv -f ${f} ${_work_dir}/isolinux
+		  		mv -f ${f} ${_script_dir}/antergos-gfxboot/po
 		  	done
-		  	cd ${_work_dir}/isolinux
-		  	rm -f bootlogo
-		  	find . | cpio -o > ${_work_dir}/bootlogo
-		  	mv ${_work_dir}/bootlogo .
+		  	cd ${_script_dir}/antergos-gfxboot
+		  	make
+		  	cp -R isolinux ${_script_dir}
 
 		fi
         	
