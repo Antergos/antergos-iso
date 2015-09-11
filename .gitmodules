@@ -1,3 +1,3 @@
 [submodule "configs/antergos/antergos-gfxboot"]
 	path = configs/antergos/antergos-gfxboot
-	url = gttp://github.com/antergos/antergos-gfxboot.git
+	url = http://github.com/antergos/antergos-gfxboot.git
