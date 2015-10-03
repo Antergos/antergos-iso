@@ -1,7 +1,8 @@
 [Unit]
 Description=Light Display Manager
 Documentation=man:lightdm(1)
-After=systemd-user-sessions.service plymouth-quit.service vboxservice.service livecd.service pacman-init.service
+After=dev-dri-card0.device systemd-user-sessions.service plymouth-quit.service vboxservice.service livecd.service pacman-init.service
+Wants=dev-dri-card0.device
 
 [Service]
 PreExecStart=/usr/bin/sleep 3
@@ -10,7 +11,7 @@ Restart=always
 IgnoreSIGPIPE=no
 BusName=org.freedesktop.DisplayManager
 StartLimitAction=none
-RestartSec=1
+RestartSec=2
 
 [Install]
 Alias=display-manager.service
