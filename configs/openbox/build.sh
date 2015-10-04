@@ -194,7 +194,7 @@ make_efiboot() {
 remove_extra_icons() {
 	if [[ -d "${work_dir}/root-image/usr/share/icons" ]]; then
 	cd ${work_dir}/root-image/usr/share/icons
-        find . ! -iname '**Cnchi**' ! -name '**image-missing.svg**' ! -name '**emblem-default.svg**' ! -name '**dialog-warning.svg**' ! -name '**edit-undo**' ! -name '**list-add**' ! -name '**list-remove**' ! -name '**system-run**' ! -name '**edit-clear-all**' ! -name 'dialog-***' ! -name '**-yes.svg**' ! -name '**_yes.svg**' ! -name '**-no.svg**' ! -name '**stock_no.svg**' ! -name 'nm-***' ! -name '**system-software-install**' ! -name '***bluetooth***' ! -name '***printer***' ! -name '***firefox***' ! -name '**network-server**' ! -name '***preferences-desktop-font***' ! -name '**fonts**' ! -name '**applications-accessories**' ! -name '**text-editor**' ! -name '**accessories-text-editor**' ! -name '**gnome-mime-x-directory-smb-share**' ! -name '**terminal**' ! -name '**video-display**' ! -name '**go-next-symbolic**' ! -name '**go-previous-symbolic**' ! -name '**_close**' ! -name '**-close**' ! -name '**dialog-**' ! -name 'nm-**' ! -name 'window-**' ! -name '**network**' ! -name 'index.theme' ! -name '**system-shutdown**' ! -name '**pan-**' ! -path '**Adwaita/cursors**' ! -path '**highcolor**' -type f -delete
+        find . ! -iname '**Cnchi**' ! -name '**image-missing.svg**' ! -name '**emblem-default.svg**' ! -name '**dialog-warning.svg**' ! -name '**edit-undo**' ! -name '**list-add**' ! -name '**list-remove**' ! -name '**system-run**' ! -name '**edit-clear-all**' ! -name 'dialog-***' ! -name '**-yes.svg**' ! -name '**_yes.svg**' ! -name '**-no.svg**' ! -name '**stock_no.svg**' ! -name 'nm-***' ! -name '**system-software-install**' ! -name '***bluetooth***' ! -name '***printer***' ! -name '***firefox***' ! -name '**network-server**' ! -name '***preferences-desktop-font***' ! -name '**fonts**' ! -name '**applications-accessories**' ! -name '**text-editor**' ! -name '**accessories-text-editor**' ! -name '**gnome-mime-x-directory-smb-share**' ! -name '**terminal**' ! -name '**video-display**' ! -name '**go-next-symbolic**' ! -name '**go-previous-symbolic**' ! -name '**_close**' ! -name '**-close**' ! -name '**dialog-**' ! -name 'nm-**' ! -name 'window-**' ! -name '**network**' ! -name 'index.theme' ! -name '**system-shutdown**' ! -name '**pan-**' ! -path '**Adwaita**' ! -path '**highcolor**' -type f -delete
         fi
 
 }
@@ -297,11 +297,15 @@ make_customize_root_image() {
         	echo "${translations}"
         	
         	# Make ISO thinner
-        rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
-        rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
-        rm -rf ${work_dir}/root-image/usr/share/icons/{Adwaita,HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest} || true
+        	rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
+        	rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
+        	rm -rf ${work_dir}/root-image/usr/share/icons/{Adwaita,HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest} || true
         
 		remove_extra_icons
+		
+		# Install translations for updater script
+        	translations="$(${script_path}/translations.sh ${out_dir} ${work_dir} ${script_path})"
+        	echo "${translations}"
         	
         	touch /var/tmp/five
         }

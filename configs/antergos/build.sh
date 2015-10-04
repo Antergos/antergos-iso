@@ -305,7 +305,7 @@ make_customize_root_image() {
         	# Black list floppy
         	echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
         	
-        	# Install translations for updater script and gfxboot
+        	# Install translations for updater script
         	translations="$(${script_path}/translations.sh ${out_dir} ${work_dir} ${script_path})"
         	echo "${translations}"
         	
