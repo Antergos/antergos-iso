@@ -6,7 +6,9 @@ _out_dir="$1"
 _work_dir="$2"
 _script_dir="$3"
 
+
 cd ${_out_dir}/trans/cnchi_updater
+
 for f in *.mo
 do
 		fullname="$(basename ${f})"
@@ -19,6 +21,27 @@ do
 		fi
 		mv ${f} ${dest}/CNCHI_UPDATER.mo
 done
+
+
+
+
+
+cd ${_out_dir}/trans/antergos-gfxboot
+
+for f in *.po
+do
+	mv -f ${f} ${_script_dir}/antergos-gfxboot/po
+done
+
+cd ${_script_dir}/antergos-gfxboot
+
+make
+
+cp -R isolinux ${_script_dir}
+
+
+
+
 
 shopt -u nullglob
 
