@@ -304,7 +304,7 @@ make_customize_root_image() {
 		remove_extra_icons
 		
 		# Install translations for updater script
-        	translations="$(${script_path}/translations.sh ${out_dir} ${work_dir} ${script_path})"
+        	translations="$(${script_path}/translations.sh $(cd ${out_dir}; pwd;) $(cd ${work_dir}; pwd;) $(cd ${script_path}; pwd;))"
         	echo "${translations}"
         	
         	touch /var/tmp/five
