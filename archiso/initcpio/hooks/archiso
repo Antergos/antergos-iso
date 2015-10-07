@@ -1,5 +1,5 @@
 # args: source, newroot, mountpoint
-_mnt_fs() {
+_mnt_dmsnapshot() {
     local img="${1}"
     local newroot="${2}"
     local mnt="${3}"
@@ -37,6 +37,16 @@ _mnt_fs() {
     echo $(readlink -f /dev/mapper/${dm_snap_name}) >> /run/archiso/used_block_devices
 }
 
+# args: source, newroot, mountpoint
+_mnt_overlayfs() {
+    local src="${1}"
+    local newroot="${2}"
+    local mnt="${3}"
+    mkdir -p /run/archiso/cowspace/${cow_directory}/upperdir /run/archiso/cowspace/${cow_directory}/workdir
+    mount -t overlay -o lowerdir=${src},upperdir=/run/archiso/cowspace/${cow_directory}/upperdir,workdir=/run/archiso/cowspace/${cow_directory}/workdir root-image "${newroot}${mnt}"
+}
+
+
 # args: /path/to/image_file, mountpoint
 _mnt_sfs() {
     local img="${1}"
@@ -44,7 +54,7 @@ _mnt_sfs() {
     local img_fullname="${img##*/}"
     local sfs_dev
 
-    if [[ "${copytoram}" == "y" ]]; then
+    if [[ "${copytoram}" = y ]]; then
         msg -n ":: Copying squashfs image to RAM..."
         if ! cp "${img}" "/run/archiso/copytoram/${img_fullname}" ; then
             echo "ERROR: while copy '${img}' to '/run/archiso/copytoram/${img_fullname}'"
@@ -100,7 +110,7 @@ run_hook() {
     [[ -z "${archisobasedir}" ]] && archisobasedir="arch"
     [[ -z "${dm_snap_prefix}" ]] && dm_snap_prefix="arch"
     [[ -z "${archisodevice}" ]] && archisodevice="/dev/disk/by-label/${archisolabel}"
-    [[ -z "${cowfile_size}" ]] && cowfile_size="256M"
+    [[ -z "${cowfile_size}" ]] && cowfile_size="1G"
 
     if [[ -n "${cow_label}" ]]; then
         cow_device="/dev/disk/by-label/${cow_label}"
@@ -164,7 +174,12 @@ archiso_mount_handler() {
     mkdir -p "/run/archiso/cowspace/${cow_directory}"
 
     _mnt_sfs "/run/archiso/bootmnt/${archisobasedir}/root-image.sfs" "/run/archiso/sfs/root-image"
-    _mnt_fs "/run/archiso/sfs/root-image/root-image.img" "${newroot}" "/"
+    
+    if [[ -f "/run/archiso/sfs/root-image/root-image.img" ]]; then
+        _mnt_dmsnapshot "/run/archiso/sfs/root-image/root-image.img" "${newroot}" "/"
+    else
+        _mnt_overlayfs "/run/archiso/sfs/root-image" "${newroot}" "/"
+    fi
 
     if [[ "${copytoram}" == "y" ]]; then
         umount -d /run/archiso/bootmnt

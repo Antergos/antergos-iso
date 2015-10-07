@@ -11,12 +11,13 @@ run_cmd=""
 quiet="n"
 pacman_conf="/etc/pacman.conf"
 export iso_label="ANTERGOS$(date +%Y%m)"
-iso_publisher="Antergos <http://www.antergos.com>"
+iso_publisher="Antergos <https://www.antergos.com>"
 iso_application="Antergos Live/Rescue CD"
 install_dir="arch"
 work_dir="work"
 out_dir="out"
 keep_pacman_packages="n"
+sfs_mode="sfs"
 sfs_comp="xz"
 
 # Show an INFO message
@@ -151,6 +152,10 @@ _usage ()
     echo "                     Default: '${work_dir}'"
     echo "    -o <out_dir>     Set the output directory"
     echo "                     Default: '${out_dir}'"
+    echo "    -s <sfs_mode>    Set SquashFS image mode (img or sfs)"
+    echo "                     img: prepare root-image.sfs for dm-snapshot usage"
+    echo "                     sfs: prepare root-image.sfs for overlayfs usage"
+    echo "                     Default: ${sfs_mode}"
     echo "    -z               Keep pacman cache packages in the iso file"
     echo "    -c <comp_type>   Set SquashFS compression type (gzip, lzma, lzo, xz)"
     echo "                     Default: '${sfs_comp}'"
@@ -282,103 +287,8 @@ _cleanup () {
 }
 
 
-
-# Makes a SquashFS filesystem image of file/directory passes as argument with desired compression.
-# $1: Source file/directory
-# $2: SquashFS compression type (gzip | lzo | xz)
-_mksfs () {
-    local _src="${1}"
-    local _sfs_comp="${2}"
-
-    if [[ ! -e "${work_dir}/${_src}" ]]; then
-        _msg_error "The path '${work_dir}/${_src}' does not exist" 1
-    fi
-
-    local _sfs_img="${work_dir}/${_src}.sfs"
-
-    _msg_info "Creating SquashFS image for '${work_dir}/${_src}', This may take some time..."
-    local _seconds=${SECONDS}
-    if [[ "${quiet}" = "y" ]]; then
-        mksquashfs "${work_dir}/${_src}" "${_sfs_img}" -noappend -comp "${_sfs_comp}" -no-progress &> /dev/null
-    else
-        mksquashfs "${work_dir}/${_src}" "${_sfs_img}" -noappend -comp "${_sfs_comp}" -no-progress
-    fi
-    _seconds=$((SECONDS - _seconds))
-    printf "[mkarchiso] INFO: Image creation done in %02d:%02d minutes\n" $((_seconds / 60)) $((_seconds % 60))
-}
-
-# Makes a filesystem from a source directory.
-# $1: Source directory
-# $2: Target filesystem type (ext4 | ext3 | ext2 | xfs)
-# $3: Size of target filesystem. Can be an absolute value in MiB, or relative value of desired free space (1% - 99%)
-_mkfs () {
-    local _src="${1}"
-    local _fs_type="${2}"
-    local _fs_size="${3}"
-
-    local _fs_src="${work_dir}/${_src}"
-    local _fs_img="${work_dir}/${_src}.fs"
-
-    if [[ ! -e "${_fs_src}" ]]; then
-        _msg_error "The path '${_fs_src}' does not exist" 1
-    fi
-
-    local _spc_used
-    _spc_used=$(du -sxm "${_fs_src}" | awk '{print $1}')
-
-    # Caculate FS size with desired % of free space, adds 10% overhead to used space.
-    if [[ ${_fs_size} != ${_fs_size%\%} ]]; then
-        if [[ ${_fs_size%\%} -le 0 || ${_fs_size%\%} -ge 100 ]]; then
-            _msg_error "Invalid percentage of free space specified '${_fs_size}' on '${_src}', should be 0% < x < 100%" 1
-        fi
-        _fs_size=$((_spc_used * 110 / (100 - ${_fs_size%\%})))
-    else
-        local _spc_used_over=$((_spc_used * 11 / 10))
-        if [[ ${_fs_size} -lt ${_spc_used_over} ]]; then
-            _msg_error "Filesystem size specified '${_fs_size}' MiB for '${_src}' is too small, must be at least '${_spc_used_over}' MiB" 1
-        fi
-    fi
-
-    _msg_info "Creating ${_fs_type} image of ${_fs_size} MiB..."
-    rm -f "${_fs_img}"
-    truncate -s ${_fs_size}M "${_fs_img}"
-    local _qflag=""
-    if [[ ${quiet} == "y" ]]; then
-        _qflag="-q"
-    fi
-    case "${_fs_type}" in
-        ext4)
-            mkfs.ext4 ${_qflag} -O ^has_journal -E lazy_itable_init=0 -m 0 -F "${_fs_img}"
-            tune2fs -c 0 -i 0 "${_fs_img}" &> /dev/null
-            ;;
-        ext3)
-            mkfs.ext3 ${_qflag} -m 0 -F "${_fs_img}"
-            tune2fs -c 0 -i 0 "${_fs_img}" &> /dev/null
-            ;;
-        ext2)
-            mkfs.ext2 ${_qflag} -m 0 -F "${_fs_img}"
-            tune2fs -c 0 -i 0 "${_fs_img}" &> /dev/null
-            ;;
-        xfs)
-            mkfs.xfs ${_qflag} "${_fs_img}"
-            ;;
-        btrfs)
-            mkfs.btrfs -M "${_fs_img}"
-            ;;
-        *)
-            _msg_error "Invalid filesystem: ${_fs_type}" 1
-            ;;
-    esac
-    _msg_info "Done!"
-    _mount_fs "${_fs_img}" "${work_dir}/mnt/${_src}"
-    _msg_info "Copying '${_fs_src}/' to '${work_dir}/mnt/${_src}/'..."
-    cp -aT "${_fs_src}/" "${work_dir}/mnt/${_src}/"
-    _msg_info "Done!"
-    _umount_fs "${work_dir}/mnt/${_src}"
-}
-
-# Makes a filesystem from a source directory.
-_mkrootfs () {
+# Makes an ext4 filesystem inside a SquashFS from a source directory.
+_mkrootfs_img () {
     if [[ ! -e "${work_dir}/root-image" ]]; then
         _msg_error "The path '${work_dir}/root-image' does not exist" 1
     fi
@@ -406,6 +316,22 @@ _mkrootfs () {
     fi
     _msg_info "Done!"
     rm ${work_dir}/root-image.img
+}
+
+# Makes a SquashFS filesystem from a source directory.
+_mkrootfs_sfs () {
+    if [[ ! -e "${work_dir}/root-image" ]]; then
+        _msg_error "The path '${work_dir}/root-image' does not exist" 1
+    fi
+
+    mkdir -p "${work_dir}/iso/${install_dir}/${arch}"
+    _msg_info "Creating SquashFS image, this may take some time..."
+    if [[ "${quiet}" = "y" ]]; then
+        mksquashfs "${work_dir}/root-image" "${work_dir}/iso/${install_dir}/${arch}/root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress &> /dev/null
+    else
+        mksquashfs "${work_dir}/root-image" "${work_dir}/iso/${install_dir}/${arch}/root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress
+    fi
+    _msg_info "Done!"
 }
 
 _mkchecksum () {
@@ -498,7 +424,11 @@ command_iso () {
 command_prepare () {
     _show_config prepare
     _cleanup
-  _mkrootfs
+    if [[ ${sfs_mode} == "sfs" ]]; then
+        _mkairootfs_sfs
+    else
+        _mkairootfs_img
+    fi
     _mkchecksum
 }
 
@@ -538,7 +468,7 @@ if [[ ${EUID} -ne 0 ]]; then
     _msg_error "This script must be run as root." 1
 fi
 
-while getopts 'p:r:C:L:P:A:D:w:o:c:vhz' arg; do
+while getopts 'p:r:C:L:P:A:D:w:o:s:c:vhz' arg; do
     case "${arg}" in
         p) pkg_list="${pkg_list} ${OPTARG}" ;;
         r) run_cmd="${OPTARG}" ;;
@@ -550,6 +480,7 @@ while getopts 'p:r:C:L:P:A:D:w:o:c:vhz' arg; do
         D) install_dir="${OPTARG}" ;;
         w) work_dir="${OPTARG}" ;;
         o) out_dir="${OPTARG}" ;;
+        s) sfs_mode="${OPTARG}" ;;
         c) sfs_comp="${OPTARG}" ;;
         v) quiet="n" ;;
         h|?) _usage 0 ;;
