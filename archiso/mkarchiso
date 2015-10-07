@@ -425,9 +425,9 @@ command_prepare () {
     _show_config prepare
     _cleanup
     if [[ ${sfs_mode} == "sfs" ]]; then
-        _mkairootfs_sfs
+        _mkrootfs_sfs
     else
-        _mkairootfs_img
+        _mkrootfs_img
     fi
     _mkchecksum
 }
