@@ -327,9 +327,9 @@ _mkrootfs_sfs () {
     mkdir -p "${work_dir}/iso/${install_dir}/${arch}"
     _msg_info "Creating SquashFS image, this may take some time..."
     if [[ "${quiet}" = "y" ]]; then
-        mksquashfs "${work_dir}/root-image" "${work_dir}/iso/${install_dir}/${arch}/root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress &> /dev/null
+        mksquashfs "${work_dir}/root-image" "${work_dir}/iso/${install_dir}/root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress &> /dev/null
     else
-        mksquashfs "${work_dir}/root-image" "${work_dir}/iso/${install_dir}/${arch}/root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress
+        mksquashfs "${work_dir}/root-image" "${work_dir}/iso/${install_dir}/root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress
     fi
     _msg_info "Done!"
 }
@@ -424,7 +424,7 @@ command_iso () {
 command_prepare () {
     _show_config prepare
     _cleanup
-    if [[ ${sfs_mode} == "sfs" ]]; then
+    if [[ ${sfs_mode} = "sfs" ]]; then
         _mkrootfs_sfs
     else
         _mkrootfs_img
