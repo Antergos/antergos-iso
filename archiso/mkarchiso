@@ -323,8 +323,12 @@ _mkrootfs_sfs () {
     if [[ ! -e "${work_dir}/root-image" ]]; then
         _msg_error "The path '${work_dir}/root-image' does not exist" 1
     fi
-
-    mkdir -p "${work_dir}/iso/${install_dir}/${arch}"
+ 
+    # https://github.com/Antergos/antergos-iso/pull/39/
+    _rootimg="${work_dir}/root-image"
+    touch -r "${_rootimg}/usr" "${_rootimg}/etc/.updated" "${_rootimg}/var/.updated"
+    
+    mkdir -p "${work_dir}/iso/${install_dir}"
     _msg_info "Creating SquashFS image, this may take some time..."
     if [[ "${quiet}" = "y" ]]; then
         mksquashfs "${work_dir}/root-image" "${work_dir}/iso/${install_dir}/root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress &> /dev/null
