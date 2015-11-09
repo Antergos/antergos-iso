@@ -23,7 +23,6 @@ python-lxml
 python-mako
 python-mock
 python-requests
-python-raven
 python-bugsnag
 
 # Network
@@ -158,15 +157,13 @@ libreoffice-installer
 libwnck3
 nautilus
 network-manager-applet
-numix-frost-themes
+numix-frost-themes-next
 numix-icon-theme-square
 orca
 pidgin
 totem
 transmission-cli
 transmission-gtk
-xdg-user-dirs-gtk
-xscreensaver
 
 # LightDM
 

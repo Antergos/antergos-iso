@@ -95,9 +95,9 @@ gsettings set org.gnome.desktop.session idle-delay 0
 
 
 # Set theme
-gsettings set org.gnome.desktop.interface gtk-theme 'Numix-Frost-Light'
-gsettings set org.gnome.desktop.wm.preferences theme 'Numix-Frost-Light'
-gsettings set org.gnome.shell.extensions.user-theme name "Numix-Frost-Light"
+gsettings set org.gnome.desktop.interface gtk-theme 'Numix-Frost-Light-Next'
+gsettings set org.gnome.desktop.wm.preferences theme 'Numix-Frost-Light-Next'
+gsettings set org.gnome.shell.extensions.user-theme name "Numix-Frost-Light-Next"
 
 # Set icon theme
 gsettings set org.gnome.desktop.interface icon-theme 'Numix-Square'
@@ -108,8 +108,8 @@ gsettings set org.gnome.desktop.background show-desktop-icons false
 # Minimize and close buttons
 gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
 
-# Disable terminal bell
-gsettings set org.gnome.desktop.wm.preferences audible-bell false
+# Don't Disable terminal bell (accessibility concerns)
+gsettings set org.gnome.desktop.wm.preferences audible-bell true
 
 # Configure touchpad
 gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true

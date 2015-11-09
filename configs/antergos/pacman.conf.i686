@@ -90,6 +90,10 @@ Include = /etc/pacman.d/mirrorlist
 #SigLevel = PackageRequired
 Include = /etc/pacman.d/mirrorlist
 
+[antergos-staging]
+#SigLevel = PackageRequired
+Include = /etc/pacman.d/antergos-mirrorlist
+
 [antergos]
 #SigLevel = PackageRequired
 Include = /etc/pacman.d/antergos-mirrorlist

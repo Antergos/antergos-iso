@@ -99,8 +99,10 @@ if [[ ${NETWORK_ALIVE} = 0 ]]; then
 	notify_user "${CHECKING_UPDATES}" "${CHECKING_UPDATES_SUB}"
 	sudo sed -i '1s%^%Server = http://repo.antergos.info/$repo/$arch\n%' /etc/pacman.d/antergos-mirrorlist
 	sudo rm /var/lib/pacman/db.lck > /dev/null 2&>1
-	sudo pacman-key --init && sudo pacman-key --populate archlinux antergos
-	sudo pacman -Syy fakeroot --noconfirm
+	sudo pacman -Syy fakeroot --noconfirm || \
+		{ sudo pacman-key --init && \
+		sudo pacman-key --populate archlinux antergos && \
+		sudo pacman -Syy fakeroot --noconfirm; }
 	CHECK_UPDATES=$(sudo checkupdates)
 	if [[ ${CHECK_UPDATES} = *'cnchi'* ]]; then
 #		sudo chmod +x /usr/share/cnchi/cnchi/info.py

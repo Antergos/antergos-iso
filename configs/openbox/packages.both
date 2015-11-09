@@ -21,7 +21,6 @@ python-mako
 python-mock
 python-lxml
 python-requests
-python-raven
 python-bugsnag
 
 # Network
@@ -53,6 +52,7 @@ xfsprogs
 squashfs-tools
 f2fs-tools
 mtools
+zfs
 
 # Xorg
 
@@ -103,7 +103,7 @@ plymouth
 network-manager-applet
 openbox
 compton
-numix-frost-themes
+numix-frost-themes-next
 #feh
 nitrogen
 tint2-git
