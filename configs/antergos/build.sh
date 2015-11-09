@@ -309,10 +309,6 @@ make_customize_root_image() {
         	translations="$(${script_path}/translations.sh $(cd ${out_dir}; pwd;) $(cd ${work_dir}; pwd;) $(cd ${script_path}; pwd;))"
         	echo "${translations}"
         	
-        	# Triggering systemd-update-done to prevent 20sec wait on LiveCD boot
-		touch ${work_dir}/root-image/etc/.updated
-		touch ${work_dir}/root-image/var/.updated
-        	
         	touch /var/tmp/five
         }
 
