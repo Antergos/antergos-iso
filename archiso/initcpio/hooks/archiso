@@ -121,7 +121,7 @@ run_hook() {
         cow_persistent="N"
     fi
 
-    [[ -z "${cow_directory}" ]] && cow_directory="persistent_${archisolabel}/${arch}"
+    [[ -z "${cow_directory}" ]] && cow_directory="persistent_${archisolabel}"
 
     # set mount handler for archiso
     mount_handler="archiso_mount_handler"

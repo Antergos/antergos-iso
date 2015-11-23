@@ -323,7 +323,16 @@ _mkrootfs_sfs () {
     if [[ ! -e "${work_dir}/root-image" ]]; then
         _msg_error "The path '${work_dir}/root-image' does not exist" 1
     fi
- 
+    
+    if [[ $1 != minimal ]]; then
+        # Squash an empty directory into a filesystem image for live usb persistance
+        mkdir -p 
+        truncate -s 250M "${work_dir}/persistent_root-image.img"
+        mkfs.ext4 -O ^has_journal,^resize_inode -L ANT_OVRLY -E lazy_itable_init=0 -m 0 -F "${work_dir}/persistent_root-image.img"
+        tune2fs -c 0 -i 0 "${work_dir}/persistent_root-image.img" &> /dev/null
+        mksquashfs "${work_dir}/persistent_root-image.img" "${work_dir}/iso/${install_dir}/persistent_root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress
+    fi
+    
     # https://github.com/Antergos/antergos-iso/pull/39/
     _rootimg="${work_dir}/root-image"
     touch -r "${_rootimg}/usr" "${_rootimg}/etc/.updated" "${_rootimg}/var/.updated"
@@ -397,6 +406,9 @@ command_iso () {
                             -no-emul-boot
                             -isohybrid-gpt-basdat"
     fi
+    if [[ $1 != minimal ]]; then
+        _persistence="-append_partition 3 Linux ${work_dir}/iso/${install_dir}/persistent_root-image.sfs"
+    fi
 
     _show_config iso
 
@@ -416,6 +428,7 @@ command_iso () {
             -eltorito-boot isolinux/isolinux.bin \
             -eltorito-catalog isolinux/boot.cat \
             -no-emul-boot -boot-load-size 4 -boot-info-table \
+            ${_persistence} \
             -isohybrid-mbr ${work_dir}/iso/isolinux/isohdpfx.bin \
             ${_iso_efi_boot_args} \
             -output "${out_dir}/${img_name}" \
@@ -514,7 +527,7 @@ case "${command_name}" in
         command_run
         ;;
     prepare)
-        command_prepare
+        command_prepare ${2}
         ;;
     checksum)
         command_checksum
@@ -528,7 +541,7 @@ case "${command_name}" in
             _usage 1
         fi
         img_name="${2}"
-        command_iso
+        command_iso ${3}
         ;;
     *)
         _msg_error "Invalid command name '${command_name}'" 0

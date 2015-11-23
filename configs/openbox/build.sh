@@ -331,7 +331,7 @@ make_prepare() {
     remove_extra_icons
 
     mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  pkglist
-    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  prepare
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  prepare minimal
 
     #rm -rf ${work_dir}/root-image (Always fails and exits the whole build process)
     #rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
@@ -345,7 +345,7 @@ make_iso() {
     else
         isoName="${iso_name}-${iso_version}-${arch}.iso"
     fi
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${isoName}"
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${isoName}" minimal
 }
 
 purge_single ()
