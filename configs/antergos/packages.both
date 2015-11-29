@@ -9,7 +9,6 @@ grub
 haveged
 hwdetect
 hwinfo
-libui-sh
 ntp
 os-prober
 parted
