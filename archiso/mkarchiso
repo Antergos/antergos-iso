@@ -515,6 +515,7 @@ if [[ $# -lt 1 ]]; then
     _usage 1
 fi
 command_name="${1}"
+_extra_arg="${2:-default}"
 
 case "${command_name}" in
     init)
@@ -527,7 +528,7 @@ case "${command_name}" in
         command_run
         ;;
     prepare)
-        command_prepare ${2}
+        command_prepare ${_extra_arg}
         ;;
     checksum)
         command_checksum
