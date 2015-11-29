@@ -325,9 +325,10 @@ _mkrootfs_sfs () {
     fi
     _extra_arg="${1:-default}"
     
+    mkdir -p "${work_dir}/iso/${install_dir}"
+    
     if [[ ${_extra_arg} != minimal ]]; then
         # Squash an empty directory into a filesystem image for live usb persistance
-        mkdir -p 
         truncate -s 250M "${work_dir}/persistent_root-image.img"
         mkfs.ext4 -O ^has_journal,^resize_inode -L ANT_OVRLY -E lazy_itable_init=0 -m 0 -F "${work_dir}/persistent_root-image.img"
         tune2fs -c 0 -i 0 "${work_dir}/persistent_root-image.img" &> /dev/null
@@ -338,7 +339,6 @@ _mkrootfs_sfs () {
     _rootimg="${work_dir}/root-image"
     touch -r "${_rootimg}/usr" "${_rootimg}/etc/.updated" "${_rootimg}/var/.updated"
     
-    mkdir -p "${work_dir}/iso/${install_dir}"
     _msg_info "Creating SquashFS image, this may take some time..."
     if [[ "${quiet}" = "y" ]]; then
         mksquashfs "${work_dir}/root-image" "${work_dir}/iso/${install_dir}/root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress &> /dev/null
