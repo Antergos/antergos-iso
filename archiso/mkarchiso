@@ -323,8 +323,9 @@ _mkrootfs_sfs () {
     if [[ ! -e "${work_dir}/root-image" ]]; then
         _msg_error "The path '${work_dir}/root-image' does not exist" 1
     fi
+    _extra_arg="${1:-default}"
     
-    if [[ $1 != minimal ]]; then
+    if [[ ${_extra_arg} != minimal ]]; then
         # Squash an empty directory into a filesystem image for live usb persistance
         mkdir -p 
         truncate -s 250M "${work_dir}/persistent_root-image.img"
