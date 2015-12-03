@@ -332,7 +332,8 @@ _mkrootfs_sfs () {
         truncate -s 250M "${work_dir}/persistent_root-image.img"
         mkfs.ext4 -O ^has_journal,^resize_inode -L ANT_OVRLY -E lazy_itable_init=0 -m 0 -F "${work_dir}/persistent_root-image.img"
         tune2fs -c 0 -i 0 "${work_dir}/persistent_root-image.img" &> /dev/null
-        mksquashfs "${work_dir}/persistent_root-image.img" "${work_dir}/iso/${install_dir}/persistent_root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress
+        # mksquashfs "${work_dir}/persistent_root-image.img" "${work_dir}/iso/${install_dir}/persistent_root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress
+        cp "${work_dir}/persistent_root-image.img" "${work_dir}/iso/${install_dir}"
     fi
     
     # https://github.com/Antergos/antergos-iso/pull/39/
@@ -409,7 +410,7 @@ command_iso () {
     fi
     _extra_arg="${1:-default}"
     if [[ ${_extra_arg} != minimal ]]; then
-        _persistence="-append_partition 3 Linux ${work_dir}/iso/${install_dir}/persistent_root-image.sfs"
+        _persistence="-append_partition 3 Linux ${work_dir}/iso/${install_dir}/persistent_root-image.img"
     fi
 
     _show_config iso
