@@ -411,6 +411,8 @@ command_iso () {
     _extra_arg="${1:-default}"
     if false && [[ ${_extra_arg} != minimal ]]; then
         _persistence="-append_partition 3 Linux ${work_dir}/iso/${install_dir}/persistent_root-image.img"
+    else
+        _persistence=''
     fi
 
     _show_config iso
