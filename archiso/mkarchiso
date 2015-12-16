@@ -327,7 +327,7 @@ _mkrootfs_sfs () {
     
     mkdir -p "${work_dir}/iso/${install_dir}"
     
-    if [[ ${_extra_arg} != minimal ]]; then
+    if false && [[ ${_extra_arg} != minimal ]]; then
         # Squash an empty directory into a filesystem image for live usb persistance
         truncate -s 250M "${work_dir}/persistent_root-image.img"
         mkfs.ext4 -O ^has_journal,^resize_inode -L ANT_OVRLY -E lazy_itable_init=0 -m 0 -F "${work_dir}/persistent_root-image.img"
@@ -409,7 +409,7 @@ command_iso () {
                             -isohybrid-gpt-basdat"
     fi
     _extra_arg="${1:-default}"
-    if [[ ${_extra_arg} != minimal ]]; then
+    if false && [[ ${_extra_arg} != minimal ]]; then
         _persistence="-append_partition 3 Linux ${work_dir}/iso/${install_dir}/persistent_root-image.img"
     fi
 
