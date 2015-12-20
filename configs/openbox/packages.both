@@ -6,13 +6,12 @@ efibootmgr
 dmraid
 #hwinfo
 ntp
-libui-sh
 dialog
 gptfdisk
 parted
 crda
 haveged
-#linux-headers
+linux-headers
 arch-install-scripts
 
 # Cnchi Graphical Installer
@@ -53,6 +52,7 @@ squashfs-tools
 f2fs-tools
 mtools
 zfs
+spl
 
 # Xorg
 

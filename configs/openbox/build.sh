@@ -301,9 +301,19 @@ make_customize_root_image() {
         	rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
         	rm -rf ${work_dir}/root-image/usr/share/icons/{Adwaita,HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest} || true
         
-		remove_extra_icons
+			remove_extra_icons
+			
+			# Build kernel modules that are handled by dkms so we can delete kernel headers to save space
+			 mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'dkms autoinstall' \
+            	run
+            
+            # Remove kernel headers and dkms.
+			 mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'pacman -Rdd --noconfirm linux-headers dkms' \
+            	run
 		
-		# Install translations for updater script
+			# Install translations for updater script
         	translations="$(${script_path}/translations.sh $(cd ${out_dir}; pwd;) $(cd ${work_dir}; pwd;) $(cd ${script_path}; pwd;))"
         	echo "${translations}"
         	
@@ -315,7 +325,7 @@ make_customize_root_image() {
         do
         	if [[ ! -f /var/tmp/${part} ]]; then
         		part_${part};
-        		sleep 5;
+        		sleep 2;
         	fi
         done
         
