@@ -92,7 +92,7 @@ libnotify
 expect
 gnome-keyring
 librsvg
-plymouth
+#plymouth
 
 # Fonts
 
