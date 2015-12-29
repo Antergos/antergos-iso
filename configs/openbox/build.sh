@@ -53,7 +53,7 @@ make_setup_mkinitcpio() {
     cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/etc/initcpio
     cp -L ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
     
-    #sed -i 's|plymouth||g' ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
+    sed -i 's|plymouth||g' ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
     
     cp -L ${script_path}/root-image/etc/os-release ${work_dir}/root-image/etc
     #cp -L ${script_path}/plymouthd.conf ${work_dir}/root-image/etc/plymouth
