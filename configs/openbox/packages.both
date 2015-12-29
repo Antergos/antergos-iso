@@ -4,7 +4,6 @@ prebootloader
 os-prober
 efibootmgr
 dmraid
-#hwinfo
 ntp
 dialog
 gptfdisk
@@ -32,13 +31,10 @@ wpa_actiond
 b43-fwcutter
 b43-firmware
 broadcom-wl
-#net-tools
 usb_modeswitch
-#modemmanager
 networkmanager-pptp
 whois 
 dnsutils
-#netctl
 linux-firmware
 intel-ucode
 
@@ -69,59 +65,36 @@ xf86-video-ati
 mesa
 virtualbox-guest-utils
 virtualbox-guest-modules
-#virtualbox-guest-dkms
-#xf86-video-vmware
-#xf86-video-openchrome
-#xf86-video-vesa
 
 
 # System Tools
 
 sudo
-#gksu
-#pacmanxg4
-#pkgfile
-#alsa-utils
 xdg-user-dirs
-#powerpill
 reflector
-#git
 wget
 gettext
 libnotify
 expect
 gnome-keyring
 librsvg
-#plymouth
-
-# Fonts
-
-#ttf-dejavu
 
 
 # Desktop
 network-manager-applet
 openbox
 compton
-numix-frost-themes
-#feh
 nitrogen
 tint2
 xfce4-notifyd
-#roxterm
 lxterminal
 
 # Theme
 
+numix-frost-themes
 numix-icon-theme-square
 adwaita-icon-theme
-#antergos-wallpapers
 
 # Compression
 
 unzip
-#unrar
-
-# LightDM
-
-#lightdm-webkit-theme-antergos

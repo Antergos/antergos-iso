@@ -39,6 +39,7 @@ netctl
 net-tools
 networkmanager-openvpn
 networkmanager-pptp
+rp-pppoe
 usb_modeswitch
 whois 
 wireless_tools
@@ -166,6 +167,6 @@ transmission-gtk
 
 # LightDM
 
-lightdm-webkit-theme-antergos
+lightdm-webkit2-greeter
 light-locker
 light-locker-settings
