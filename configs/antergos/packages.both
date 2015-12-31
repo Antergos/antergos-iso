@@ -48,6 +48,7 @@ zd1211-firmware
 
 # Filesystems
 
+linux-headers
 btrfs-progs
 dosfstools
 f2fs-tools
@@ -55,6 +56,7 @@ mtools
 ntfs-3g
 squashfs-tools
 xfsprogs
+zfs
 
 # Xorg & Graphics Drivers
 

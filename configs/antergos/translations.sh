@@ -11,28 +11,29 @@ _script_dir="$3"
 for f in ${_out_dir}/trans/cnchi_updater/*.mo
 do
 		fullname="$(basename ${f})"
-		echo ${fullname}
+		echo "${fullname}"
 		fname="${fullname%.*}"
-		echo ${fname}
+		echo "${fname}"
 		dest="${_script_dir}/root-image/usr/share/locale/${fname}/LC_MESSAGES"
+		echo "${dest}"
 		if ! [[ -d "${dest}" ]]; then
 			mkdir -p "${dest}";
 		fi
-		mv ${f} ${dest}/CNCHI_UPDATER.mo
+		mv "${f}" "${dest}/CNCHI_UPDATER.mo"
 done
 
  
 
 for f in ${_out_dir}/trans/antergos-gfxboot/*.po
 do
-	mv -f ${f} ${_script_dir}/antergos-gfxboot/po
+	mv -f "${f}" "${_script_dir}/antergos-gfxboot/po"
 done
 
-cd ${_script_dir}/antergos-gfxboot
+cd "${_script_dir}/antergos-gfxboot"
 
 make
 
-cp -R isolinux ${_script_dir}
+cp -R isolinux "${_script_dir}"
 
 
 shopt -u nullglob
