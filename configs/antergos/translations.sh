@@ -10,16 +10,16 @@ _script_dir="$3"
 
 for f in ${_out_dir}/trans/cnchi_updater/*.mo
 do
-		fullname="$(basename ${f})"
-		echo "${fullname}"
-		fname="${fullname%.*}"
-		echo "${fname}"
-		dest="${_script_dir}/root-image/usr/share/locale/${fname}/LC_MESSAGES"
-		echo "${dest}"
-		if ! [[ -d "${dest}" ]]; then
-			mkdir -p "${dest}";
-		fi
-		mv "${f}" "${dest}/CNCHI_UPDATER.mo"
+	fullname="$(basename ${f})"
+	echo "${fullname}"
+	fname="${fullname%.*}"
+	echo "${fname}"
+	dest="${_script_dir}/root-image/usr/share/locale/${fname}/LC_MESSAGES"
+	echo "${dest}"
+	if ! [[ -d "${dest}" ]]; then
+		mkdir -p "${dest}";
+	fi
+	mv "${f}" "${dest}/CNCHI_UPDATER.mo"
 done
 
  
