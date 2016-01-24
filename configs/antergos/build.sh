@@ -87,9 +87,6 @@ make_boot_extra() {
     cp ${work_dir}/root-image/usr/share/licenses/common/GPL2/license.txt ${work_dir}/iso/${install_dir}/boot/memtest.COPYING
     cp ${work_dir}/root-image/boot/intel-ucode.img ${work_dir}/iso/${install_dir}/boot/intel_ucode.img
     cp ${work_dir}/root-image/usr/share/licenses/intel-ucode/LICENSE ${work_dir}/iso/${install_dir}/boot/intel_ucode.LICENSE
-#    # Install translations for gfxboot
-#    isolinux_translations="$(${script_path}/translations.sh ${out_dir} ${script_path} gfxboot)"
-#    echo "${isolinux_translations}"
 }
 
 # Prepare /${install_dir}/boot/syslinux
@@ -140,9 +137,11 @@ make_efi() {
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/iso/loader/entries/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
 
-            sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                 s|%INSTALL_DIR%|${install_dir}|g" \
-                 ${script_path}/efiboot/loader/entries/archiso-x86_64-usb.conf > ${work_dir}/iso/loader/entries/archiso-x86_64.conf
+            for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
+            	fname=$(basename ${boot_entry})
+            	sed "s|%ARCHISO_LABEL%|${iso_label}|g;
+                 	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/efiboot/loader/entries/${fname}
+            done
 
            # EFI Shell 2.0 for UEFI 2.3+
     curl -o ${work_dir}/iso/EFI/shellx64_v2.efi https://raw.githubusercontent.com/tianocore/edk2/master/ShellBinPkg/UefiShell/X64/Shell.efi
@@ -181,9 +180,11 @@ make_efiboot() {
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/efiboot/loader/entries/
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/efiboot/loader/entries/
 
-            sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                 s|%INSTALL_DIR%|${install_dir}|g" \
-                 ${script_path}/efiboot/loader/entries/archiso-x86_64-cd.conf > ${work_dir}/efiboot/loader/entries/archiso-x86_64.conf
+            for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
+            	fname=$(basename ${boot_entry})
+            	sed "s|%ARCHISO_LABEL%|${iso_label}|g;
+                 	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/efiboot/loader/entries/${fname}
+            done
 
             cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
             cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
@@ -221,9 +222,9 @@ make_customize_root_image() {
             #	run || true
             	touch /var/tmp/two 
         }
-	
-	part_three() {
-		echo "Adding autologin group"
+
+		part_three() {
+			echo "Adding autologin group"
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r 'groupadd -r autologin' \
             	run
@@ -271,7 +272,7 @@ make_customize_root_image() {
         	#sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/pacmanxg.desktop
         	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/libreoffice-installer.desktop
         	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
-        	sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=http://antergos.com|g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
+        	sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
         	
         	touch /var/tmp/four
         }
