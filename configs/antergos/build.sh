@@ -140,7 +140,7 @@ make_efi() {
             for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
             	fname=$(basename ${boot_entry})
             	sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                 	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/efiboot/loader/entries/${fname}
+                 	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/iso/loader/entries/${fname}
             done
 
            # EFI Shell 2.0 for UEFI 2.3+
