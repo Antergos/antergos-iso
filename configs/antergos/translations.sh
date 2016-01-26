@@ -29,7 +29,8 @@ do
 	mv -f "${f}" "${_script_dir}/antergos-gfxboot/po"
 done
 
-cd "${_script_dir}/antergos-gfxboot"
+cp -R "${_script_dir}/antergos-gfxboot" "/usr/share/gfxboot/themes/"
+cd /usr/share/gfxboot/themes/antergos-gfxboot
 
 make
 
