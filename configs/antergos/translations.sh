@@ -26,6 +26,7 @@ done
 
 for f in ${_out_dir}/trans/antergos-gfxboot/*.po
 do
+	echo "Moving ${f} to ${_script_dir}/antergos-gfxboot/po"
 	mv -f "${f}" "${_script_dir}/antergos-gfxboot/po"
 done
 
