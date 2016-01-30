@@ -142,9 +142,11 @@ make_efi() {
             cp -L ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/iso/loader/entries/
             cp -L ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
 
-            sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                 s|%INSTALL_DIR%|${install_dir}|g" \
-                 ${script_path}/efiboot/loader/entries/archiso-x86_64-usb.conf > ${work_dir}/iso/loader/entries/archiso-x86_64.conf
+            for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
+            	fname=$(basename ${boot_entry})
+            	sed "s|%ARCHISO_LABEL%|${iso_label}|g;
+                 	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/iso/loader/entries/${fname}
+            done
 
            # EFI Shell 2.0 for UEFI 2.3+
     curl -o ${work_dir}/iso/EFI/shellx64_v2.efi https://raw.githubusercontent.com/tianocore/edk2/master/ShellBinPkg/UefiShell/X64/Shell.efi
@@ -184,9 +186,11 @@ make_efiboot() {
             cp -L ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/efiboot/loader/entries/
             cp -L ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/efiboot/loader/entries/
 
-            sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                 s|%INSTALL_DIR%|${install_dir}|g" \
-                 ${script_path}/efiboot/loader/entries/archiso-x86_64-cd.conf > ${work_dir}/efiboot/loader/entries/archiso-x86_64.conf
+            for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
+            	fname=$(basename ${boot_entry})
+            	sed "s|%ARCHISO_LABEL%|${iso_label}|g;
+                 	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/efiboot/loader/entries/${fname}
+            done
 
             cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
             cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
@@ -322,8 +326,7 @@ make_customize_root_image() {
             	run
 		
 			# Install translations for updater script
-        	translations="$(${script_path}/translations.sh $(cd ${out_dir}; pwd;) $(cd ${work_dir}; pwd;) $(cd ${script_path}; pwd;))"
-        	echo "${translations}"
+        	( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
         	
         	touch /var/tmp/five
         }
