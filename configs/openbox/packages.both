@@ -10,7 +10,6 @@ gptfdisk
 parted
 crda
 haveged
-linux-headers
 arch-install-scripts
 
 # Cnchi Graphical Installer
@@ -47,8 +46,6 @@ xfsprogs
 squashfs-tools
 f2fs-tools
 mtools
-zfs
-spl
 
 # Xorg
 
