@@ -280,7 +280,7 @@ make_customize_root_image() {
         part_five() {
         
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'systemctl -fq enable dkms pacman-init lightdm-plymouth plymouth-start NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' \
+            	-r 'systemctl -fq enable pacman-init lightdm-plymouth plymouth-start NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' \
             	run
             	
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -310,6 +310,12 @@ make_customize_root_image() {
         	( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
         	
         	cp "${script_path}/file_to_copy" "${work_dir}/root-image/etc/cnchi.conf"
+        	
+        	cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
+        	chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
+        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+           	-r '/usr/bin/dkms.sh' \
+           	run
         	
         	touch /var/tmp/five
         }
