@@ -1,8 +1,5 @@
 #!/bin/bash
 
-pacman -R --noconfirm syslinux
-pacman -Syy --noconfirm syslinux-tmp
-
 shopt -s nullglob
 
 _out_dir="$1"
