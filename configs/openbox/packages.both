@@ -11,6 +11,7 @@ parted
 crda
 haveged
 arch-install-scripts
+syslinux-tmp
 
 # Cnchi Graphical Installer
 cnchi

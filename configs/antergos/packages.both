@@ -14,6 +14,7 @@ os-prober
 parted
 prebootloader
 arch-install-scripts
+syslinux-tmp
 
 # Cnchi Graphical Installer
 
