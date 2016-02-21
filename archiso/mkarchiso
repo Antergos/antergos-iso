@@ -56,7 +56,7 @@ _chroot_init() {
          _msg_info "Initial environment already installed, skipping."
      else
           mkdir -p ${work_dir}/root-image
-          _pacman "base antergos-keyring antergos-mirrorlist syslinux-tmp"
+          _pacman "base antergos-keyring antergos-mirrorlist syslinux"
          : > "${work_dir}/mkarchiso.init"
       fi
   }

@@ -74,6 +74,10 @@ Architecture = auto
 #SigLevel = PackageRequired
 #Include = /etc/pacman.d/mirrorlist
 
+[antergos]
+#SigLevel = PackageRequired
+Include = /etc/pacman.d/antergos-mirrorlist
+
 [core]
 #SigLevel = PackageRequired
 Include = /etc/pacman.d/mirrorlist
@@ -94,9 +98,9 @@ Include = /etc/pacman.d/mirrorlist
 #SigLevel = PackageRequired
 Include = /etc/pacman.d/antergos-mirrorlist
 
-[antergos]
+#antergos]
 #SigLevel = PackageRequired
-Include = /etc/pacman.d/antergos-mirrorlist
+#Include = /etc/pacman.d/antergos-mirrorlist
 
 # An example of a custom package repository.  See the pacman manpage for
 # tips on creating your own repositories.
