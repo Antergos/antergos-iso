@@ -345,6 +345,26 @@ make_customize_root_image() {
 
 }
 
+# Prepare ISO Version Files
+make_iso_version_files() {
+
+# Replace <VERSION> with actual iso version in all version files.
+base_dir="${work_dir}/root-image/etc"
+version_files=('arch-release' 'hostname' 'hosts' 'lsb-release' 'os-release')
+year="$(date +'%y')"
+month="$(date +'%-m')"
+version="${year}.${month}"
+
+echo "${year} ${month} ${version}"
+
+for version_file_name in "${version_files[@]}"
+do
+	version_file="${base_dir}/${version_file_name}"
+	sed -i "s|<VERSION>|${version}|g" "${version_file}"
+done
+	
+}
+
 # Build a single root filesystem
 make_prepare() {
 	rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
@@ -399,6 +419,7 @@ make_common_single() {
     run_once make_packages
     make_setup_mkinitcpio
     run_once make_customize_root_image
+    run_once make_iso_version_files
     run_once make_boot
     run_once make_boot_extra
     run_once make_syslinux

@@ -331,6 +331,26 @@ make_customize_root_image() {
 
 }
 
+# Prepare ISO Version Files
+make_iso_version_files() {
+
+# Replace <VERSION> with actual iso version in all version files.
+base_dir="${work_dir}/root-image/etc"
+version_files=('arch-release' 'hostname' 'hosts' 'lsb-release' 'os-release')
+year="$(date +'%y')"
+month="$(date +'%-m')"
+version="${year}.${month}"
+
+echo "${year} ${month} ${version}"
+
+for version_file_name in "${version_files[@]}"
+do
+	version_file="${base_dir}/${version_file_name}"
+	sed -i "s|<VERSION>|${version}|g" "${version_file}"
+done
+	
+}
+
 # Build a single root filesystem
 make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
@@ -353,8 +373,7 @@ make_iso() {
     mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${isoName}"
 }
 
-purge_single ()
-{
+purge_single () {
     if [[ -d ${work_dir} ]]; then
         find ${work_dir} -mindepth 1 -maxdepth 1 \
             ! -path ${work_dir}/iso -prune \
@@ -362,8 +381,7 @@ purge_single ()
     fi
 }
 
-clean_single ()
-{
+clean_single () {
     rm -rf ${work_dir}
     rm -f ${out_dir}/${iso_name}-${iso_version}-*-${arch}.iso
 }
@@ -381,6 +399,7 @@ make_common_single() {
     run_once make_packages
     run_once make_setup_mkinitcpio
     run_once make_customize_root_image
+    run_once make_iso_version_files
     run_once make_boot
     run_once make_boot_extra
     run_once make_syslinux

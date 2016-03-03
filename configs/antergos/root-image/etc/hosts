@@ -3,7 +3,7 @@
 #
 
 #<ip-address>	<hostname.domain.org>	<hostname>
-127.0.0.1	localhost.localdomain	localhost	ant-16.2
-::1		localhost.localdomain	localhost	ant-16.2
+127.0.0.1	localhost.localdomain	localhost	ant-<VERSION>
+::1		localhost.localdomain	localhost	ant-<VERSION>
 
 # End of file
