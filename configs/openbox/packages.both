@@ -61,7 +61,6 @@ xf86-video-nouveau
 xf86-video-ati
 mesa
 virtualbox-guest-utils
-virtualbox-guest-modules
 
 
 # System Tools
