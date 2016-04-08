@@ -55,11 +55,15 @@ _chroot_init() {
      if [[ -f "${work_dir}/mkarchiso.init" ]]; then
          _msg_info "Initial environment already installed, skipping."
      else
-          mkdir -p ${work_dir}/root-image
+        mkdir -p ${work_dir}/root-image
+        if [ "${1}" == "minimal" ]]; then
+          _pacman "bash coreutils cryptsetup device-mapper dhcpd e2fsprogs filesystem jfsutils linux lvm2 mdadm pacman sed xfsprogs antergos-keyring antergos-mirrorlist syslinux"
+        else
           _pacman "base antergos-keyring antergos-mirrorlist syslinux"
-         : > "${work_dir}/mkarchiso.init"
-      fi
-  }
+        fi
+        : > "${work_dir}/mkarchiso.init"
+     fi
+}
 
 _chroot_run() {
     eval arch-chroot ${work_dir}/root-image "${run_cmd}"
@@ -481,6 +485,11 @@ command_init() {
     _chroot_init
 }
 
+command_init_minimal() {
+    _show_config init
+    _chroot_init minimal
+}
+
 command_run() {
     _show_config run
     _chroot_run
@@ -526,6 +535,9 @@ _extra_arg2="${3:-}"
 case "${command_name}" in
     init)
         command_init
+        ;;
+    init-minimal)
+        command_init minimal
         ;;
     install)
         command_install
