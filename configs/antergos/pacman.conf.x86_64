@@ -68,21 +68,21 @@ Architecture = auto
 # repo name header and Include lines. You can add preferred servers immediately
 # after the header, and they will be used before the default mirrors.
 
-[testing]
-SigLevel = PackageRequired
-Include = /etc/pacman.d/mirrorlist
-
-[gnome-unstable]
-SigLevel = PackageRequired
-Include = /etc/pacman.d/mirrorlist
-
-[antergos-staging]
-#SigLevel = PackageRequired
-Include = /etc/pacman.d/antergos-mirrorlist
-
 [antergos]
 #SigLevel = PackageRequired
 Include = /etc/pacman.d/antergos-mirrorlist
+
+#[antergos-staging]
+#SigLevel = PackageRequired
+#Include = /etc/pacman.d/antergos-mirrorlist
+
+#[testing]
+#SigLevel = PackageRequired
+#Include = /etc/pacman.d/mirrorlist
+
+#[gnome-unstable]
+#SigLevel = PackageRequired
+#Include = /etc/pacman.d/mirrorlist
 
 [core]
 #SigLevel = PackageRequired
@@ -100,18 +100,9 @@ Include = /etc/pacman.d/mirrorlist
 #SigLevel = PackageRequired
 Include = /etc/pacman.d/mirrorlist
 
-
 [multilib]
 #SigLevel = PackageRequired
 Include = /etc/pacman.d/mirrorlist
-
-#[antergos-staging]
-#SigLevel = PackageRequired
-#Include = /etc/pacman.d/antergos-mirrorlist
-
-#[antergos]
-#SigLevel = PackageRequired
-#Include = /etc/pacman.d/antergos-mirrorlist
 
 # An example of a custom package repository.  See the pacman manpage for
 # tips on creating your own repositories.

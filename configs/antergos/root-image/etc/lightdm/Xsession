@@ -61,23 +61,29 @@ if [[ -z "$DBUS_SESSION_BUS_ADDRESS" ]]; then
 	# No DBUS session running, start one.
 	eval `dbus-launch --sh-syntax`
 fi
+
 # Change keyboard layaout
-gsettings set org.gnome.desktop.input-sources sources "[('xkb','us')]"
+_current_val="$(gsettings get org.gnome.desktop.input-sources sources)"
+echo "${_current_val}" > /tmp/.input-sources
+if [[ *'[]'* = "${_current_val}" ]]; then
+	gsettings set org.gnome.desktop.input-sources sources "[('xkb','us')]"
+fi
+
 # Enabled extensions
-gsettings set org.gnome.shell enabled-extensions \
-	"['user-theme@gnome-shell-extensions.gcampax.github.com', 'status-menu-buttons@dev.antergos.com', 'dash-to-dock@micxgx.gmail.com', 'panel-osd@berend.de.schouwer.gmail.com', 'topIcons@adel.gadllah@gmail.com']"
-	
+_extensions="['user-theme@gnome-shell-extensions.gcampax.github.com', 'status-menu-buttons@dev.antergos.com', 'dash-to-dock@micxgx.gmail.com', 'panel-osd@berend.de.schouwer.gmail.com', 'topIcons@adel.gadllah@gmail.com']"
+gsettings set org.gnome.shell enabled-extensions "${_extensions}"
+
 # Extension - Panel-OSD Settings
- gsettings set org.gnome.shell.extensions.panel-osd x-pos 96.0
- gsettings set org.gnome.shell.extensions.panel-osd y-pos 96.0
- gsettings set org.gnome.shell.extensions.panel-osd force-expand true
+gsettings set org.gnome.shell.extensions.panel-osd x-pos 96.0
+gsettings set org.gnome.shell.extensions.panel-osd y-pos 96.0
+gsettings set org.gnome.shell.extensions.panel-osd force-expand true
 
 # Extension - dash-to-dock Settings
- gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
- gsettings set org.gnome.shell.extensions.dash-to-dock opaque-background true
- gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.5
- gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots false
- gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink false
+gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
+gsettings set org.gnome.shell.extensions.dash-to-dock opaque-background true
+gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.5
+gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots false
+gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink false
 
 # Randomly choose a default wallpaper from antergos-wallpapers
 DIR="/usr/share/antergos/wallpapers"
@@ -117,8 +123,8 @@ gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
 gsettings set org.gnome.desktop.peripherals.touchpad scroll-method 'two-finger-scrolling'
 
 # Set fonts
-gsettings set org.gnome.desktop.interface font-name 'Lato 11'
-gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Lato Bold 12'
+gsettings set org.gnome.desktop.interface font-name 'Open Sans 12'
+gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Open Sans 13'
 gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
 
 # Turn on automatic date/time
