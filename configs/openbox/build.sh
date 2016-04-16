@@ -120,9 +120,6 @@ make_isolinux() {
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/isolinux.bin ${work_dir}/iso/isolinux/
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/isohdpfx.bin ${work_dir}/iso/isolinux/
         cp ${work_dir}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${work_dir}/iso/isolinux/
-#         # Install translations for gfxboot
-#    ( isolinux_translations="$(${script_path}/translations.sh ${out_dir} ${script_path} gfxboot)"
-#    echo "${isolinux_translations}" )
 
 }
 
@@ -200,9 +197,52 @@ make_efiboot() {
 }
 remove_extra_icons() {
 	if [[ -d "${work_dir}/root-image/usr/share/icons" ]]; then
-	cd ${work_dir}/root-image/usr/share/icons
-        find . ! -iname '**Cnchi**' ! -name '**image-missing.svg**' ! -name '**emblem-default.svg**' ! -name '**dialog-warning.svg**' ! -name '**edit-undo**' ! -name '**list-add**' ! -name '**list-remove**' ! -name '**system-run**' ! -name '**edit-clear-all**' ! -name 'dialog-***' ! -name '**-yes.svg**' ! -name '**_yes.svg**' ! -name '**-no.svg**' ! -name '**stock_no.svg**' ! -name 'nm-***' ! -name '**system-software-install**' ! -name '***bluetooth***' ! -name '***printer***' ! -name '***firefox***' ! -name '**network-server**' ! -name '***preferences-desktop-font***' ! -name '**fonts**' ! -name '**applications-accessories**' ! -name '**text-editor**' ! -name '**accessories-text-editor**' ! -name '**gnome-mime-x-directory-smb-share**' ! -name '**terminal**' ! -name '**video-display**' ! -name '**go-next-symbolic**' ! -name '**go-previous-symbolic**' ! -name '**_close**' ! -name '**-close**' ! -name '**dialog-**' ! -name 'nm-**' ! -name 'window-**' ! -name '**network**' ! -name 'index.theme' ! -name '**system-shutdown**' ! -name '**pan-**' ! -path '**Adwaita**' ! -path '**highcolor**' -type f -delete
-        fi
+		cd ${work_dir}/root-image/usr/share/icons
+		find . \
+			! -iname '**Cnchi**' \
+			! -iname '**image-missing.svg**' \
+			! -iname '**emblem-default.svg**' \
+			! -iname '**dialog-warning.svg**' \
+			! -iname '**edit-undo**' \
+			! -iname '**list-add**' \
+			! -iname '**list-remove**' \
+			! -iname '**system-run**' \
+			! -iname '**edit-clear-all**' \
+			! -iname 'dialog-***' \
+			! -iname '**-yes.svg**' \
+			! -iname '**_yes.svg**' \
+			! -iname '**-no.svg**' \
+			! -iname '**stock_no.svg**' \
+			! -iname 'nm-***' \
+			! -iname '**system-software-install**' \
+			! -iname '***bluetooth***' \
+			! -iname '***printer***' \
+			! -iname '***firefox***' \
+			! -iname '**network-server**' \
+			! -iname '***preferences-desktop-font***' \
+			! -iname '**fonts**' \
+			! -iname '**applications-accessories**' \
+			! -iname '**text-editor**' \
+			! -iname '**accessories-text-editor**' \
+			! -iname '**gnome-mime-x-directory-smb-share**' \
+			! -iname '**terminal**' \
+			! -iname '**video-display**' \
+			! -iname '**go-next-symbolic**' \
+			! -iname '**go-previous-symbolic**' \
+			! -iname '**_close**' \
+			! -iname '**-close**' \
+			! -iname '**dialog-**' \
+			! -iname 'nm-**' \
+			! -iname 'window-**' \
+			! -iname '**network**' \
+			! -iname 'index.theme' \
+			! -iname '**system-shutdown**' \
+			! -iname '**pan-**' \
+			! -iname '**symbolic**' \
+			! -ipath '**Adwaita**' \
+			! -ipath '**highcolor**' \
+			-type f -delete
+	fi
 
 }
 
@@ -306,7 +346,6 @@ make_customize_root_image() {
         	# Make ISO thinner
         	rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
         	rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
-        	rm -rf ${work_dir}/root-image/usr/share/icons/{Adwaita,HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest} || true
         
 			remove_extra_icons
 			
@@ -395,7 +434,7 @@ purge_single ()
 {
     if [[ -d ${work_dir} ]]; then
         find ${work_dir} -mindepth 1 -maxdepth 1 \
-            ! -path ${work_dir}/iso -prune \
+            ! -ipath ${work_dir}/iso -prune \
             | xargs rm -rf
     fi
 }
