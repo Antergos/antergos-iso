@@ -311,12 +311,6 @@ make_customize_root_image() {
         	
         	cp "${script_path}/file_to_copy" "${work_dir}/root-image/etc/cnchi.conf"
         	
-        	cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
-        	chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-           	-r '/usr/bin/dkms.sh' \
-           	run
-        	
         	touch /var/tmp/five
         }
 
@@ -349,6 +343,17 @@ do
 	sed -i "s|<VERSION>|${version}|g" "${version_file}"
 done
 	
+}
+
+# Build "dkms" kernel modules.
+build_kernel_modules_with_dkms() {
+
+	cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
+	chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
+	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+		-r '/usr/bin/dkms.sh' \
+		run
+
 }
 
 # Build a single root filesystem
@@ -400,6 +405,7 @@ make_common_single() {
     run_once make_setup_mkinitcpio
     run_once make_customize_root_image
     run_once make_iso_version_files
+    build_kernel_modules_with_dkms
     run_once make_boot
     run_once make_boot_extra
     run_once make_syslinux
