@@ -405,7 +405,7 @@ make_common_single() {
     run_once make_setup_mkinitcpio
     run_once make_customize_root_image
     run_once make_iso_version_files
-    build_kernel_modules_with_dkms
+    run_once build_kernel_modules_with_dkms
     run_once make_boot
     run_once make_boot_extra
     run_once make_syslinux

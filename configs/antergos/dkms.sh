@@ -6,6 +6,8 @@ _MODVER_STR="$(pacman -Q zfs)"
 _MODVER_STR="${_MODVER_STR/zfs }"
 _MODVER="${_MODVER_STR/.r*}"
 
+pacman -S --needed linux-headers
+
 echo '>>> Updating module dependencies. Please wait ...'
 
 if [[ $(dkms status -k "${_KERNVER}" "spl/${_MODVER}") != *'installed'* ]]; then
