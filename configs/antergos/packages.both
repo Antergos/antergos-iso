@@ -156,7 +156,6 @@ gstreamer0.10-plugins
 gstreamer-vaapi
 gvfs-mtp
 libgnomeui
-libreoffice-installer
 libwnck3
 nautilus
 network-manager-applet

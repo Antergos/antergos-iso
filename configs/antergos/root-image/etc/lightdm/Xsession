@@ -103,7 +103,7 @@ gsettings set org.gnome.desktop.session idle-delay 0
 # Set theme
 gsettings set org.gnome.desktop.interface gtk-theme 'Numix-Frost-Light'
 gsettings set org.gnome.desktop.wm.preferences theme 'Numix-Frost-Light'
-gsettings set org.gnome.shell.extensions.user-theme name "Numix-Frost-Light"
+gsettings set org.gnome.shell.extensions.user-theme name 'Numix-Frost'
 
 # Set icon theme
 gsettings set org.gnome.desktop.interface icon-theme 'Numix-Square'
