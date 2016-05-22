@@ -1,6 +1,6 @@
 # Installation
 grub
-prebootloader
+efitools
 os-prober
 efibootmgr
 dmraid
