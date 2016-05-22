@@ -128,8 +128,8 @@ make_efi() {
         if [[ ${arch} == "x86_64" ]]; then
 
             mkdir -p ${work_dir}/iso/EFI/boot
-            cp ${work_dir}/root-image/usr/lib/efitools/PreLoader.efi ${work_dir}/iso/EFI/boot/bootx64.efi
-            cp ${work_dir}/root-image/usr/lib/efitools/HashTool.efi ${work_dir}/iso/EFI/boot/
+            cp ${work_dir}/root-image/usr/share/efitools/efi/PreLoader.efi ${work_dir}/iso/EFI/boot/bootx64.efi
+            cp ${work_dir}/root-image/usr/share/efitools/efi/HashTool.efi ${work_dir}/iso/EFI/boot/
             #cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/iso/EFI/
 
             cp ${work_dir}/root-image/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${work_dir}/iso/EFI/boot/loader.efi
@@ -172,8 +172,8 @@ make_efiboot() {
             cp ${work_dir}/iso/${install_dir}/boot/intel_ucode.img ${work_dir}/efiboot/EFI/archiso/intel_ucode.img
 
             mkdir -p ${work_dir}/efiboot/EFI/boot
-            cp ${work_dir}/root-image/usr/lib/efitools/PreLoader.efi ${work_dir}/efiboot/EFI/boot/bootx64.efi
-            cp ${work_dir}/root-image/usr/lib/efitools/HashTool.efi ${work_dir}/efiboot/EFI/boot/
+            cp ${work_dir}/root-image/usr/share/efitools/efi/PreLoader.efi ${work_dir}/efiboot/EFI/boot/bootx64.efi
+            cp ${work_dir}/root-image/usr/share/efitools/efi/HashTool.efi ${work_dir}/efiboot/EFI/boot/
             #cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/efiboot/EFI/
 
             cp ${work_dir}/root-image/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${work_dir}/efiboot/EFI/boot/loader.efi
