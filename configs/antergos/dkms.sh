@@ -18,8 +18,4 @@ if [[ $(dkms status -k "${_KERNVER}" "zfs/${_MODVER}") != *'installed'* ]]; then
 	{ dkms install -k "${_KERNVER}" "zfs/${_MODVER}"; } || exit 1
 fi
 
-if [[ $(dkms status -k "${_KERNVER}" vboxguest/5.0.16_OSE) != *'installed'* ]]; then
-	{ dkms install -k "${_KERNVER}" "vboxguest/5.0.16_OSE"; } || exit 1
-fi
-
 { mkinitcpio -p linux && exit 0; } || exit 1
