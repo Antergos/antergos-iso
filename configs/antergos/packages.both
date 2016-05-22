@@ -63,7 +63,7 @@ zfs
 
 mesa
 mesa-vdpau
-virtualbox-guest-dkms
+virtualbox-guest-modules-arch
 virtualbox-guest-utils
 xf86-input-synaptics
 xf86-video-ati

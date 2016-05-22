@@ -60,6 +60,7 @@ xf86-video-intel
 xf86-video-nouveau
 xf86-video-ati
 mesa
+virtualbox-guest-modules-arch
 virtualbox-guest-utils
 
 
