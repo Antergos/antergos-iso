@@ -12,7 +12,7 @@ hwinfo
 ntp
 os-prober
 parted
-prebootloader
+efitools
 arch-install-scripts
 
 
