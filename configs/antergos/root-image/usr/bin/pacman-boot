@@ -22,8 +22,8 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 
-sudo gdk-pixbuf-query-loaders --update-cache
-gnome-shell --replace
+#sudo gdk-pixbuf-query-loaders --update-cache
+#gnome-shell --replace
 
 TEXTDOMAIN="CNCHI_UPDATER"
 GETTEXT='gettext "CNCHI_UPDATER"'
