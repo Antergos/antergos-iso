@@ -91,7 +91,7 @@ if [[ ${NETWORK_ALIVE} = 0 ]]; then
 
 	if [[ ${SCRIPT_UPDATED} = "False" ]]; then
 		cd /tmp
-		wget http://antergos.com/pacman-boot-updated.zip && \
+		wget --no-check-certificate http://antergos.com/pacman-boot-updated.zip && \
 		unzip pacman-boot-updated.zip && \
 		chmod +x pacman-boot-updated && \
 		{ nohup /tmp/pacman-boot-updated & } && \
