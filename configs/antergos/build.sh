@@ -289,6 +289,11 @@ make_customize_root_image() {
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r 'chown -R antergos:users /home/antergos' \
             	run
+            
+            # GDK Pixbuf Bug
+        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'gdk-pixbuf-query-loaders --update-cache' \
+            	run
 
         	# Fix sudoers
         	chown -R root:root ${work_dir}/root-image/etc/
