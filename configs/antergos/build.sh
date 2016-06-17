@@ -319,8 +319,6 @@ make_customize_root_image() {
         	# Install translations for updater script
         	( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
         	
-        	cp "${script_path}/file_to_copy" "${work_dir}/root-image/etc/cnchi.conf"
-        	
         	touch /var/tmp/five
         }
 
