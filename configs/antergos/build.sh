@@ -138,6 +138,7 @@ make_efi() {
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
 
             for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
+            	[[ "${boot_entry}" = **'archiso-cd'** ]] && continue
             	fname=$(basename ${boot_entry})
             	sed "s|%ARCHISO_LABEL%|${iso_label}|g;
                  	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/iso/loader/entries/${fname}
@@ -181,6 +182,7 @@ make_efiboot() {
             cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/efiboot/loader/entries/
 
             for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
+            	[[ "${boot_entry}" = **'archiso-usb-default'** ]] && continue
             	fname=$(basename ${boot_entry})
             	sed "s|%ARCHISO_LABEL%|${iso_label}|g;
                  	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/efiboot/loader/entries/${fname}
