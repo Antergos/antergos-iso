@@ -190,6 +190,11 @@ make_efiboot() {
             	sed "s|%ARCHISO_LABEL%|${iso_label}|g;
                  	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/efiboot/loader/entries/${fname}
             done
+            
+            for boot_entry in ${work_dir}/efiboot/loader/entries/**.conf; do
+            	grep -q '/arch/boot/' "${boot_entry}" || continue
+            	sed -i 's|/arch/boot/|/EFI/archiso/|g' "${boot_entry}"
+            done
 
             cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
             cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
