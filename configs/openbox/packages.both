@@ -11,6 +11,7 @@ parted
 crda
 haveged
 arch-install-scripts
+fakeroot
 
 # Cnchi Graphical Installer
 cnchi
