@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Cnchi
+GenericName=Cnchi
+Comment=Antergos Graphical Installer
+Exec=sudo -E cnchi -d -v -s bugsnag
+Icon=/usr/share/cnchi/data/images/antergos/antergos-icon.png
+StartupNotify=true
+Type=Application
+Categories=GNOME;System;

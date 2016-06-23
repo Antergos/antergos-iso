@@ -1,0 +1,1 @@
+../../../antergos/root-image/etc/modules-load.d
