@@ -129,6 +129,7 @@ gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
 
 # Turn on automatic date/time
 gsettings set org.gnome.desktop.datetime automatic-timezone true;
+timedatectl set-ntp true
 
 }
 

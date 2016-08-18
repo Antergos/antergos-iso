@@ -1,3 +1,4 @@
+#!/usr/bin/env xdg-open
 [Desktop Entry]
 Terminal=false
 Icon=/usr/share/antergos/cnchi.png

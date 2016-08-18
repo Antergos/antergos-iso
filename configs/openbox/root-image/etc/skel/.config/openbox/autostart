@@ -3,4 +3,5 @@ compton --config ~/.config/compton.conf -b &
 tint2 &
 nm-applet &
 pacman-boot &
+timedatectl set-ntp true &
 
