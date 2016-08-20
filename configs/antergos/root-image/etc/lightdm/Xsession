@@ -99,7 +99,6 @@ gsettings set org.gnome.desktop.screensaver lock-enabled false
 gsettings set org.gnome.desktop.lockdown disable-lock-screen true
 gsettings set org.gnome.desktop.session idle-delay 0
 
-
 # Set theme
 gsettings set org.gnome.desktop.interface gtk-theme 'Numix-Frost-Light'
 gsettings set org.gnome.desktop.wm.preferences theme 'Numix-Frost-Light'
@@ -110,6 +109,9 @@ gsettings set org.gnome.desktop.interface icon-theme 'Numix-Square'
 
 # Not show desktop icons
 gsettings set org.gnome.desktop.background show-desktop-icons false
+
+# Directories befor files in nautilus
+gsettings set org.gnome.nautilus.preferences sort-directories-first true
 
 # Minimize and close buttons
 gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
