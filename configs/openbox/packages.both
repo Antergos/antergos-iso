@@ -5,7 +5,6 @@ os-prober
 efibootmgr
 dmraid
 ntp
-dialog
 gptfdisk
 parted
 crda
@@ -16,7 +15,6 @@ fakeroot
 # Cnchi Graphical Installer
 cnchi
 python-mako
-python-mock
 python-lxml
 python-requests
 python-bugsnag
@@ -33,9 +31,8 @@ b43-firmware
 broadcom-wl
 usb_modeswitch
 networkmanager
-networkmanager-pptp
-whois 
-dnsutils
+networkmanager-pptp 
+bind-tools
 linux-firmware
 intel-ucode
 
@@ -46,17 +43,15 @@ ntfs-3g
 dosfstools
 xfsprogs
 squashfs-tools
-f2fs-tools
 mtools
 
 # Xorg
 
 xorg-server
-#xorg-server-utils
-xf86-input-synaptics
+xf86-input-libinput
 xorg-xinit
 
-# Graphical Drivers
+# Graphic Drivers
 
 xf86-video-intel
 xf86-video-nouveau
@@ -74,7 +69,6 @@ reflector
 wget
 gettext
 libnotify
-expect
 gnome-keyring
 librsvg
 
@@ -84,9 +78,9 @@ network-manager-applet
 openbox
 compton
 nitrogen
-tint2
+lxpanel-gtk3
 xfce4-notifyd
-lxterminal
+lxterminal-gtk3
 
 # Theme
 

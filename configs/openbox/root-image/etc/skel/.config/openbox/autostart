@@ -1,7 +1,7 @@
 nitrogen --restore &
 compton --config ~/.config/compton.conf -b &
-tint2 &
+lxpanel &
 nm-applet &
-pacman-boot &
 timedatectl set-ntp true &
+pacman-boot &
 
