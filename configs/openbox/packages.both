@@ -82,6 +82,9 @@ lxpanel-gtk3
 xfce4-notifyd
 lxterminal-gtk3
 
+# Set antergos user password
+expect
+
 # Theme
 
 numix-frost-themes
