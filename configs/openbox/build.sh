@@ -308,7 +308,7 @@ make_customize_root_image() {
 		#echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
         	# Configuring pacman
 		echo "Configuring Pacman"
-        	cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
+        	cp -f ${script_path}/pacman.conf.x86_64 ${work_dir}/root-image/etc/pacman.conf
         	sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
         	sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${work_dir}/root-image/etc/pacman.conf
         	if [[ ${arch} == 'x86_64' ]]; then
