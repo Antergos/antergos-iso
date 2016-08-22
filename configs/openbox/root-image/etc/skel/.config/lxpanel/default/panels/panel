@@ -7,19 +7,19 @@ Global {
   margin=0
   widthtype=percent
   width=100
-  height=32
+  height=38
   transparent=1
   tintcolor=#444444
-  alpha=100
+  alpha=255
   setdocktype=1
   setpartialstrut=1
   usefontcolor=1
   fontcolor=#eeeeee
   usefontsize=1
-  fontsize=11
+  fontsize=12
   background=0
   backgroundfile=/usr/share/lxpanel/images/background.png
-  iconsize=26
+  iconsize=24
 }
 Plugin {
   type=space
@@ -39,13 +39,9 @@ Plugin {
     Button {
       id=menu://applications/System/Cnchi.desktop
     }
-  }
-}
-
-Plugin {
-  type=space
-  Config {
-    Size=4
+    Button {
+      id=menu://applications/DesktopSettings/nm-connection-editor.desktop
+    }
   }
 }
 Plugin {
@@ -60,7 +56,23 @@ Plugin {
     Size=4
   }
 }
-
+Plugin {
+  type=space
+  Config {
+    Size=5
+  }
+}
+Plugin {
+  type=separator
+  Config {
+  }
+}
+Plugin {
+  type=space
+  Config {
+    Size=10
+  }
+}
 Plugin {
   type=taskbar
   expand=1
@@ -76,7 +88,7 @@ Plugin {
     FlatButton=0
     MaxTaskWidth=150
     spacing=2
-    DisableUpscale=0
+    DisableUpscale=1
   }
 }
 Plugin {
@@ -84,27 +96,42 @@ Plugin {
   Config {
   }
 }
-
 Plugin {
   type=space
   Config {
-    Size=4
-  }
-}
-
-Plugin {
-  type=dclock
-  Config {
-    ClockFmt=%b %e, %l:%M %p
-    TooltipFmt=%A %x
-    BoldFont=1
-    IconOnly=0
-    CenterText=1
+    Size=10
   }
 }
 Plugin {
-  type=netstat
+  type=xkb
   Config {
+    Model=pc105
+    LayoutsList=us
+    VariantsList=,
+    ToggleOpt=grp:shift_caps_toggle
+  }
+}
+Plugin {
+  type=space
+  Config {
+    Size=10
+  }
+}
+Plugin {
+  type=batt
+  Config {
+    BackgroundColor=black
+    ChargingColor1=#28f200
+    ChargingColor2=#22cc00
+    DischargingColor1=#ffee00
+    DischargingColor2=#d9ca00
+    HideIfNoBattery=1
+    AlarmCommand=notify-send "Battery low" --icon=battery-caution
+    AlarmTime=10
+    BorderWidth=0
+    Size=8
+    ShowExtendedInformation=0
+    BatteryNumber=0
   }
 }
 Plugin {
@@ -113,4 +140,19 @@ Plugin {
     Size=5
   }
 }
-
+Plugin {
+  type=dclock
+  Config {
+    ClockFmt=%b %e, %l:%M %p
+    TooltipFmt=%B %e %Y, %l:%M %p
+    BoldFont=1
+    IconOnly=0
+    CenterText=1
+  }
+}
+Plugin {
+  type=space
+  Config {
+    Size=5
+  }
+}
