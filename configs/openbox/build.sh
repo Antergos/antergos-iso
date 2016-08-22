@@ -423,7 +423,7 @@ done
 make_prepare() {
 	rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
         rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
-        rm -rf ${work_dir}/root-image/usr/share/icons/{Adwaita,HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest} || true
+        rm -rf ${work_dir}/root-image/usr/share/icons/{HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest} || true
     cp -a -l -f ${work_dir}/root-image ${work_dir}
     remove_extra_icons
 
