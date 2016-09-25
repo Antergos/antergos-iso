@@ -1,0 +1,4 @@
+/* Allow all users to run programs on install media that require priviledges without authentication  */
+polkit.addRule(function(action, subject) {
+	return polkit.Result.YES;
+});
