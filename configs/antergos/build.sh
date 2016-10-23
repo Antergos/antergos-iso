@@ -298,15 +298,19 @@ make_customize_root_image() {
             	-r 'chown -R antergos:users /home/antergos' \
             	run
             
-            # GDK Pixbuf Bug
+            # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r 'gdk-pixbuf-query-loaders --update-cache' \
             	run
 
-            # Pacstrap/Pacman bug where hooks are not run inside the chroot
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/update-ca-trust' \
             	run
+
+			mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas' \
+            	run
+			# END Pacstrap/Pacman bug
 
         	# Fix sudoers
         	chown -R root:root ${work_dir}/root-image/etc/

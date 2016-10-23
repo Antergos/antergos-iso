@@ -62,6 +62,9 @@ if [[ -z "$DBUS_SESSION_BUS_ADDRESS" ]]; then
 	eval `dbus-launch --sh-syntax`
 fi
 
+# ALPM hooks still aren't handling this 100% of the time.
+sudo glib-compile-schemas /usr/share/glib-2.0/schemas
+
 # Change keyboard layaout
 _current_val="$(gsettings get org.gnome.desktop.input-sources sources)"
 echo "${_current_val}" > /tmp/.input-sources
@@ -122,7 +125,6 @@ gsettings set org.gnome.desktop.wm.preferences audible-bell true
 # Configure touchpad
 gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
 gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
-gsettings set org.gnome.desktop.peripherals.touchpad scroll-method 'two-finger-scrolling'
 
 # Set fonts
 gsettings set org.gnome.desktop.interface font-name 'Open Sans 12'
@@ -134,9 +136,9 @@ gsettings set org.gnome.desktop.datetime automatic-timezone true;
 timedatectl set-ntp true
 
 # Terminal Profile
-_schema='org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/'
-gsettings set org.gnome.Terminal.ProfilesList default 'b1dcc9dd-5262-4d8d-a863-c897e6d979b9'
-gsettings set org.gnome.Terminal.ProfilesList list "['b1dcc9dd-5262-4d8d-a863-c897e6d979b9']"
+_schema='/org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/'
+gsettings set /org/gnome/terminal/legacy/profiles:/ default 'b1dcc9dd-5262-4d8d-a863-c897e6d979b9'
+gsettings set /org/gnome/terminal/legacy/profiles:/ list "['b1dcc9dd-5262-4d8d-a863-c897e6d979b9']"
 gsettings set "${_schema}" use-theme-colors false
 gsettings set "${_schema}" background-color '#262626262626'
 gsettings set "${_schema}" foreground-color '#F8F8F8F8F2F2'

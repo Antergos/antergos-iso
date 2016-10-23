@@ -371,15 +371,19 @@ make_customize_root_image() {
             	-r 'pacman -Scc --noconfirm' \
             	run
             
-             # GDK Pixbuf Bug
+             # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r 'gdk-pixbuf-query-loaders --update-cache' \
             	run
-            	
-            # Pacstrap/Pacman bug where hooks are not run inside the chroot
+
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/update-ca-trust' \
             	run
+
+			mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas' \
+            	run
+			# END Pacstrap/Pacman bug
 		
 			# Install translations for updater script
         	( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
