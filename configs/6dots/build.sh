@@ -2,7 +2,7 @@
 
 set -e -u
 
-iso_name=antergos-minimal
+iso_name=antergos-6dots
 iso_label="ANTERGOS"
 iso_version=$(date +%Y.%m.%d)
 install_dir="arch"
