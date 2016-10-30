@@ -1,0 +1,10 @@
+#!/bin/sh
+started_flag=/run/speech-is-running
+if [ -f $started_flag ]; then
+	exit 0
+fi
+systemctl stop espeakup
+sleep 5
+pick-a-card
+systemctl start espeakup
+touch $started_flag

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Quit
+GenericName=Quit
+Comment=Shutdown the computer
+Exec=sudo poweroff
+Icon=system-shutdown
+StartupNotify=false
+Type=Application
+Categories=GNOME;System;
+Name[en_US]=Quit

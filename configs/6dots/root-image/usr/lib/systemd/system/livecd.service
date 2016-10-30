@@ -1,0 +1,10 @@
+[Unit]
+Description=LiveMedia Config Script
+Before=systemd-user-sessions.service systemd-modules-load.service vboxservice.service
+
+[Service]
+Type=oneshot
+ExecStart=/etc/antergos/livecd
+
+[Install]
+WantedBy=multi-user.target

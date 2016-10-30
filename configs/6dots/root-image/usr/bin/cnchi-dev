@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sudo cp /usr/share/cnchi/scripts/testing.sh /tmp/testing.sh
+sudo chmod +x /tmp/testing.sh
+notify-send -t 10000 -a "Cnchi" -i /usr/share/cnchi/data/antergos-icon.png "Updating Cnchi with the latest testing code. Please wait..."
+sudo -E /tmp/testing.sh ${@}
