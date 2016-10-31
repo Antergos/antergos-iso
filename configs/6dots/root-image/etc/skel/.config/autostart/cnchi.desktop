@@ -1,0 +1,10 @@
+[Desktop Entry]
+Terminal=false
+Icon=/usr/share/antergos/cnchi.png
+Type=Application
+Exec=/usr/bin/pacman-boot
+Name=Cnchi Updater
+GenericName=Cnchi Updater
+Comment=Updates Cnchi at first boot.
+X-GNOME-Autostart-Delay=5
+
