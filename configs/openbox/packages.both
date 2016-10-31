@@ -21,6 +21,7 @@ python-bugsnag
 
 # Network
 
+dialog
 ipw2100-fw
 ipw2200-fw
 zd1211-firmware
