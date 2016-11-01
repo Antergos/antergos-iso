@@ -94,7 +94,7 @@ unzip
 unrar
 wget
 xdg-user-dirs-gtk
-plymouth
+
 
 # Fonts
 
@@ -118,7 +118,6 @@ chromium
 chromium-pepper-flash
 dconf-editor
 eog
-espeak
 evince
 file-roller
 gedit
@@ -162,7 +161,6 @@ nautilus
 network-manager-applet
 numix-frost-themes
 numix-icon-theme-square
-orca
 pidgin
 totem
 transmission-cli
@@ -196,4 +194,5 @@ grml-zsh-config
 irssi
 lftp
 mc
+orca
 vim-minimal

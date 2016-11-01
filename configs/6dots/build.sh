@@ -106,7 +106,6 @@ make_syslinux() {
     gzip -c -9 ${work_dir}/root-image/usr/lib/modules/*-ARCH/modules.alias > ${work_dir}/iso/${install_dir}/boot/syslinux/hdt/modalias.gz
 }
 
-
 make_isolinux() {
         mkdir -p ${work_dir}/iso/isolinux
         cp -Lr isolinux ${work_dir}/iso
