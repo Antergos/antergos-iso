@@ -77,7 +77,7 @@ xf86-video-vesa
 xf86-video-vmware
 xorg-server
 xorg-server-utils
-
+xorg-xinit
 
 # System Tools
 
