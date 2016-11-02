@@ -166,12 +166,6 @@ totem
 transmission-cli
 transmission-gtk
 
-# LightDM
-
-lightdm-webkit2-greeter
-light-locker
-light-locker-settings
-
 # 6dots
 alsa-utils
 bluez

@@ -10,4 +10,5 @@ fi
 
 sudo timedatectl set-ntp true
 
-exec dbus-launch --exit-with-session openbox-session
+exec gnome-session
+
