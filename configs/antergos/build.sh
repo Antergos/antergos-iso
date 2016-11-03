@@ -407,6 +407,7 @@ purge_single () {
 clean_single () {
     rm -rf ${work_dir}
     rm -f ${out_dir}/${iso_name}-${iso_version}-*-${arch}.iso
+    rm -f /var/tmp/one /var/tmp/two /var/tmp/three /var/tmp/four /var/tmp/five
 }
 
 # Helper function to run make_*() only one time per architecture.

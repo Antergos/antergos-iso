@@ -106,6 +106,7 @@ make_syslinux() {
     gzip -c -9 ${work_dir}/root-image/usr/lib/modules/*-ARCH/modules.alias > ${work_dir}/iso/${install_dir}/boot/syslinux/hdt/modalias.gz
 }
 
+
 make_isolinux() {
         mkdir -p ${work_dir}/iso/isolinux
         cp -Lr isolinux ${work_dir}/iso
@@ -284,10 +285,8 @@ make_customize_root_image() {
         
         part_five() {
         
-        	##mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	##-r 'systemctl -fq enable pacman-init lightdm-plymouth plymouth-start NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online ntpd' \
-		mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-                -r 'systemctl -fq enable pacman-init NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online ntpd' \
+        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r 'systemctl -fq enable pacman-init NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online ntpd' \
             	run
             	
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
