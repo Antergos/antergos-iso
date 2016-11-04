@@ -15,7 +15,7 @@ Modified version of archiso to build the Antergos ISO
 ## Instructions ##
 
  - `sudo make install`
- - Copy the config folder from `/usr/share/antergos-iso` to your working directory (for instance, `/home/antergos`)
+ - Copy the config folder from `/usr/share/antergos-iso` to your working directory (`/home/antergos`, for instance).
  - Create destination folder `/out` : `sudo mkdir /out`
  - Create a symlink to your working directory and call it `/start` : `sudo ln -s /home/antergos /start`
  - Build the iso (run the command inside the `/home/antergos/config/antergos` directory): `sudo ./build.sh build dual`
