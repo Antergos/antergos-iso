@@ -20,3 +20,4 @@ Modified version of archiso to build the Antergos ISO
  - Create a symlink to your working directory and call it `/start`
  - Build the iso (run the command inside the config/antergos directory): `sudo ./build.sh build dual`
  
+/start and /out are defaults. You can change it passing the desired directories as parameters to build.sh
