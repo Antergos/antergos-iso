@@ -1,0 +1,10 @@
+#%PAM-1.0
+auth        sufficient  pam_succeed_if.so user ingroup nopasswdlogin
+auth        include     system-login
+-auth       optional    pam_gnome_keyring.so
+account     include     system-login
+password    include     system-login
+session     include     system-login
+session    required     pam_loginuid.so
+session    required     pam_systemd.so
+-session    optional    pam_gnome_keyring.so auto_start
