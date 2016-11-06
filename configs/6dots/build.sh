@@ -283,9 +283,9 @@ make_customize_root_image() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl -fq enable gdm' run
 
-        # Set ntp to true
+        # Enable systemd-timesyncd (ntp)
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'timedatectl set-ntp true' run
+            -r 'systemctl -fq enable systemd-timesyncd.service' run
 
         # Disable pamac (we don't want it to interfere with cnchi)
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -329,7 +329,7 @@ make_customize_root_image() {
     parts=(one two three four five)
     for part in ${parts[*]}
     do
-    	if [[ ! -f /var/tmp/${part} ]]; then
+    	if [[ ! -f /var/tmp/customize_root_image.${part} ]]; then
     		part_${part};
     		sleep 5;
     	fi
