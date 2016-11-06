@@ -242,8 +242,12 @@ make_customize_root_image() {
         echo "Setting zsh shell for antergos and root users"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'chsh -s /bin/zsh antergos' run
-            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-                -r 'chsh -s /bin/zsh root' run
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'chsh -s /bin/zsh root' run
+
+        echo "Set systemd target"
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'systemctl set-default -f graphical.target' run
 
        	rm ${work_dir}/root-image/etc/xdg/autostart/vboxclient.desktop
     	touch /var/tmp/customize_root_image.three
@@ -281,7 +285,7 @@ make_customize_root_image() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl -fq enable pacman-init NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' run
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -fq enable gdm' run
+            -r 'systemctl -fq enable gdm accounts-daemon avahi-daemon bluetooth brltty' run
 
         # Enable systemd-timesyncd (ntp)
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -294,6 +298,14 @@ make_customize_root_image() {
         # Fix /home permissions
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
         	-r 'chown -R antergos:users /home/antergos' run
+
+        # Disable zfs services (not kernel modules)
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        	-r 'systemctl -fq disable zfs-mount' run
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        	-r 'systemctl -fq disable zfs-share' run
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        	-r 'systemctl -fq disable zfs-zed' run
 
         # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -322,6 +334,7 @@ make_customize_root_image() {
 
         # Install translations for updater script
         ( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
+
         touch /var/tmp/customize_root_image.five
     }
 
