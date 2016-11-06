@@ -16,9 +16,7 @@ efitools
 arch-install-scripts
 fakeroot
 
-
 # Cnchi Graphical Installer
-
 cnchi
 python-lxml
 python-mako
@@ -27,7 +25,6 @@ python-requests
 python-bugsnag
 
 # Network
-
 b43-fwcutter
 broadcom-wl
 b43-firmware
@@ -50,7 +47,6 @@ wpa_actiond
 zd1211-firmware
 
 # Filesystems
-
 linux-headers
 btrfs-progs
 dosfstools
@@ -62,7 +58,6 @@ xfsprogs
 zfs
 
 # Xorg & Graphics Drivers
-
 mesa
 mesa-vdpau
 virtualbox-guest-modules-arch
@@ -80,7 +75,6 @@ xorg-server-utils
 xorg-xinit
 
 # System Tools
-
 alsa-utils
 expect
 git
@@ -95,9 +89,7 @@ unrar
 wget
 xdg-user-dirs-gtk
 
-
 # Fonts
-
 divehi-fonts
 ttf-aboriginal-sans
 ttf-arphic-uming
@@ -107,10 +99,9 @@ ttf-dejavu
 ttf-freefont
 ttf-opensans
 
-
 # Desktop
-
 antergos-wallpapers
+antergos-gnome-defaults-list
 baobab
 brasero
 cdrkit
@@ -165,6 +156,11 @@ pidgin
 totem
 transmission-cli
 transmission-gtk
+
+# LightDM
+lightdm-webkit2-greeter
+light-locker
+light-locker-settings
 
 # 6dots
 alsa-utils
