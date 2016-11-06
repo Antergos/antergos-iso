@@ -112,6 +112,7 @@ dconf-editor
 eog
 evince
 file-roller
+gdm
 gedit
 gnome-backgrounds
 gnome-bluetooth
@@ -130,7 +131,7 @@ gnome-screenshot
 gnome-shell
 gnome-shell-extension-dash-to-dock
 gnome-shell-extension-topicons
-gnome-shell-extension-status-menu-buttons
+#gnome-shell-extension-status-menu-buttons
 gnome-shell-extension-panel-osd
 gnome-shell-extensions
 gnome-sound-recorder
@@ -154,14 +155,10 @@ network-manager-applet
 numix-frost-themes
 numix-icon-theme-square
 pidgin
+polari
 totem
 transmission-cli
 transmission-gtk
-
-# LightDM
-lightdm-webkit2-greeter
-light-locker
-light-locker-settings
 
 # 6dots
 alsa-utils
@@ -186,4 +183,5 @@ irssi
 lftp
 mc
 orca
+python2-speechd
 vim-minimal
