@@ -65,6 +65,5 @@ _set_locales ()
 	# add also American English as safe default
 	sed -i -r "s/#(en_US.*UTF-8)/\1/g" ${DESTDIR}/etc/locale.gen
 
-	sed -i "s/'us'/'${KBLAYOUT}'/" /etc/lightdm/Xsession
+	# sed -i "s/'us'/'${KBLAYOUT}'/" /etc/lightdm/Xsession
 }
-

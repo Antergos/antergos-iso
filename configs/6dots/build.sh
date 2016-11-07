@@ -224,7 +224,7 @@ make_customize_root_image() {
         touch /var/tmp/customize_root_image.two
     }
 
-	part_three() {
+    part_three() {
 		echo "Adding autologin group"
     	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'groupadd -r autologin' run
@@ -254,12 +254,12 @@ make_customize_root_image() {
     }
 
     part_four() {
-        echo "Set antergos user password"
-        cp ${script_path}/set_password ${work_dir}/root-image/usr/bin
-        chmod +x ${work_dir}/root-image/usr/bin/set_password
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r '/usr/bin/set_password' run
-        rm ${work_dir}/root-image/usr/bin/set_password
+        #echo "Set antergos user password"
+        ##cp ${script_path}/set_password ${work_dir}/root-image/usr/bin
+        ##chmod +x ${work_dir}/root-image/usr/bin/set_password
+        ##mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        ##    -r '/usr/bin/set_password' run
+        ##rm ${work_dir}/root-image/usr/bin/set_password
 
 		echo "Configuring Pacman"
     	cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
