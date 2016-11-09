@@ -261,13 +261,6 @@ make_customize_root_image() {
         ##    -r '/usr/bin/set_password' run
         ##rm ${work_dir}/root-image/usr/bin/set_password
 
-        echo "Set Gnome settings"
-        cp ${script_path}/set-gnome-settings ${work_dir}/root-image/usr/bin
-        chmod +x ${work_dir}/root-image/usr/bin/set-gnome-settings
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r '/usr/bin/set-gnome-settings' run
-        rm ${work_dir}/root-image/usr/bin/set-gnome-settings
-
 		echo "Configuring Pacman"
     	cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
     	sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
@@ -341,6 +334,13 @@ make_customize_root_image() {
 
         # Install translations for updater script
         ( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
+
+        echo "Set Gnome settings"
+        cp ${script_path}/set-gnome-settings ${work_dir}/root-image/usr/bin
+        chmod +x ${work_dir}/root-image/usr/bin/set-gnome-settings
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r '/usr/bin/set-gnome-settings' run
+        #rm ${work_dir}/root-image/usr/bin/set-gnome-settings
 
         touch /var/tmp/customize_root_image.five
     }
