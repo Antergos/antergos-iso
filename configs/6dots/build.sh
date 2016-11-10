@@ -335,12 +335,9 @@ make_customize_root_image() {
         # Install translations for updater script
         ( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
 
-        echo "Set Gnome settings"
-        cp ${script_path}/set-gnome-settings ${work_dir}/root-image/usr/bin
-        chmod +x ${work_dir}/root-image/usr/bin/set-gnome-settings
+        echo "Compile Gnome Schemas"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r '/usr/bin/set-gnome-settings' run
-        #rm ${work_dir}/root-image/usr/bin/set-gnome-settings
+            -r 'glib-compile-schemas /usr/share/glib-2.0/schemas' run
 
         touch /var/tmp/customize_root_image.five
     }
