@@ -4,6 +4,6 @@ toolkit-accessibility=true
 
 [org.gnome.desktop.a11y.applications]
 screen-reader-enabled=true
-screen-keyboard-enabled=true
-screen-magnifier-enabled=true
+screen-keyboard-enabled=false
+screen-magnifier-enabled=false
 
