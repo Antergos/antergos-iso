@@ -239,11 +239,11 @@ make_customize_root_image() {
     	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
            	-r 'passwd -d antergos' run
 
-        echo "Setting zsh shell for antergos and root users"
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'chsh -s /bin/zsh antergos' run
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'chsh -s /bin/zsh root' run
+        #echo "Setting zsh shell for antergos and root users"
+        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        #    -r 'chsh -s /bin/zsh antergos' run
+        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        #    -r 'chsh -s /bin/zsh root' run
 
         echo "Set systemd target"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
