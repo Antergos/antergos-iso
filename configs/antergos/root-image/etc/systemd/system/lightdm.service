@@ -5,7 +5,6 @@ After=dev-dri-card0.device systemd-user-sessions.service getty@tty1.service plym
 Wants=dev-dri-card0.device
 
 [Service]
-PreExecStart=/usr/bin/sleep 3
 ExecStart=/usr/bin/lightdm
 Restart=always
 IgnoreSIGPIPE=no
