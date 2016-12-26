@@ -286,7 +286,7 @@ make_customize_root_image() {
         part_five() {
         
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'systemctl -fq enable pacman-init lightdm-plymouth plymouth-start NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online ntpd' \
+            	-r 'systemctl -fq enable pacman-init lightdm plymouth-start NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online ntpd' \
             	run
             	
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
