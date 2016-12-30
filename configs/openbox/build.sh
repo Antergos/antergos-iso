@@ -371,17 +371,25 @@ make_customize_root_image() {
             	-r 'pacman -Scc --noconfirm' \
             	run
             
-             # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'gdk-pixbuf-query-loaders --update-cache' \
-            	run
-
+            # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
         	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/update-ca-trust' \
             	run
 
 			mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             	-r '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas' \
+            	run
+
+			mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r '/usr/bin/update-desktop-database --quiet' \
+            	run
+
+			mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r '/usr/bin/update-mime-database /usr/share/mime' \
+            	run
+
+			mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            	-r '/usr/bin/gdk-pixbuf-query-loaders --update-cache' \
             	run
 			# END Pacstrap/Pacman bug
 		
