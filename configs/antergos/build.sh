@@ -4,7 +4,9 @@ set -e -u
 
 iso_name=antergos
 iso_label="ANTERGOS"
-iso_version=$(date +%Y.%m.%d)
+year="$(date +'%y')"
+month="$(date +'%-m')"
+iso_version="${year}.${month}"
 install_dir="arch"
 arch=$(uname -m)
 work_dir=work
@@ -353,21 +355,15 @@ make_customize_root_image() {
 
 # Prepare ISO Version Files
 make_iso_version_files() {
+	base_dir="${work_dir}/root-image/etc"
+	version_files=('arch-release' 'hostname' 'hosts' 'lsb-release' 'os-release')
 
-# Replace <VERSION> with actual iso version in all version files.
-base_dir="${work_dir}/root-image/etc"
-version_files=('arch-release' 'hostname' 'hosts' 'lsb-release' 'os-release')
-year="$(date +'%y')"
-month="$(date +'%-m')"
-version="${year}.${month}"
-
-echo "${year} ${month} ${version}"
-
-for version_file_name in "${version_files[@]}"
-do
-	version_file="${base_dir}/${version_file_name}"
-	sed -i "s|<VERSION>|${version}|g" "${version_file}"
-done
+	# Replace <VERSION> with actual iso version in all version files.
+	for version_file_name in "${version_files[@]}"
+	do
+		version_file="${base_dir}/${version_file_name}"
+		sed -i "s|<VERSION>|${iso_version}|g" "${version_file}"
+	done
 	
 }
 
