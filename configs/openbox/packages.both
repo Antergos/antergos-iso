@@ -18,6 +18,7 @@ python-mako
 python-lxml
 python-requests
 python-bugsnag
+upower
 
 # Network
 

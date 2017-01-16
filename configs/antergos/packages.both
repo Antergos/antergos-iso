@@ -25,6 +25,7 @@ python-mako
 python-mock
 python-requests
 python-bugsnag
+upower
 
 # Network
 
