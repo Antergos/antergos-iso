@@ -45,7 +45,7 @@ networkmanager-openvpn
 networkmanager-pptp
 rp-pppoe
 usb_modeswitch
-whois 
+whois
 wireless_tools
 wpa_actiond
 zd1211-firmware
@@ -154,7 +154,6 @@ gst-plugins-bad
 gst-plugins-base
 gst-plugins-good
 gst-plugins-ugly
-gstreamer0.10-plugins
 gstreamer-vaapi
 gvfs-mtp
 libgnomeui
