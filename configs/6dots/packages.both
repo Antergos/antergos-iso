@@ -149,7 +149,6 @@ gst-plugins-good
 gst-plugins-ugly
 gstreamer-vaapi
 gvfs-mtp
-libgnomeui
 libwnck3
 nautilus
 network-manager-applet

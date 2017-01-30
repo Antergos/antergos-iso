@@ -156,7 +156,6 @@ gst-plugins-good
 gst-plugins-ugly
 gstreamer-vaapi
 gvfs-mtp
-libgnomeui
 libwnck3
 mutter
 nautilus
