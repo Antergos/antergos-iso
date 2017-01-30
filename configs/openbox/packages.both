@@ -1,4 +1,5 @@
 # Installation
+dialog
 grub
 efitools
 os-prober
@@ -21,8 +22,6 @@ python-bugsnag
 upower
 
 # Network
-
-dialog
 ipw2100-fw
 ipw2200-fw
 zd1211-firmware
@@ -33,28 +32,24 @@ b43-firmware
 broadcom-wl
 usb_modeswitch
 networkmanager
-networkmanager-pptp 
 bind-tools
 linux-firmware
 intel-ucode
 
 # Filesystems
-
 btrfs-progs
 ntfs-3g
 dosfstools
 xfsprogs
 squashfs-tools
 mtools
+zfs
 
-# Xorg
-
+# Xorg & Graphic Drivers
 xorg-server
 xf86-input-libinput
 xorg-xinit
-
-# Graphic Drivers
-
+xf86-video-amdgpu
 xf86-video-intel
 xf86-video-nouveau
 xf86-video-ati
@@ -64,16 +59,15 @@ virtualbox-guest-utils
 
 
 # System Tools
-
 sudo
 xdg-user-dirs
 reflector
+powerpill
 wget
-gettext
 libnotify
-gnome-keyring
 librsvg
-
+expect
+gnome-keyring
 
 # Desktop
 network-manager-applet
@@ -81,18 +75,14 @@ openbox
 compton
 nitrogen
 lxpanel-gtk3
-xfce4-notifyd
+notify-osd
 lxterminal-gtk3
 
-# Set antergos user password
-expect
-
 # Theme
-
 numix-frost-themes
 numix-icon-theme-square
 adwaita-icon-theme
 
 # Compression
-
+xz
 unzip

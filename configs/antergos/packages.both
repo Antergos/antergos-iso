@@ -16,9 +16,7 @@ efitools
 arch-install-scripts
 fakeroot
 
-
 # Cnchi Graphical Installer
-
 cnchi
 python-lxml
 python-mako
@@ -28,11 +26,9 @@ python-bugsnag
 upower
 
 # Network
-
 b43-fwcutter
 broadcom-wl
 b43-firmware
-dialog
 dnsutils
 intel-ucode
 ipw2100-fw
@@ -42,8 +38,6 @@ modemmanager
 netctl
 net-tools
 networkmanager-openvpn
-networkmanager-pptp
-rp-pppoe
 usb_modeswitch
 whois
 wireless_tools
@@ -51,8 +45,6 @@ wpa_actiond
 zd1211-firmware
 
 # Filesystems
-
-linux-headers
 btrfs-progs
 dosfstools
 f2fs-tools
@@ -63,26 +55,19 @@ xfsprogs
 zfs
 
 # Xorg & Graphics Drivers
-
 mesa
-mesa-vdpau
 virtualbox-guest-modules-arch
 virtualbox-guest-utils
-xf86-input-synaptics
+xf86-input-libinput
+xf86-video-amdgpu
 xf86-video-ati
-xf86-video-fbdev
 xf86-video-intel
 xf86-video-nouveau
-xf86-video-openchrome
-xf86-video-vesa
-xf86-video-vmware
 xorg-server
 xorg-server-utils
 
 
 # System Tools
-
-alsa-utils
 expect
 git
 gksu
@@ -98,7 +83,6 @@ xdg-user-dirs-gtk
 plymouth
 
 # Fonts
-
 divehi-fonts
 ttf-aboriginal-sans
 ttf-arphic-uming
@@ -110,9 +94,7 @@ ttf-opensans
 
 
 # Desktop
-
 antergos-wallpapers
-baobab
 brasero
 cdrtools
 chromium
@@ -156,22 +138,26 @@ gst-plugins-good
 gst-plugins-ugly
 gstreamer-vaapi
 gvfs-mtp
-libgnomeui
 libwnck3
 mutter
 nautilus
 network-manager-applet
-numix-frost-themes
-numix-icon-theme-square
-orca
 pidgin
 polari
 totem
-transmission-cli
 transmission-gtk
 
-# LightDM
+# Theme
+numix-frost-themes
+numix-icon-theme-square
 
+# LightDM
 lightdm-webkit2-greeter
 light-locker
 light-locker-settings
+
+# Compression
+xz
+unzip
+
+

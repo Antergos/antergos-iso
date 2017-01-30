@@ -28,7 +28,6 @@ python-bugsnag
 b43-fwcutter
 broadcom-wl
 b43-firmware
-dialog
 dnsutils
 intel-ucode
 ipw2100-fw
@@ -39,8 +38,6 @@ nss-mdns
 netctl
 net-tools
 networkmanager-openvpn
-networkmanager-pptp
-rp-pppoe
 usb_modeswitch
 whois
 wireless_tools
@@ -48,7 +45,6 @@ wpa_actiond
 zd1211-firmware
 
 # Filesystems
-linux-headers
 btrfs-progs
 dosfstools
 f2fs-tools
@@ -60,17 +56,13 @@ zfs
 
 # Xorg & Graphics Drivers
 mesa
-mesa-vdpau
 virtualbox-guest-modules-arch
 virtualbox-guest-utils
-xf86-input-synaptics
+xf86-input-libinput
+xf86-video-amdgpu
 xf86-video-ati
-xf86-video-fbdev
 xf86-video-intel
 xf86-video-nouveau
-xf86-video-openchrome
-xf86-video-vesa
-xf86-video-vmware
 xorg-server
 xorg-server-utils
 xorg-xinit
@@ -78,11 +70,9 @@ xterm
 
 # System Tools
 accountsservice
-alsa-utils
 expect
 git
 gksu
-pamac
 pkgfile
 powerpill
 reflector
@@ -105,7 +95,6 @@ ttf-opensans
 # Desktop
 antergos-wallpapers
 antergos-gnome-defaults-list
-baobab
 brasero
 cdrtools
 chromium
@@ -114,7 +103,6 @@ dconf-editor
 eog
 evince
 file-roller
-gdm
 gedit
 gnome-backgrounds
 gnome-bluetooth
@@ -133,7 +121,6 @@ gnome-screenshot
 gnome-shell
 gnome-shell-extension-dash-to-dock
 gnome-shell-extension-topicons
-#gnome-shell-extension-status-menu-buttons
 gnome-shell-extension-panel-osd
 gnome-shell-extensions
 gnome-sound-recorder
@@ -149,17 +136,28 @@ gst-plugins-good
 gst-plugins-ugly
 gstreamer-vaapi
 gvfs-mtp
-libgnomeui
 libwnck3
+mutter
 nautilus
 network-manager-applet
-numix-frost-themes
-numix-icon-theme-square
 pidgin
 polari
 totem
-transmission-cli
 transmission-gtk
+
+# Theme
+numix-frost-themes
+numix-icon-theme-square
+adwaita-icon-theme
+
+# GDM
+gdm
+
+
+# Compression
+xz
+unzip
+
 
 # 6dots
 alsa-utils
@@ -170,16 +168,12 @@ clonezilla
 darkhttpd
 ddrescue
 dhclient
-dialog
 dnsmasq
-dnsutils
 elinks
 espeakup
 ethtool
-fsarchiver
 gnu-netcat
 gpm
-grml-zsh-config
 irssi
 lftp
 mc
