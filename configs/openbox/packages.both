@@ -40,6 +40,7 @@ intel-ucode
 btrfs-progs
 ntfs-3g
 dosfstools
+linux-headers
 xfsprogs
 squashfs-tools
 mtools
