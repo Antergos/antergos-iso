@@ -41,6 +41,7 @@ linux-firmware
 modemmanager
 netctl
 net-tools
+networkmanager
 networkmanager-openvpn
 networkmanager-pptp
 rp-pppoe

@@ -38,6 +38,7 @@ modemmanager
 nss-mdns
 netctl
 net-tools
+networkmanager
 networkmanager-openvpn
 networkmanager-pptp
 rp-pppoe
