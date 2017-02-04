@@ -1,0 +1,12 @@
+# Xorg & Graphic Drivers
+xorg-server
+xf86-input-libinput
+xorg-xinit
+xf86-video-amdgpu
+xf86-video-intel
+xf86-video-nouveau
+xf86-video-ati
+mesa
+virtualbox-guest-modules-arch
+virtualbox-guest-utils
+
