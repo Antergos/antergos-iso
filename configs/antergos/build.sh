@@ -219,7 +219,7 @@ make_customize_root_image() {
         	#mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
         	# Download opendesktop-fonts
         	#wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
-        	cp /start/opendesktop**.xz ${work_dir}/root-image/arch/pkg
+        	#cp /start/opendesktop**.xz ${work_dir}/root-image/arch/pkg
         	touch /var/tmp/one
         }
         
