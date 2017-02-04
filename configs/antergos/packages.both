@@ -37,6 +37,7 @@ linux-firmware
 modemmanager
 netctl
 net-tools
+networkmanager
 networkmanager-openvpn
 usb_modeswitch
 whois
@@ -48,6 +49,7 @@ zd1211-firmware
 btrfs-progs
 dosfstools
 f2fs-tools
+linux-headers
 mtools
 ntfs-3g
 squashfs-tools

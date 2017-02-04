@@ -37,6 +37,7 @@ modemmanager
 nss-mdns
 netctl
 net-tools
+networkmanager
 networkmanager-openvpn
 usb_modeswitch
 whois
@@ -50,6 +51,7 @@ dosfstools
 f2fs-tools
 mtools
 ntfs-3g
+linux-headers
 squashfs-tools
 xfsprogs
 zfs
