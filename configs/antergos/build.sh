@@ -3,6 +3,7 @@
 set -e -u
 
 iso_name=antergos
+#iso_name=antergos-6dots
 iso_label="ANTERGOS"
 year="$(date +'%y')"
 month="$(date +'%-m')"
@@ -34,7 +35,7 @@ make_basefs() {
 
 # Additional packages (root-image)
 make_packages() {
-    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages.both)" install
+    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages/packages.*)" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
@@ -60,7 +61,7 @@ make_setup_mkinitcpio() {
     cp -L ${script_path}/plymouth.initcpio_install ${work_dir}/root-image/etc/initcpio/install
     #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
-   #sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
+    #sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2>&1
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~MKINITCPIO DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     if [[ -f ${work_dir}/root-image/boot/archiso.img ]]; then
@@ -69,18 +70,18 @@ make_setup_mkinitcpio() {
     		echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~CANNOT FIND archiso.img!!!~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     		arch-chroot "${work_dir}/root-image" 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' 2>&1
     fi
-    		
+
 }
 
 # Prepare ${install_dir}/boot/
 make_boot() {
     mkdir -p ${work_dir}/iso/${install_dir}/boot/
     if [[ -f ${work_dir}/root-image/boot/archiso.img ]]; then
-    	cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
-    	cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
+        cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
+        cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
     else
-    	echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~work_dir is'; echo ${work_dir}; echo '~~~~~~~~~@@@@@@@@@@@@@@@@@@@'
-    	ls ${work_dir} && ls ${work_dir}/root-image/ && ls ${work_dir}/root-image/boot/
+        echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~work_dir is'; echo ${work_dir}; echo '~~~~~~~~~@@@@@@@@@@@@@@@@@@@'
+        ls ${work_dir} && ls ${work_dir}/root-image/ && ls ${work_dir}/root-image/boot/
     fi
 }
 
@@ -110,272 +111,260 @@ make_syslinux() {
 
 
 make_isolinux() {
-        mkdir -p ${work_dir}/iso/isolinux
-        cp -Lr isolinux ${work_dir}/iso
-        cp -R ${work_dir}/root-image/usr/lib/syslinux/bios/* ${work_dir}/iso/isolinux/
-        cp ${work_dir}/root-image/usr/lib/syslinux/bios/*.c32 ${work_dir}/iso/isolinux/
-        sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-             s|%INSTALL_DIR%|${install_dir}|g;
-             s|%ARCH%|${arch}|g" ${script_path}/isolinux/isolinux.cfg > ${work_dir}/iso/isolinux/isolinux.cfg
-        cp ${work_dir}/root-image/usr/lib/syslinux/bios/isolinux.bin ${work_dir}/iso/isolinux/
-        cp ${work_dir}/root-image/usr/lib/syslinux/bios/isohdpfx.bin ${work_dir}/iso/isolinux/
-        cp ${work_dir}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${work_dir}/iso/isolinux/
-
+    mkdir -p ${work_dir}/iso/isolinux
+    cp -Lr isolinux ${work_dir}/iso
+    cp -R ${work_dir}/root-image/usr/lib/syslinux/bios/* ${work_dir}/iso/isolinux/
+    cp ${work_dir}/root-image/usr/lib/syslinux/bios/*.c32 ${work_dir}/iso/isolinux/
+    sed "s|%ARCHISO_LABEL%|${iso_label}|g;
+         s|%INSTALL_DIR%|${install_dir}|g;
+         s|%ARCH%|${arch}|g" ${script_path}/isolinux/isolinux.cfg > ${work_dir}/iso/isolinux/isolinux.cfg
+    cp ${work_dir}/root-image/usr/lib/syslinux/bios/isolinux.bin ${work_dir}/iso/isolinux/
+    cp ${work_dir}/root-image/usr/lib/syslinux/bios/isohdpfx.bin ${work_dir}/iso/isolinux/
+    cp ${work_dir}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${work_dir}/iso/isolinux/
 }
 
 # Prepare /EFI
 make_efi() {
-        if [[ ${arch} == "x86_64" ]]; then
+    mkdir -p ${work_dir}/iso/EFI/boot
+    cp ${work_dir}/root-image/usr/share/efitools/efi/PreLoader.efi ${work_dir}/iso/EFI/boot/bootx64.efi
+    cp ${work_dir}/root-image/usr/share/efitools/efi/HashTool.efi ${work_dir}/iso/EFI/boot/
+    cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/iso/EFI/
 
-            mkdir -p ${work_dir}/iso/EFI/boot
-            cp ${work_dir}/root-image/usr/share/efitools/efi/PreLoader.efi ${work_dir}/iso/EFI/boot/bootx64.efi
-            cp ${work_dir}/root-image/usr/share/efitools/efi/HashTool.efi ${work_dir}/iso/EFI/boot/
-            cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/iso/EFI/
+    cp ${work_dir}/root-image/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${work_dir}/iso/EFI/boot/loader.efi
 
-            cp ${work_dir}/root-image/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${work_dir}/iso/EFI/boot/loader.efi
+    mkdir -p ${work_dir}/iso/loader/entries
+    cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/iso/loader/
+    cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/iso/loader/entries/
+    cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
 
-            mkdir -p ${work_dir}/iso/loader/entries
-            cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/iso/loader/
-            cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/iso/loader/entries/
-            cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/iso/loader/entries/
+    for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
+        [[ "${boot_entry}" = **'archiso-cd'** ]] && continue
+        fname=$(basename ${boot_entry})
+        sed "s|%ARCHISO_LABEL%|${iso_label}|g;
+            s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/iso/loader/entries/${fname}
+    done
 
-            for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
-            	[[ "${boot_entry}" = **'archiso-cd'** ]] && continue
-            	fname=$(basename ${boot_entry})
-            	sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                 	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/iso/loader/entries/${fname}
-            done
-
-           # EFI Shell 2.0 for UEFI 2.3+
-    curl -o ${work_dir}/iso/EFI/shellx64_v2.efi https://raw.githubusercontent.com/tianocore/edk2/master/ShellBinPkg/UefiShell/X64/Shell.efi
-    # EFI Shell 1.0 for non UEFI 2.3+
-    curl -o ${work_dir}/iso/EFI/shellx64_v1.efi https://raw.githubusercontent.com/tianocore/edk2/master/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
-
-        fi
+   # EFI Shell 2.0 for UEFI 2.3+
+   curl -o ${work_dir}/iso/EFI/shellx64_v2.efi https://raw.githubusercontent.com/tianocore/edk2/master/ShellBinPkg/UefiShell/X64/Shell.efi
+   # EFI Shell 1.0 for non UEFI 2.3+
+   curl -o ${work_dir}/iso/EFI/shellx64_v1.efi https://raw.githubusercontent.com/tianocore/edk2/master/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
 }
 
 # Prepare efiboot.img::/EFI for "El Torito" EFI boot mode
 make_efiboot() {
-        if [[ ${arch} == "x86_64" ]]; then
+    mkdir -p ${work_dir}/iso/EFI/archiso
+    truncate -s 64M ${work_dir}/iso/EFI/archiso/efiboot.img
+    mkfs.fat -n ARCHISO_EFI ${work_dir}/iso/EFI/archiso/efiboot.img
 
-            mkdir -p ${work_dir}/iso/EFI/archiso
-            truncate -s 64M ${work_dir}/iso/EFI/archiso/efiboot.img
-            mkfs.fat -n ARCHISO_EFI ${work_dir}/iso/EFI/archiso/efiboot.img
+    mkdir -p ${work_dir}/efiboot
+    mount ${work_dir}/iso/EFI/archiso/efiboot.img ${work_dir}/efiboot
 
-            mkdir -p ${work_dir}/efiboot
-            mount ${work_dir}/iso/EFI/archiso/efiboot.img ${work_dir}/efiboot
+    mkdir -p ${work_dir}/efiboot/EFI/archiso
+    cp ${work_dir}/iso/${install_dir}/boot/vmlinuz ${work_dir}/efiboot/EFI/archiso/vmlinuz.efi
+    cp ${work_dir}/iso/${install_dir}/boot/archiso.img ${work_dir}/efiboot/EFI/archiso/archiso.img
 
-            mkdir -p ${work_dir}/efiboot/EFI/archiso
-            cp ${work_dir}/iso/${install_dir}/boot/vmlinuz ${work_dir}/efiboot/EFI/archiso/vmlinuz.efi
-            cp ${work_dir}/iso/${install_dir}/boot/archiso.img ${work_dir}/efiboot/EFI/archiso/archiso.img
-            
-            cp ${work_dir}/iso/${install_dir}/boot/intel_ucode.img ${work_dir}/efiboot/EFI/archiso/intel_ucode.img
+    cp ${work_dir}/iso/${install_dir}/boot/intel_ucode.img ${work_dir}/efiboot/EFI/archiso/intel_ucode.img
 
-            mkdir -p ${work_dir}/efiboot/EFI/boot
-            cp ${work_dir}/root-image/usr/share/efitools/efi/PreLoader.efi ${work_dir}/efiboot/EFI/boot/bootx64.efi
-            cp ${work_dir}/root-image/usr/share/efitools/efi/HashTool.efi ${work_dir}/efiboot/EFI/boot/
-            cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/efiboot/EFI/
+    mkdir -p ${work_dir}/efiboot/EFI/boot
+    cp ${work_dir}/root-image/usr/share/efitools/efi/PreLoader.efi ${work_dir}/efiboot/EFI/boot/bootx64.efi
+    cp ${work_dir}/root-image/usr/share/efitools/efi/HashTool.efi ${work_dir}/efiboot/EFI/boot/
+    cp ${script_path}/efiboot/loader/bg.bmp ${work_dir}/efiboot/EFI/
 
-            cp ${work_dir}/root-image/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${work_dir}/efiboot/EFI/boot/loader.efi
-            
-            mkdir -p ${work_dir}/efiboot/loader/entries
-            cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/efiboot/loader/
-            cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/efiboot/loader/entries/
-            cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/efiboot/loader/entries/
+    cp ${work_dir}/root-image/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${work_dir}/efiboot/EFI/boot/loader.efi
 
-            for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
-            	[[ "${boot_entry}" = **'archiso-usb-default'** ]] && continue
-            	fname=$(basename ${boot_entry})
-            	sed "s|%ARCHISO_LABEL%|${iso_label}|g;
-                 	s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/efiboot/loader/entries/${fname}
-            done
-            
-            for boot_entry in ${work_dir}/efiboot/loader/entries/**.conf; do
-            	grep -q '/arch/boot/' "${boot_entry}" || continue
-            	sed -i 's|/arch/boot/|/EFI/archiso/|g' "${boot_entry}"
-            done
+    mkdir -p ${work_dir}/efiboot/loader/entries
+    cp ${script_path}/efiboot/loader/loader.conf ${work_dir}/efiboot/loader/
+    cp ${script_path}/efiboot/loader/entries/uefi-shell-v2-x86_64.conf ${work_dir}/efiboot/loader/entries/
+    cp ${script_path}/efiboot/loader/entries/uefi-shell-v1-x86_64.conf ${work_dir}/efiboot/loader/entries/
 
-            cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
-            cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
+    for boot_entry in ${script_path}/efiboot/loader/entries/**.conf; do
+        [[ "${boot_entry}" = **'archiso-usb-default'** ]] && continue
+        fname=$(basename ${boot_entry})
+        sed "s|%ARCHISO_LABEL%|${iso_label}|g;
+            s|%INSTALL_DIR%|${install_dir}|g" ${boot_entry} > ${work_dir}/efiboot/loader/entries/${fname}
+    done
 
-            umount -d ${work_dir}/efiboot
-    fi
+    for boot_entry in ${work_dir}/efiboot/loader/entries/**.conf; do
+        grep -q '/arch/boot/' "${boot_entry}" || continue
+        sed -i 's|/arch/boot/|/EFI/archiso/|g' "${boot_entry}"
+    done
+
+    cp ${work_dir}/iso/EFI/shellx64_v2.efi ${work_dir}/efiboot/EFI/
+    cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
+
+    umount -d ${work_dir}/efiboot
 }
 
 
 # Customize installation (root-image)
 make_customize_root_image() {
-	part_one() {
-        	cp -af ${script_path}/root-image ${work_dir}
-        	rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop || true
-        	rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop || true
-        	ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
-        	chmod 750 ${work_dir}/root-image/etc/sudoers.d
-        	chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
-        	mkdir -p ${work_dir}/root-image/etc/pacman.d
-        	wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
-        	sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
-        	#mkdir -p ${work_dir}/root-image/var/run/dbus
-        	#mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
-        	# Download opendesktop-fonts
-        	#wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
-        	#cp /start/opendesktop**.xz ${work_dir}/root-image/arch/pkg
-        	touch /var/tmp/one
-        }
-        
-        part_two() {
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r '/usr/bin/locale-gen' \
-            	run
-		#mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            #	-r '/usr/bin/localectl set-locale "LANG=en_US.UTF-8" ' \
-            #	run || true
-            	touch /var/tmp/two 
-        }
+    part_one() {
+        cp -af ${script_path}/root-image ${work_dir}
+        rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop || true
+        rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop || true
+        ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
+        chmod 750 ${work_dir}/root-image/etc/sudoers.d
+        chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
+        mkdir -p ${work_dir}/root-image/etc/pacman.d
+        wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
+        sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
+        #mkdir -p ${work_dir}/root-image/var/run/dbus
+        #mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
+        # Download opendesktop-fonts
+        #wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
+        #cp /start/opendesktop**.xz ${work_dir}/root-image/arch/pkg
+        touch /var/tmp/customize_root_image.one
+    }
 
-		part_three() {
-			echo "Adding autologin group"
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'groupadd -r autologin' \
-            	run
-            
-            echo "Adding nopasswdlogin group"
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'groupadd -r nopasswdlogin' \
-            	run
-	
-		echo "Adding antergos user"
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin,nopasswdlogin" antergos' \
-            	run
-        
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-           	-r 'passwd -d antergos' \
-           	run
-           	
-           	rm ${work_dir}/root-image/etc/xdg/autostart/vboxclient.desktop
-           	
-        	touch /var/tmp/three
-        }
-        
-        part_four() {
-        	cp ${script_path}/set_password ${work_dir}/root-image/usr/bin
-        	chmod +x ${work_dir}/root-image/usr/bin/set_password
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-           	-r '/usr/bin/set_password' \
-           	run
-           	rm ${work_dir}/root-image/usr/bin/set_password
-		#echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
-        	# Configuring pacman
-		echo "Configuring Pacman"
-        	cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
-        	sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
-        	sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${work_dir}/root-image/etc/pacman.conf
-        	if [[ ${arch} == 'x86_64' ]]; then
-            		echo '' >> ${work_dir}/root-image/etc/pacman.conf
-            		echo '[multilib]' >> ${work_dir}/root-image/etc/pacman.conf
-            		echo 'SigLevel = PackageRequired' >> ${work_dir}/root-image/etc/pacman.conf
-            		echo 'Include = /etc/pacman.d/mirrorlist' >> ${work_dir}/root-image/etc/pacman.conf
-        	fi
+    part_two() {
+        echo "Generating locales"
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r '/usr/bin/locale-gen' run
+        touch /var/tmp/customize_root_image.two
+    }
 
-        	sed -i 's/#\(Storage=\)auto/\1volatile/' ${work_dir}/root-image/etc/systemd/journald.conf
-        	sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
-        	sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
-        	
-        	touch /var/tmp/four
-        }
-        
-        part_five() {
-        
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'systemctl -fq enable pacman-init lightdm plymouth-start NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online ntpd' \
-            	run
-            	
-            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'systemctl -fq disable pamac' \
-            	run
-            
-            # Fix /home permissions
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r 'chown -R antergos:users /home/antergos' \
-            	run
-            
-            # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
-        	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r '/usr/bin/update-ca-trust' \
-            	run
+    part_three() {
+        echo "Adding autologin group"
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'groupadd -r autologin' run
 
-			mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas' \
-            	run
+        echo "Adding nopasswdlogin group"
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'groupadd -r nopasswdlogin' run
 
-			mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r '/usr/bin/update-desktop-database --quiet' \
-            	run
+        echo "Adding antergos user"
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin,nopasswdlogin" antergos' run
 
-			mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r '/usr/bin/update-mime-database /usr/share/mime' \
-            	run
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'passwd -d antergos' run
 
-			mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            	-r '/usr/bin/gdk-pixbuf-query-loaders --update-cache' \
-            	run
-			# END Pacstrap/Pacman bug
 
-        	# Fix sudoers
-        	chown -R root:root ${work_dir}/root-image/etc/
-        	chmod 660 ${work_dir}/root-image/etc/sudoers
+        echo "Set systemd target"
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'systemctl set-default -f graphical.target' run
 
-        	# Fix QT apps
-        	echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${work_dir}/root-image/etc/bash.bashrc
+       	rm ${work_dir}/root-image/etc/xdg/autostart/vboxclient.desktop
+    	touch /var/tmp/customize_root_image.three
+    }
 
-        	# Configure powerpill
-        	sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
-        	chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
-        
-        	# Black list floppy
-        	echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
-        	
-        	# Install translations for updater script
-        	( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
-        	
-        	touch /var/tmp/five
-        }
+    part_four() {
+        cp ${script_path}/set_password ${work_dir}/root-image/usr/bin
+        chmod +x ${work_dir}/root-image/usr/bin/set_password
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r '/usr/bin/set_password' run
 
-        parts=(one two three four five)
-        for part in ${parts[*]}
-        do
-        	if [[ ! -f /var/tmp/${part} ]]; then
-        		part_${part};
-        		sleep 5;
-        	fi
-        done
+        rm ${work_dir}/root-image/usr/bin/set_password
+        #echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
 
+        # Configuring pacman
+        echo "Configuring Pacman"
+        cp -f ${script_path}/pacman.conf ${work_dir}/root-image/etc/pacman.conf
+        sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
+        sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${work_dir}/root-image/etc/pacman.conf
+
+        # Setup journal
+        sed -i 's/#\(Storage=\)auto/\1volatile/' ${work_dir}/root-image/etc/systemd/journald.conf
+        # Setup gparted execution method
+        sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
+        # Setup Chromium initial page
+        sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
+
+        touch /var/tmp/customize_root_image.four
+    }
+
+    part_five() {
+        # Enable services
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'systemctl -fq enable pacman-init plymouth-start NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' run
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'systemctl -fq enable lightdm' run
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'systemctl -fq enable gdm' run
+
+	# Disable pamac
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'systemctl -fq disable pamac pamac-cleancache.timer pamac-mirrorlist.timer' run
+
+        # Enable systemd-timesyncd (ntp)
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'systemctl -fq enable systemd-timesyncd.service' run
+
+        # Fix /home permissions
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'chown -R antergos:users /home/antergos' run
+
+        # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r '/usr/bin/update-ca-trust' run
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas' run
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r '/usr/bin/update-desktop-database --quiet' run
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r '/usr/bin/update-mime-database /usr/share/mime' run
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r '/usr/bin/gdk-pixbuf-query-loaders --update-cache' run
+        # END Pacstrap/Pacman bug
+
+        # Fix sudoers
+        chown -R root:root ${work_dir}/root-image/etc/
+        chmod 660 ${work_dir}/root-image/etc/sudoers
+
+        # Fix QT apps
+        echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${work_dir}/root-image/etc/bash.bashrc
+
+        # Configure powerpill
+        sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
+
+        chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
+        chmod +x ${work_dir}/root-image/etc/gdm/Xsession
+
+        # Black list floppy
+        echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
+
+        # Install translations for updater script
+        ( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
+
+        touch /var/tmp/customize_root_image.five
+    }
+
+    # Call all "parts" functions
+    parts=(one two three four five)
+    for part in ${parts[*]}
+    do
+        if [[ ! -f /var/tmp/customize_root_image.${part} ]]; then
+            part_${part};
+            sleep 5;
+        fi
+    done
 }
 
 # Prepare ISO Version Files
 make_iso_version_files() {
-	base_dir="${work_dir}/root-image/etc"
-	version_files=('arch-release' 'hostname' 'hosts' 'lsb-release' 'os-release')
+    base_dir="${work_dir}/root-image/etc"
+    version_files=('arch-release' 'hostname' 'hosts' 'lsb-release' 'os-release')
 
-	# Replace <VERSION> with actual iso version in all version files.
-	for version_file_name in "${version_files[@]}"
-	do
-		version_file="${base_dir}/${version_file_name}"
-		sed -i "s|<VERSION>|${iso_version}|g" "${version_file}"
-	done
-	
+    # Replace <VERSION> with actual iso version in all version files.
+    for version_file_name in "${version_files[@]}"
+    do
+        version_file="${base_dir}/${version_file_name}"
+        sed -i "s|<VERSION>|${iso_version}|g" "${version_file}"
+    done
 }
 
 # Build "dkms" kernel modules.
 build_kernel_modules_with_dkms() {
-
-	cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
-	chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
-	mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-		-r '/usr/bin/dkms.sh' \
-		run
-
+    cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
+    chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        -r '/usr/bin/dkms.sh' run
 }
 
 # Build a single root filesystem
@@ -384,14 +373,10 @@ make_prepare() {
 
     mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}"  pkglist
     mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}"  prepare
-
-    #rm -rf ${work_dir}/root-image (Always fails and exits the whole build process)
-    #rm -rf ${work_dir}/${arch}/root-image (if low space, this helps)
 }
 
 # Build ISO
 make_iso() {
-    #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" checksum
     if [[ -f "${out_dir}/${iso_name}-${iso_version}-${arch}.iso" ]]; then
         isoName="${iso_name}-${iso_version}-2-${arch}.iso"
     else
@@ -411,7 +396,7 @@ purge_single () {
 clean_single () {
     rm -rf ${work_dir}
     rm -f ${out_dir}/${iso_name}-${iso_version}-*-${arch}.iso
-    rm -f /var/tmp/one /var/tmp/two /var/tmp/three /var/tmp/four /var/tmp/five
+    rm -f /var/tmp/customize_root_image.*
 }
 
 # Helper function to run make_*() only one time per architecture.

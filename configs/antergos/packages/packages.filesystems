@@ -1,0 +1,10 @@
+# Filesystems
+btrfs-progs
+dosfstools
+f2fs-tools
+linux-headers
+mtools
+ntfs-3g
+squashfs-tools
+xfsprogs
+zfs
