@@ -24,7 +24,7 @@ setup_workdir() {
     mkdir -p "${work_dir}"
     pacman_conf="${work_dir}/pacman.conf"
     sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" \
-        "${script_path}/pacman.conf.${arch}" > "${pacman_conf}"
+        "${script_path}/pacman.conf" > "${pacman_conf}"
 }
 
 # Base installation (root-image)
