@@ -278,11 +278,15 @@ make_customize_root_image() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl -fq enable pacman-init plymouth-start NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' run
 
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -fq enable lightdm' run
+        if [ -f "${work_dir}/etc/systemd/system/lightdm.service" ]; then
+            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+                -r 'systemctl -fq enable lightdm' run
+        fi
 
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -fq enable gdm' run
+        if [ -f "${work_dir}/etc/systemd/system/gdm.service" ]; then
+            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+                -r 'systemctl -fq enable gdm' run
+        ]
 
 	# Disable pamac
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
