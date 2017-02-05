@@ -21,9 +21,7 @@ setup_workdir() {
     #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
     cache_dirs="/var/cache/pacman/pkg"
     mkdir -p "${work_dir}"
-    pacman_conf="${work_dir}/pacman.conf"
-    sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" \
-        "${script_path}/pacman.conf.${arch}" > "${pacman_conf}"
+    sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs})|g" "${script_path}/pacman.conf" > "${pacman_conf}"
 }
 
 # Base installation (root-image)
@@ -213,8 +211,8 @@ make_customize_root_image() {
         	chmod 750 ${work_dir}/root-image/etc/sudoers.d
         	chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
         	mkdir -p ${work_dir}/root-image/etc/pacman.d
-        	wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
-        	sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
+        	# wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
+        	# sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
         	#mkdir -p ${work_dir}/root-image/var/run/dbus
         	#mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
         	# Download opendesktop-fonts
@@ -268,7 +266,7 @@ make_customize_root_image() {
 		#echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
         	# Configuring pacman
 		echo "Configuring Pacman"
-        	cp -f ${script_path}/pacman.conf.i686 ${work_dir}/root-image/etc/pacman.conf
+        	cp -f ${script_path}/pacman.conf ${work_dir}/root-image/etc
         	sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
         	sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${work_dir}/root-image/etc/pacman.conf
         	if [[ ${arch} == 'x86_64' ]]; then
