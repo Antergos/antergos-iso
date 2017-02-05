@@ -255,8 +255,9 @@ remove_extra_icons() {
 make_customize_root_image() {
     part_one() {
         cp -afLR ${script_path}/root-image ${work_dir}
-        rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop || true
-        rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop || true
+        if [ -f "${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop" ]; then
+            rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop
+        fi
         ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
         chmod 750 ${work_dir}/root-image/etc/sudoers.d
         chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
@@ -275,7 +276,6 @@ make_customize_root_image() {
     }
 
     part_two() {
-        echo "Generating locales"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/locale-gen' run
         touch /var/tmp/customize_root_image.two
@@ -343,13 +343,13 @@ make_customize_root_image() {
                 -r 'systemctl -fq enable plymouth-start' run
         fi
 
-        if [ -f "${work_dir}/etc/systemd/system/lightdm.service" ]; then
+        if [ -f "${work_dir}/root-image/etc/systemd/system/lightdm.service" ]; then
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
                 -r 'systemctl -fq enable lightdm' run
             chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
         fi
 
-        if [ -f "${work_dir}/etc/systemd/system/gdm.service" ]; then
+        if [ -f "${work_dir}/root-image/etc/systemd/system/gdm.service" ]; then
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
                 -r 'systemctl -fq enable gdm' run
             chmod +x ${work_dir}/root-image/etc/gdm/Xsession
