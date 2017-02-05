@@ -3,7 +3,6 @@
 set -e -u
 
 iso_name=antergos
-#iso_name=antergos-6dots
 iso_label="ANTERGOS"
 year="$(date +'%y')"
 month="$(date +'%-m')"
@@ -17,6 +16,7 @@ cmd_args=""
 keep_pacman_packages="y"
 pacman_conf="${work_dir}/pacman.conf"
 script_path=$(readlink -f ${0%/*})
+use_plymouth="yes"
 
 setup_workdir() {
     #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
@@ -55,12 +55,17 @@ make_setup_mkinitcpio() {
     cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/etc/initcpio
     cp -L ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
     cp -L ${script_path}/root-image/etc/os-release ${work_dir}/root-image/etc
-    cp -L ${script_path}/plymouthd.conf ${work_dir}/root-image/etc/plymouth
-    cp -L ${script_path}/plymouth.initcpio_hook ${work_dir}/root-image/etc/initcpio/hooks
-    cp -L ${script_path}/plymouth.initcpio_install ${work_dir}/root-image/etc/initcpio/install
-    #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
-    echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
-    #sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
+
+    if [ "$use_plymouth" == "yes" ]; then
+        cp -L ${script_path}/plymouthd.conf ${work_dir}/root-image/etc/plymouth
+        cp -L ${script_path}/plymouth.initcpio_hook ${work_dir}/root-image/etc/initcpio/hooks
+        cp -L ${script_path}/plymouth.initcpio_install ${work_dir}/root-image/etc/initcpio/install
+        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
+        echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
+    else
+        sed -i 's|plymouth||g' ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
+    fi
+
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2>&1
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~MKINITCPIO DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     if [[ -f ${work_dir}/root-image/boot/archiso.img ]]; then
@@ -195,53 +200,53 @@ make_efiboot() {
 }
 
 remove_extra_icons() {
-	if [[ -d "${work_dir}/root-image/usr/share/icons" ]]; then
-		cd ${work_dir}/root-image/usr/share/icons
-		find . \
-			! -iname '**Cnchi**' \
-			! -iname '**image-missing.svg**' \
-			! -iname '**emblem-default.svg**' \
-			! -iname '**dialog-warning.svg**' \
-			! -iname '**edit-undo**' \
-			! -iname '**list-add**' \
-			! -iname '**list-remove**' \
-			! -iname '**system-run**' \
-			! -iname '**edit-clear-all**' \
-			! -iname 'dialog-***' \
-			! -iname '**-yes.svg**' \
-			! -iname '**_yes.svg**' \
-			! -iname '**-no.svg**' \
-			! -iname '**stock_no.svg**' \
-			! -iname 'nm-***' \
-			! -iname '**system-software-install**' \
-			! -iname '***bluetooth***' \
-			! -iname '***printer***' \
-			! -iname '***firefox***' \
-			! -iname '**network-server**' \
-			! -iname '***preferences-desktop-font***' \
-			! -iname '**fonts**' \
-			! -iname '**applications-accessories**' \
-			! -iname '**text-editor**' \
-			! -iname '**accessories-text-editor**' \
-			! -iname '**gnome-mime-x-directory-smb-share**' \
-			! -iname '**terminal**' \
-			! -iname '**video-display**' \
-			! -iname '**go-next-symbolic**' \
-			! -iname '**go-previous-symbolic**' \
-			! -iname '**_close**' \
-			! -iname '**-close**' \
-			! -iname '**dialog-**' \
-			! -iname 'nm-**' \
-			! -iname 'window-**' \
-			! -iname '**network**' \
-			! -iname 'index.theme' \
-			! -iname '**system-shutdown**' \
-			! -iname '**pan-**' \
-			! -iname '**symbolic**' \
-			! -ipath '**Adwaita**' \
-			! -ipath '**highcolor**' \
-			-type f -delete
-	fi
+    if [[ -d "${work_dir}/root-image/usr/share/icons" ]]; then
+        cd ${work_dir}/root-image/usr/share/icons
+        find . \
+            ! -iname '**Cnchi**' \
+            ! -iname '**image-missing.svg**' \
+            ! -iname '**emblem-default.svg**' \
+            ! -iname '**dialog-warning.svg**' \
+            ! -iname '**edit-undo**' \
+            ! -iname '**list-add**' \
+            ! -iname '**list-remove**' \
+            ! -iname '**system-run**' \
+            ! -iname '**edit-clear-all**' \
+            ! -iname 'dialog-***' \
+            ! -iname '**-yes.svg**' \
+            ! -iname '**_yes.svg**' \
+            ! -iname '**-no.svg**' \
+            ! -iname '**stock_no.svg**' \
+            ! -iname 'nm-***' \
+            ! -iname '**system-software-install**' \
+            ! -iname '***bluetooth***' \
+            ! -iname '***printer***' \
+            ! -iname '***firefox***' \
+            ! -iname '**network-server**' \
+            ! -iname '***preferences-desktop-font***' \
+            ! -iname '**fonts**' \
+            ! -iname '**applications-accessories**' \
+            ! -iname '**text-editor**' \
+            ! -iname '**accessories-text-editor**' \
+            ! -iname '**gnome-mime-x-directory-smb-share**' \
+            ! -iname '**terminal**' \
+            ! -iname '**video-display**' \
+            ! -iname '**go-next-symbolic**' \
+            ! -iname '**go-previous-symbolic**' \
+            ! -iname '**_close**' \
+            ! -iname '**-close**' \
+            ! -iname '**dialog-**' \
+            ! -iname 'nm-**' \
+            ! -iname 'window-**' \
+            ! -iname '**network**' \
+            ! -iname 'index.theme' \
+            ! -iname '**system-shutdown**' \
+            ! -iname '**pan-**' \
+            ! -iname '**symbolic**' \
+            ! -ipath '**Adwaita**' \
+            ! -ipath '**highcolor**' \
+            -type f -delete
+    fi
 
 }
 
@@ -292,7 +297,6 @@ make_customize_root_image() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'passwd -d antergos' run
 
-
         echo "Set systemd target"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl set-default -f graphical.target' run
@@ -329,17 +333,26 @@ make_customize_root_image() {
     part_five() {
         # Enable services
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -fq enable pacman-init plymouth-start NetworkManager ModemManager livecd vboxservice NetworkManager-wait-online' run
+            -r 'systemctl -fq enable pacman-init NetworkManager livecd vboxservice NetworkManager-wait-online systemd-networkd' run
+
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'systemctl -fq enable ModemManager' run
+
+        if [ "$use_plymouth" == "yes" ]; then
+            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+                -r 'systemctl -fq enable plymouth-start' run
+        fi
 
         if [ -f "${work_dir}/etc/systemd/system/lightdm.service" ]; then
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
                 -r 'systemctl -fq enable lightdm' run
-        fi
-
+            chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
+        
         if [ -f "${work_dir}/etc/systemd/system/gdm.service" ]; then
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
                 -r 'systemctl -fq enable gdm' run
-        ]
+            chmod +x ${work_dir}/root-image/etc/gdm/Xsession
+        fi
 
 	# Disable pamac
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -348,6 +361,14 @@ make_customize_root_image() {
         # Enable systemd-timesyncd (ntp)
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl -fq enable systemd-timesyncd.service' run
+
+        # Build kernel modules that are handled by dkms so we can delete kernel headers to save space
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'dkms autoinstall' run
+
+        # Remove kernel headers and dkms.
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'pacman -Rdd --noconfirm linux-headers dkms' run
 
         # Fix /home permissions
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -379,9 +400,6 @@ make_customize_root_image() {
 
         # Configure powerpill
         sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
-
-        chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
-        chmod +x ${work_dir}/root-image/etc/gdm/Xsession
 
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf

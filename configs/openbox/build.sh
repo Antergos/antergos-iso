@@ -16,6 +16,7 @@ cmd_args=""
 keep_pacman_packages="n"
 pacman_conf="${work_dir}/pacman.conf"
 script_path=/start/antergos-iso/configs/openbox
+use_plymouth = "no"
 
 setup_workdir() {
     #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
@@ -53,15 +54,18 @@ make_setup_mkinitcpio() {
     cp /usr/lib/initcpio/install/archiso_kms ${work_dir}/root-image/etc/initcpio/install
     cp /usr/lib/initcpio/archiso_shutdown ${work_dir}/root-image/etc/initcpio
     cp -L ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
-
-    sed -i 's|plymouth||g' ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
-
     cp -L ${script_path}/root-image/etc/os-release ${work_dir}/root-image/etc
-    #cp -L ${script_path}/plymouthd.conf ${work_dir}/root-image/etc/plymouth
-    #cp -L ${script_path}/plymouth.initcpio_hook ${work_dir}/root-image/etc/initcpio/hooks
-    #cp -L ${script_path}/plymouth.initcpio_install ${work_dir}/root-image/etc/initcpio/install
-    #echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
-    #sed -i 's|umount "|umount -l "|g' /usr/bin/arch-chroot
+
+    if [ "$use_plymouth" == "yes" ]; then
+        cp -L ${script_path}/plymouthd.conf ${work_dir}/root-image/etc/plymouth
+        cp -L ${script_path}/plymouth.initcpio_hook ${work_dir}/root-image/etc/initcpio/hooks
+        cp -L ${script_path}/plymouth.initcpio_install ${work_dir}/root-image/etc/initcpio/install
+        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
+        echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
+    else
+        sed -i 's|plymouth||g' ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
+    fi
+
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2>&1
     echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~MKINITCPIO DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
     if [[ -f ${work_dir}/root-image/boot/archiso.img ]]; then
@@ -246,35 +250,36 @@ remove_extra_icons() {
 
 }
 
+
 # Customize installation (root-image)
 make_customize_root_image() {
-	part_one() {
+    part_one() {
         cp -afLR ${script_path}/root-image ${work_dir}
         ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
         chmod 750 ${work_dir}/root-image/etc/sudoers.d
         chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
-        mkdir -p ${work_dir}/root-image/etc/pacman.d
-        wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
-        sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
+
+        #mkdir -p ${work_dir}/root-image/etc/pacman.d
+        #wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
+        #sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
+
         #mkdir -p ${work_dir}/root-image/var/run/dbus
         #mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
+
         # Download opendesktop-fonts
         #wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
-        cp /start/opendesktop**.xz ${work_dir}/root-image/arch/pkg
-        touch /var/tmp/one
+        #cp /start/opendesktop**.xz ${work_dir}/root-image/arch/pkg
+        touch /var/tmp/customize_root_image.one
     }
 
     part_two() {
+        echo "Generating locales"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        -r '/usr/bin/locale-gen' \
-        run
-        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        #	-r '/usr/bin/localectl set-locale "LANG=en_US.UTF-8" ' \
-        #	run || true
-        touch /var/tmp/two
+            -r '/usr/bin/locale-gen' run
+        touch /var/tmp/customize_root_image.two
     }
 
-	part_three() {
+    part_three() {
         echo "Adding autologin group"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'groupadd -r autologin' run
@@ -283,9 +288,9 @@ make_customize_root_image() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'groupadd -r nopasswdlogin' run
 
-		echo "Adding antergos user"
+        echo "Adding antergos user"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin" antergos' run
+            -r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin,nopasswdlogin" antergos' run
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'passwd -d antergos' run
@@ -294,8 +299,8 @@ make_customize_root_image() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl set-default -f graphical.target' run
 
-        rm ${work_dir}/root-image/etc/xdg/autostart/vboxclient.desktop
-        touch /var/tmp/three
+       	rm ${work_dir}/root-image/etc/xdg/autostart/vboxclient.desktop
+    	touch /var/tmp/customize_root_image.three
     }
 
     part_four() {
@@ -303,54 +308,53 @@ make_customize_root_image() {
         chmod +x ${work_dir}/root-image/usr/bin/set_password
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/set_password' run
+
         rm ${work_dir}/root-image/usr/bin/set_password
         #echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${work_dir}/root-image
+
         # Configuring pacman
         echo "Configuring Pacman"
-        cp -f ${script_path}/pacman.conf.x86_64 ${work_dir}/root-image/etc/pacman.conf
+        cp -f ${script_path}/pacman.conf ${work_dir}/root-image/etc/pacman.conf
         sed -i 's|^#CheckSpace|CheckSpace|g' ${work_dir}/root-image/etc/pacman.conf
         sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${work_dir}/root-image/etc/pacman.conf
-        if [[ ${arch} == 'x86_64' ]]; then
-            echo '' >> ${work_dir}/root-image/etc/pacman.conf
-            echo '[multilib]' >> ${work_dir}/root-image/etc/pacman.conf
-            echo 'SigLevel = PackageRequired' >> ${work_dir}/root-image/etc/pacman.conf
-            echo 'Include = /etc/pacman.d/mirrorlist' >> ${work_dir}/root-image/etc/pacman.conf
-    	fi
 
+        # Setup journal
         sed -i 's/#\(Storage=\)auto/\1volatile/' ${work_dir}/root-image/etc/systemd/journald.conf
-        #sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
+        # Setup gparted execution method
+        sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
+        # Setup Chromium initial page
+        sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
 
-        touch /var/tmp/four
+        touch /var/tmp/customize_root_image.four
     }
 
     part_five() {
+        # Enable services
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -fq enable pacman-init NetworkManager livecd NetworkManager-wait-online systemd-networkd' run
+            -r 'systemctl -fq enable pacman-init NetworkManager livecd vboxservice NetworkManager-wait-online systemd-networkd' run
 
-        # Fix /home permissions
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'chown -R antergos:users /home/antergos' run
+        if [ "$use_plymouth" == "yes" ]; then
+            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+                -r 'systemctl -fq enable plymouth-start' run
+        fi
 
-        # Fix sudoers
-        chown -R root:root ${work_dir}/root-image/etc/
-        chmod 660 ${work_dir}/root-image/etc/sudoers
-
-        # Fix QT apps
-        echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${work_dir}/root-image/etc/bash.bashrc
-
-
-        # Black list floppy
-        echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
-
-        # Install translations for updater script and gfxboot
-        translations="$(${script_path}/translations.sh ${out_dir} ${work_dir} ${script_path})"
-        echo "${translations}"
+        if [ -f "${work_dir}/etc/systemd/system/lightdm.service" ]; then
+            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+                -r 'systemctl -fq enable lightdm' run
+        elif [ -f "${work_dir}/etc/systemd/system/gdm.service" ]; then
+            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+                -r 'systemctl -fq enable gdm' run
+        fi
 
         # Make ISO thinner
         rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
         rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
 
         remove_extra_icons
+
+        # Enable systemd-timesyncd (ntp)
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'systemctl -fq enable systemd-timesyncd.service' run
 
         # Build kernel modules that are handled by dkms so we can delete kernel headers to save space
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -363,6 +367,10 @@ make_customize_root_image() {
         # Make sure we arent keeping any packages in pacman cache.
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'pacman -Scc --noconfirm' run
+
+        # Fix /home permissions
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'chown -R antergos:users /home/antergos' run
 
         # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -381,19 +389,33 @@ make_customize_root_image() {
             -r '/usr/bin/gdk-pixbuf-query-loaders --update-cache' run
         # END Pacstrap/Pacman bug
 
+        # Fix sudoers
+        chown -R root:root ${work_dir}/root-image/etc/
+        chmod 660 ${work_dir}/root-image/etc/sudoers
+
+        # Fix QT apps
+        echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${work_dir}/root-image/etc/bash.bashrc
+
+        # Configure powerpill
+        sed -i 's|"ask" : true|"ask" : false|g' ${work_dir}/root-image/etc/powerpill/powerpill.json
+
+        # Black list floppy
+        echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
+
         # Install translations for updater script
         ( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
 
-        touch /var/tmp/five
+        touch /var/tmp/customize_root_image.five
     }
 
+    # Call all "parts" functions
     parts=(one two three four five)
     for part in ${parts[*]}
     do
-    	if [[ ! -f /var/tmp/${part} ]]; then
-    		part_${part};
-    		sleep 2;
-    	fi
+        if [[ ! -f /var/tmp/customize_root_image.${part} ]]; then
+            part_${part};
+            sleep 5;
+        fi
     done
 }
 
