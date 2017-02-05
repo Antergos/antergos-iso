@@ -23,8 +23,7 @@ setup_workdir() {
     cache_dirs="/var/cache/pacman/pkg"
     mkdir -p "${work_dir}"
     pacman_conf="${work_dir}/pacman.conf"
-    sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" \
-        "${script_path}/pacman.conf" > "${pacman_conf}"
+    sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" "${script_path}/pacman.conf" > "${pacman_conf}"
 }
 
 # Base installation (root-image)
@@ -199,17 +198,20 @@ make_efiboot() {
 # Customize installation (root-image)
 make_customize_root_image() {
     part_one() {
-        cp -af ${script_path}/root-image ${work_dir}
+        cp -afLR ${script_path}/root-image ${work_dir}
         rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop || true
         rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop || true
         ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
         chmod 750 ${work_dir}/root-image/etc/sudoers.d
         chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
-        mkdir -p ${work_dir}/root-image/etc/pacman.d
-        wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
-        sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
+
+        #mkdir -p ${work_dir}/root-image/etc/pacman.d
+        #wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
+        #sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
+
         #mkdir -p ${work_dir}/root-image/var/run/dbus
         #mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
+
         # Download opendesktop-fonts
         #wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
         #cp /start/opendesktop**.xz ${work_dir}/root-image/arch/pkg
@@ -249,7 +251,7 @@ make_customize_root_image() {
     }
 
     part_four() {
-        cp ${script_path}/set_password ${work_dir}/root-image/usr/bin
+        cp -L ${script_path}/set_password ${work_dir}/root-image/usr/bin
         chmod +x ${work_dir}/root-image/usr/bin/set_password
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/set_password' run
