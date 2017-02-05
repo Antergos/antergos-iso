@@ -6,6 +6,8 @@ _MODVER_STR="$(pacman -Q zfs)"
 _MODVER_STR="${_MODVER_STR/zfs }"
 _MODVER="${_MODVER_STR/.r*}"
 
+reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+
 pacman -S --noconfirm --needed linux-headers dkms
 
 echo '>>> Updating module dependencies. Please wait ...'
