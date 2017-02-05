@@ -1,2 +1,1 @@
-#!/bin/bash
-#/bin/login -f root
+../../../../antergos/root-image/usr/bin/autologin

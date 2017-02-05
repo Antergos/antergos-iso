@@ -1,3 +1,1 @@
-#!/bin/bash
-
-sudo /arch/setup && exit 0;
+../../../../antergos/root-image/usr/bin/antergos-setup
