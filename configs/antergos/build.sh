@@ -347,14 +347,15 @@ make_customize_root_image() {
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
                 -r 'systemctl -fq enable lightdm' run
             chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
-        
+        fi
+
         if [ -f "${work_dir}/etc/systemd/system/gdm.service" ]; then
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
                 -r 'systemctl -fq enable gdm' run
             chmod +x ${work_dir}/root-image/etc/gdm/Xsession
         fi
 
-	# Disable pamac
+        # Disable pamac
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl -fq disable pamac pamac-cleancache.timer pamac-mirrorlist.timer' run
 
