@@ -1,11 +1,1 @@
-#%PAM-1.0
-
-auth       required     pam_securetty.so
-auth       requisite    pam_nologin.so
-auth       include      system-local-login
-auth       optional     pam_gnome_keyring.so
-account    include      system-local-login
-session    include      system-local-login
-session    required     pam_loginuid.so
-session    required     pam_systemd.so
-session    optional     pam_gnome_keyring.so    auto_start
+../../../../antergos/root-image/etc/pam.d/login

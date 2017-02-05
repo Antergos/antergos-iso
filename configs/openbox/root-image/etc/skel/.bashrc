@@ -1,3 +1,1 @@
-if [[ $LANG = '' ]]; then
-	export LANG=en_US.UTF-8
-fi
+../../../../antergos/root-image/etc/skel/.bashrc
