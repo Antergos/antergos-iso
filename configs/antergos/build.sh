@@ -99,7 +99,7 @@ make_syslinux() {
              s|%INSTALL_DIR%|${install_dir}|g;
              s|%ARCH%|${arch}|g" ${_cfg} > ${work_dir}/iso/${install_dir}/boot/syslinux/${_cfg##*/}
     done
-    cp -Lr isolinux ${work_dir}/iso/${install_dir}/boot/syslinux
+    cp -LR ${script_path}/isolinux ${work_dir}/iso/${install_dir}/boot/syslinux
     cp ${work_dir}/root-image/usr/lib/syslinux/bios/*.c32 ${work_dir}/iso/${install_dir}/boot/syslinux
     cp ${work_dir}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${work_dir}/iso/${install_dir}/boot/syslinux
     cp ${work_dir}/root-image/usr/lib/syslinux/bios/memdisk ${work_dir}/iso/${install_dir}/boot/syslinux
@@ -111,7 +111,7 @@ make_syslinux() {
 
 make_isolinux() {
     mkdir -p ${work_dir}/iso/isolinux
-    cp -Lr isolinux ${work_dir}/iso
+    cp -LR isolinux ${work_dir}/iso
     cp -R ${work_dir}/root-image/usr/lib/syslinux/bios/* ${work_dir}/iso/isolinux/
     cp ${work_dir}/root-image/usr/lib/syslinux/bios/*.c32 ${work_dir}/iso/isolinux/
     sed "s|%ARCHISO_LABEL%|${iso_label}|g;
@@ -192,6 +192,57 @@ make_efiboot() {
     cp ${work_dir}/iso/EFI/shellx64_v1.efi ${work_dir}/efiboot/EFI/
 
     umount -d ${work_dir}/efiboot
+}
+
+remove_extra_icons() {
+	if [[ -d "${work_dir}/root-image/usr/share/icons" ]]; then
+		cd ${work_dir}/root-image/usr/share/icons
+		find . \
+			! -iname '**Cnchi**' \
+			! -iname '**image-missing.svg**' \
+			! -iname '**emblem-default.svg**' \
+			! -iname '**dialog-warning.svg**' \
+			! -iname '**edit-undo**' \
+			! -iname '**list-add**' \
+			! -iname '**list-remove**' \
+			! -iname '**system-run**' \
+			! -iname '**edit-clear-all**' \
+			! -iname 'dialog-***' \
+			! -iname '**-yes.svg**' \
+			! -iname '**_yes.svg**' \
+			! -iname '**-no.svg**' \
+			! -iname '**stock_no.svg**' \
+			! -iname 'nm-***' \
+			! -iname '**system-software-install**' \
+			! -iname '***bluetooth***' \
+			! -iname '***printer***' \
+			! -iname '***firefox***' \
+			! -iname '**network-server**' \
+			! -iname '***preferences-desktop-font***' \
+			! -iname '**fonts**' \
+			! -iname '**applications-accessories**' \
+			! -iname '**text-editor**' \
+			! -iname '**accessories-text-editor**' \
+			! -iname '**gnome-mime-x-directory-smb-share**' \
+			! -iname '**terminal**' \
+			! -iname '**video-display**' \
+			! -iname '**go-next-symbolic**' \
+			! -iname '**go-previous-symbolic**' \
+			! -iname '**_close**' \
+			! -iname '**-close**' \
+			! -iname '**dialog-**' \
+			! -iname 'nm-**' \
+			! -iname 'window-**' \
+			! -iname '**network**' \
+			! -iname 'index.theme' \
+			! -iname '**system-shutdown**' \
+			! -iname '**pan-**' \
+			! -iname '**symbolic**' \
+			! -ipath '**Adwaita**' \
+			! -ipath '**highcolor**' \
+			-type f -delete
+	fi
+
 }
 
 
@@ -394,7 +445,7 @@ make_iso() {
 purge_single () {
     if [[ -d ${work_dir} ]]; then
         find ${work_dir} -mindepth 1 -maxdepth 1 \
-            ! -path ${work_dir}/iso -prune \
+            ! -ipath ${work_dir}/iso -prune \
             | xargs rm -rf
     fi
 }
