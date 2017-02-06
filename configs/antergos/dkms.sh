@@ -6,8 +6,11 @@ _MODVER_STR="$(pacman -Q zfs)"
 _MODVER_STR="${_MODVER_STR/zfs }"
 _MODVER="${_MODVER_STR/.r*}"
 
+# I'm doing something wrong, all this should be already created/installed
 reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
-
+haveged -w 1024
+pacman-key --init
+pacman-key --populate archlinux antergos
 pacman -S --noconfirm --needed linux-headers dkms
 
 echo '>>> Updating module dependencies. Please wait ...'
