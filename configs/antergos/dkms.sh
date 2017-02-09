@@ -23,4 +23,4 @@ if [[ $(dkms status -k "${_KERNVER}" "zfs/${_MODVER}") != *'installed'* ]]; then
 	{ dkms install -k "${_KERNVER}" "zfs/${_MODVER}"; } || exit 1
 fi
 
-{ mkinitcpio -p linux && exit 0; } || exit 1
+{ mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img && exit 0; } || exit 1
