@@ -83,6 +83,7 @@ make_setup_mkinitcpio() {
 
 }
 
+
 # Prepare ${install_dir}/boot/
 make_boot() {
     mkdir -p ${work_dir}/iso/${install_dir}/boot/
@@ -95,12 +96,14 @@ make_boot() {
     fi
 }
 
+
 make_boot_extra() {
     cp ${work_dir}/root-image/boot/memtest86+/memtest.bin ${work_dir}/iso/${install_dir}/boot/memtest
     cp ${work_dir}/root-image/usr/share/licenses/common/GPL2/license.txt ${work_dir}/iso/${install_dir}/boot/memtest.COPYING
     cp ${work_dir}/root-image/boot/intel-ucode.img ${work_dir}/iso/${install_dir}/boot/intel_ucode.img
     cp ${work_dir}/root-image/usr/share/licenses/intel-ucode/LICENSE ${work_dir}/iso/${install_dir}/boot/intel_ucode.LICENSE
 }
+
 
 # Prepare /${install_dir}/boot/syslinux
 make_syslinux() {
@@ -133,6 +136,7 @@ make_isolinux() {
     cp ${work_dir}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${work_dir}/iso/isolinux/
 }
 
+
 # Prepare /EFI
 make_efi() {
     mkdir -p ${work_dir}/iso/EFI/boot
@@ -159,6 +163,7 @@ make_efi() {
    # EFI Shell 1.0 for non UEFI 2.3+
    curl -o ${work_dir}/iso/EFI/shellx64_v1.efi https://raw.githubusercontent.com/tianocore/edk2/master/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
 }
+
 
 # Prepare efiboot.img::/EFI for "El Torito" EFI boot mode
 make_efiboot() {
@@ -204,6 +209,7 @@ make_efiboot() {
 
     umount -d ${work_dir}/efiboot
 }
+
 
 remove_extra_icons() {
     if [[ -d "${work_dir}/root-image/usr/share/icons" ]]; then
@@ -337,6 +343,8 @@ make_customize_root_image() {
         # Setup Chromium start page if installed
         if [ -f "${work_dir}/root-image/usr/share/applications/chromium.desktop" ]; then
             sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
+        else
+            echo ">>> Chromium not installed."
         fi
 
 	# Setup Midori start page if installed
@@ -372,9 +380,11 @@ make_customize_root_image() {
             chmod +x ${work_dir}/root-image/etc/gdm/Xsession
         fi
 
-        # Disable pamac
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -fq disable pamac pamac-cleancache.timer pamac-mirrorlist.timer' run
+        # Disable pamac if present
+        if [ -f "${work_dir}/root-image/usr/lib/systemd/system/pamac.service" ]; then
+            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+                -r 'systemctl -fq disable pamac pamac-cleancache.timer pamac-mirrorlist.timer' run
+        fi
 
         # Enable systemd-timesyncd (ntp)
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -439,6 +449,7 @@ make_customize_root_image() {
     done
 }
 
+
 # Prepare ISO Version Files
 make_iso_version_files() {
     base_dir="${work_dir}/root-image/etc"
@@ -452,6 +463,7 @@ make_iso_version_files() {
     done
 }
 
+
 # Build "dkms" kernel modules.
 build_kernel_modules_with_dkms() {
     cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
@@ -460,6 +472,7 @@ build_kernel_modules_with_dkms() {
         -r '/usr/bin/dkms.sh' run
 }
 
+
 # Build a single root filesystem
 make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
@@ -467,6 +480,7 @@ make_prepare() {
     mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}"  pkglist
     mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}"  prepare
 }
+
 
 # Build ISO
 make_iso() {
@@ -478,6 +492,7 @@ make_iso() {
     mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${isoName}"
 }
 
+
 purge_single () {
     if [[ -d ${work_dir} ]]; then
         find ${work_dir} -mindepth 1 -maxdepth 1 \
@@ -486,11 +501,13 @@ purge_single () {
     fi
 }
 
+
 clean_single () {
     rm -rf ${work_dir}
     rm -f ${out_dir}/${iso_name}-${iso_version}-*-${arch}.iso
     rm -f /var/tmp/customize_${iso_name}_root_image.*
 }
+
 
 # Helper function to run make_*() only one time per architecture.
 run_once() {
@@ -499,6 +516,7 @@ run_once() {
         touch ${work_dir}/build.${1}_${arch}
     fi
 }
+
 
 make_common_single() {
     run_once make_basefs
@@ -517,6 +535,7 @@ make_common_single() {
     run_once make_iso
     exit 0;
 }
+
 
 _usage ()
 {
@@ -551,6 +570,7 @@ _usage ()
     echo "         <mode> Valid values 'single', 'dual' or 'all'"
     exit ${1}
 }
+
 
 if [[ ${EUID} -ne 0 ]]; then
     echo "This script must be run as root."
@@ -605,8 +625,8 @@ if [[ $# -lt 1 ]]; then
     echo "No command specified"
     _usage 1
 fi
-command_name="${1}"
 
+command_name="${1}"
 
 setup_workdir
 
