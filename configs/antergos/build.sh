@@ -340,7 +340,7 @@ make_customize_root_image() {
         fi
 
 	# Setup Midori start page if installed
-	if [ -f "${work_dir}/root-image/usr/share/applications/midori.desktop" }; then
+	if [ -f "${work_dir}/root-image/usr/share/applications/midori.desktop" ]; then
            sed -i 's|^Exec=midori %U|Exec=midori https://www.antergos.com|g' ${work_dir}/root-image/usr/share/applications/midori.desktop
         fi
 
