@@ -2,24 +2,21 @@
 
 set -e -u
 
-iso_name="antergos"
+iso_name=antergos-minimal
 iso_label="ANTERGOS"
 year="$(date +'%y')"
 month="$(date +'%-m')"
 iso_version="${year}.${month}"
 install_dir="arch"
 arch=$(uname -m)
-work_dir=work
+work_dir=/start/antergos-iso/configs/openbox/work
 out_dir=/out
 verbose="-v"
 cmd_args=""
-keep_pacman_packages="y"
+keep_pacman_packages="n"
 pacman_conf="${work_dir}/pacman.conf"
-script_path=$(readlink -f ${0%/*})
-
-if [ -f "${script_path}/iso_name.txt" ]; then
-    iso_name=$(cat ${script_path}/iso_name.txt)
-fi
+script_path=/start/antergos-iso/configs/openbox
+use_plymouth = "no"
 
 setup_workdir() {
     #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
@@ -29,19 +26,16 @@ setup_workdir() {
     sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" "${script_path}/pacman.conf" > "${pacman_conf}"
 }
 
-
 # Base installation (root-image)
 make_basefs() {
-    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode memtest86+ nbd" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode memtest86+ nbd" install
 }
-
 
 # Additional packages (root-image)
 make_packages() {
-    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages/packages.*)" install
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages/packages.*)" install
 }
-
 
 # Copy mkinitcpio archiso hooks (root-image)
 make_setup_mkinitcpio() {
@@ -62,7 +56,7 @@ make_setup_mkinitcpio() {
     cp -L ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
     cp -L ${script_path}/root-image/etc/os-release ${work_dir}/root-image/etc
 
-    if [ -f "${script_path}/plymouthd.conf" ]; then
+    if [ "$use_plymouth" == "yes" ]; then
         cp -L ${script_path}/plymouthd.conf ${work_dir}/root-image/etc/plymouth
         cp -L ${script_path}/plymouth.initcpio_hook ${work_dir}/root-image/etc/initcpio/hooks
         cp -L ${script_path}/plymouth.initcpio_install ${work_dir}/root-image/etc/initcpio/install
@@ -96,7 +90,7 @@ make_boot() {
 }
 
 make_boot_extra() {
-    cp ${work_dir}/root-image/boot/memtest86+/memtest.bin ${work_dir}/iso/${install_dir}/boot/memtest
+    #cp ${work_dir}/root-image/boot/memtest86+/memtest.bin ${work_dir}/iso/${install_dir}/boot/memtest
     cp ${work_dir}/root-image/usr/share/licenses/common/GPL2/license.txt ${work_dir}/iso/${install_dir}/boot/memtest.COPYING
     cp ${work_dir}/root-image/boot/intel-ucode.img ${work_dir}/iso/${install_dir}/boot/intel_ucode.img
     cp ${work_dir}/root-image/usr/share/licenses/intel-ucode/LICENSE ${work_dir}/iso/${install_dir}/boot/intel_ucode.LICENSE
@@ -261,15 +255,9 @@ remove_extra_icons() {
 make_customize_root_image() {
     part_one() {
         cp -afLR ${script_path}/root-image ${work_dir}
-        if [ -f "${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop" ]; then
-            rm ${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop
-        fi
         ln -sf /usr/share/zoneinfo/UTC ${work_dir}/root-image/etc/localtime
         chmod 750 ${work_dir}/root-image/etc/sudoers.d
         chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
-
-        cp ${script_path}/iso-hotfix-utility/iso-hotfix-utility ${work_dir}/root-image/usr/bin/pacman-boot
-        chmod 755 ${work_dir}/root-image/usr/bin/pacman-boot
 
         #mkdir -p ${work_dir}/root-image/etc/pacman.d
         #wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
@@ -285,6 +273,7 @@ make_customize_root_image() {
     }
 
     part_two() {
+        echo "Generating locales"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/locale-gen' run
         touch /var/tmp/customize_root_image.two
@@ -344,29 +333,24 @@ make_customize_root_image() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl -fq enable pacman-init NetworkManager livecd vboxservice NetworkManager-wait-online systemd-networkd' run
 
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -fq enable ModemManager' run
-
-        if [ -f "${script_path}/plymouthd.conf" ]; then
+        if [ "$use_plymouth" == "yes" ]; then
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
                 -r 'systemctl -fq enable plymouth-start' run
         fi
 
-        if [ -f "${work_dir}/root-image/etc/systemd/system/lightdm.service" ]; then
+        if [ -f "${work_dir}/etc/systemd/system/lightdm.service" ]; then
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
                 -r 'systemctl -fq enable lightdm' run
-            chmod +x ${work_dir}/root-image/etc/lightdm/Xsession
-        fi
-
-        if [ -f "${work_dir}/root-image/etc/systemd/system/gdm.service" ]; then
+        elif [ -f "${work_dir}/etc/systemd/system/gdm.service" ]; then
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
                 -r 'systemctl -fq enable gdm' run
-            chmod +x ${work_dir}/root-image/etc/gdm/Xsession
         fi
 
-        # Disable pamac
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -fq disable pamac pamac-cleancache.timer pamac-mirrorlist.timer' run
+        # Make ISO thinner
+        rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
+        rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
+
+        remove_extra_icons
 
         # Enable systemd-timesyncd (ntp)
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -379,6 +363,10 @@ make_customize_root_image() {
         # Remove kernel headers and dkms.
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'pacman -Rdd --noconfirm linux-headers dkms' run
+
+        # Make sure we arent keeping any packages in pacman cache.
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'pacman -Scc --noconfirm' run
 
         # Fix /home permissions
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -454,10 +442,14 @@ build_kernel_modules_with_dkms() {
 
 # Build a single root filesystem
 make_prepare() {
+	rm -rf ${work_dir}/root-image/usr/share/{doc,gtk-doc,info,gtk-2.0,gtk-3.0} || true
+        rm -rf ${work_dir}/root-image/usr/share/{man,gnome} || true
+        rm -rf ${work_dir}/root-image/usr/share/icons/{HighContrast,hicolor,Faenza-Ambiance,Faenza-Radiance,Faenza-Darker,Faenza-Darkest} || true
     cp -a -l -f ${work_dir}/root-image ${work_dir}
+    remove_extra_icons
 
-    mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}"  pkglist
-    mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}"  prepare
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  pkglist
+    mkarchiso ${verbose} -w "${work_dir}" -D "${install_dir}"  prepare minimal
 }
 
 # Build ISO
@@ -467,7 +459,7 @@ make_iso() {
     else
         isoName="${iso_name}-${iso_version}-${arch}.iso"
     fi
-    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${isoName}"
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${isoName}" minimal
 }
 
 purge_single () {
@@ -495,10 +487,10 @@ run_once() {
 make_common_single() {
     run_once make_basefs
     run_once make_packages
-    run_once make_setup_mkinitcpio
+    make_setup_mkinitcpio
     run_once make_customize_root_image
     run_once make_iso_version_files
-    run_once build_kernel_modules_with_dkms
+    #run_once build_kernel_modules_with_dkms
     run_once make_boot
     run_once make_boot_extra
     run_once make_syslinux
