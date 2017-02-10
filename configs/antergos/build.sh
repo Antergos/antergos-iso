@@ -333,8 +333,16 @@ make_customize_root_image() {
         sed -i 's/#\(Storage=\)auto/\1volatile/' ${work_dir}/root-image/etc/systemd/journald.conf
         # Setup gparted execution method
         sed -i 's|^Exec=|Exec=sudo -E |g' ${work_dir}/root-image/usr/share/applications/gparted.desktop
-        # Setup Chromium initial page
-        sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
+
+        # Setup Chromium start page if installed
+        if [ -f "${work_dir}/root-image/usr/share/applications/chromium.desktop" ]; then
+            sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
+        fi
+
+	# Setup Midori start page if installed
+	if [ -f "${work_dir}/root-image/usr/share/applications/midori.desktop" }; then
+           sed -i 's|^Exec=midori %U|Exec=midori https://www.antergos.com|g' ${work_dir}/root-image/usr/share/applications/midori.desktop
+        fi
 
         touch /var/tmp/customize_${iso_name}_root_image.four
     }
