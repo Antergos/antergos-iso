@@ -281,13 +281,13 @@ make_customize_root_image() {
         # Download opendesktop-fonts
         #wget --content-disposition -P ${work_dir}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
         #cp /start/opendesktop**.xz ${work_dir}/root-image/arch/pkg
-        touch /var/tmp/customize_root_image.one
+        touch /var/tmp/customize_${iso_name}_root_image.one
     }
 
     part_two() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/locale-gen' run
-        touch /var/tmp/customize_root_image.two
+        touch /var/tmp/customize_${iso_name}_root_image.two
     }
 
     part_three() {
@@ -311,7 +311,7 @@ make_customize_root_image() {
             -r 'systemctl set-default -f graphical.target' run
 
        	rm ${work_dir}/root-image/etc/xdg/autostart/vboxclient.desktop
-    	touch /var/tmp/customize_root_image.three
+    	touch /var/tmp/customize_${iso_name}_root_image.three
     }
 
     part_four() {
@@ -336,7 +336,7 @@ make_customize_root_image() {
         # Setup Chromium initial page
         sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${work_dir}/root-image/usr/share/applications/chromium.desktop
 
-        touch /var/tmp/customize_root_image.four
+        touch /var/tmp/customize_${iso_name}_root_image.four
     }
 
     part_five() {
@@ -417,14 +417,14 @@ make_customize_root_image() {
         # Install translations for updater script
         ( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
 
-        touch /var/tmp/customize_root_image.five
+        touch /var/tmp/customize_${iso_name}_root_image.five
     }
 
     # Call all "parts" functions
     parts=(one two three four five)
     for part in ${parts[*]}
     do
-        if [[ ! -f /var/tmp/customize_root_image.${part} ]]; then
+        if [[ ! -f /var/tmp/customize_${iso_name}_root_image.${part} ]]; then
             part_${part};
             sleep 5;
         fi
@@ -481,7 +481,7 @@ purge_single () {
 clean_single () {
     rm -rf ${work_dir}
     rm -f ${out_dir}/${iso_name}-${iso_version}-*-${arch}.iso
-    rm -f /var/tmp/customize_root_image.*
+    rm -f /var/tmp/customize_${iso_name}_root_image.*
 }
 
 # Helper function to run make_*() only one time per architecture.
