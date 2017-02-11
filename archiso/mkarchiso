@@ -386,7 +386,7 @@ command_checksum () {
 command_pkglist () {
     _show_config pkglist
 
-        _msg_info "Creating a list of installed packages on live-enviroment..."
+        _msg_info "Creating a list of installed packages on live-environment..."
         pacman -Sl -r "${work_dir}/root-image" --config "${pacman_conf}" | \
             awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > \
             "${work_dir}/iso/${install_dir}/pkglist.${arch}.txt"
