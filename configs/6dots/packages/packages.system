@@ -1,1 +1,13 @@
-../../antergos/packages/packages.system
+# System Tools
+expect
+git
+gksu
+pamac
+pkgfile
+powerpill
+reflector
+sudo
+unrar
+unzip
+wget
+xdg-user-dirs-gtk
