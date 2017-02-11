@@ -390,14 +390,6 @@ make_customize_root_image() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'systemctl -fq enable systemd-timesyncd.service' run
 
-        # Build kernel modules that are handled by dkms so we can delete kernel headers to save space
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'dkms autoinstall' run
-
-        # Remove kernel headers and dkms.
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'pacman -Rdd --noconfirm linux-headers dkms' run
-
         # Fix /home permissions
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'chown -R antergos:users /home/antergos' run
@@ -431,6 +423,9 @@ make_customize_root_image() {
 
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
+
+        # Black list pc speaker
+        echo "blacklist pcspkr" > ${work_dir}/root-image/etc/modprobe.d/nopcspkr.conf
 
         # Install translations for updater script
         ( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
@@ -466,6 +461,15 @@ make_iso_version_files() {
 
 # Build "dkms" kernel modules.
 build_kernel_modules_with_dkms() {
+    # Build kernel modules that are handled by dkms so we can delete kernel headers to save space
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        -r 'dkms autoinstall' run
+
+    # Remove kernel headers and dkms.
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        -r 'pacman -Rdd --noconfirm linux-headers dkms' run
+
+    # Bugfix 
     cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
     chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
