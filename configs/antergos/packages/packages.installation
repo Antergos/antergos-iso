@@ -12,6 +12,7 @@ grub
 haveged
 hwdetect
 hwinfo
+iso-hotfix-utility
 ntp
 os-prober
 parted
