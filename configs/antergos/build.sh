@@ -461,19 +461,23 @@ make_iso_version_files() {
 
 # Build "dkms" kernel modules.
 build_kernel_modules_with_dkms() {
-    # Build kernel modules that are handled by dkms so we can delete kernel headers to save space
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        -r 'dkms autoinstall' run
+    if [[ ! -f /var/tmp/customize_${iso_name}_root_image.dkms ]]; then
+        # Build kernel modules that are handled by dkms so we can delete kernel headers to save space
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'dkms autoinstall' run
 
-    # Remove kernel headers and dkms.
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        -r 'pacman -Rdd --noconfirm linux-headers dkms' run
+        # Remove kernel headers and dkms.
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'pacman -Rdd --noconfirm linux-headers dkms' run
 
-    # Bugfix 
-    cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
-    chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-        -r '/usr/bin/dkms.sh' run
+        # Bugfix 
+        cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
+        chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r '/usr/bin/dkms.sh' run
+
+        touch /var/tmp/customize_${iso_name}_root_image.dkms
+    fi
 }
 
 
