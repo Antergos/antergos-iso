@@ -95,7 +95,7 @@ PIC=$(ls ${DIR}/* | shuf -n1)
 gsettings set org.gnome.desktop.background picture-uri file://${PIC}
 
 # Set favorite apps
-gsettings set org.gnome.shell favorite-apps "['Cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'pidgin.desktop', 'gnome-music.desktop']"
+gsettings set org.gnome.shell favorite-apps "['cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'pidgin.desktop', 'gnome-music.desktop']"
 
 # Disable screensaver
 gsettings set org.gnome.desktop.screensaver lock-enabled false
