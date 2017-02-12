@@ -1,0 +1,293 @@
+#!/bin/sh
+#
+# This is SORT OF LIKE an X session, but not quite.  You get a command as the
+# first argument (it could be multiple words, so run it with "eval").  As a
+# special case, the command can be:
+#  default - Run the appropriate Xclients startup (see the code below)
+#  custom - Run ~/.xsession and if that's not available run 'default'
+#
+# (Note that other arguments could also follow, but only the command one is
+# right now relevant and supported)
+#
+# The output is ALREADY redirected to .xsession-errors in GDM.  This way
+# .xsession-errors actually gets more output such as if the PreSession script
+# is failing.  This also prevents DoS attacks if some app in the users session
+# can be prodded to dump lots of stuff on the stdout/stderr.  We wish to be
+# robust don't we?  In case you wish to use an existing script for other DM's,
+# you can just not redirect when GDMSESSION is set.  GDMSESSION will always
+# be set from gdm.
+#
+# Also note that this is not run as a login shell, this is just executed.
+# This is why we source the profile files below.
+#
+# based on:
+# $XConsortium: Xsession /main/10 1995/12/18 18:21:28 gildea $
+
+command="$@"
+
+# this will go into the .xsession-errors along with all other echo's
+# good for debugging where things went wrong
+echo "$0: Beginning session setup..."
+
+# First read /etc/profile and .profile
+test -f /etc/profile && . /etc/profile
+test -f "$HOME/.profile" && . "$HOME/.profile"
+# Second read /etc/xprofile and .xprofile for X specific setup
+test -f /etc/xprofile && . /etc/xprofile
+test -f "$HOME/.xprofile" && . "$HOME/.xprofile"
+
+# Translation stuff
+if [ -x "/usr/lib/gdm/gdmtranslate" ] ; then
+  gdmtranslate="/usr/lib/gdm/gdmtranslate"
+else
+  gdmtranslate=
+fi
+
+# Note that this should only go to zenity dialogs which always expect utf8
+gettextfunc () {
+  if [ "x$gdmtranslate" != "x" ] ; then
+    "$gdmtranslate" --utf8 "$1"
+  else
+    echo "$1"
+  fi
+}
+
+OLD_IFS=$IFS
+
+gdmwhich () {
+  COMMAND="$1"
+  OUTPUT=
+  IFS=:
+  for dir in $PATH
+  do
+    if test -x "$dir/$COMMAND" ; then
+      if test "x$OUTPUT" = "x" ; then
+        OUTPUT="$dir/$COMMAND"
+      fi
+    fi
+  done
+  IFS=$OLD_IFS 
+  echo "$OUTPUT"
+}
+
+zenity=`gdmwhich zenity`
+
+# Note: ~/.xsession-errors is now done in the daemon so that it
+# works for ALL sessions (except ones named 'Failsafe')
+
+# clean up after xbanner
+freetemp=`gdmwhich freetemp`
+if [ -n "$freetemp" ] ; then
+	"$freetemp"
+fi
+
+userresources="$HOME/.Xresources"
+usermodmap="$HOME/.Xmodmap"
+userxkbmap="$HOME/.Xkbmap"
+
+sysresources=/etc/X11/Xresources 
+sysmodmap=/etc/X11/Xmodmap 
+sysxkbmap=/etc/X11/Xkbmap
+
+rh6sysresources=/etc/X11/xinit/Xresources 
+rh6sysmodmap=/etc/X11/xinit/Xmodmap 
+
+# merge in defaults
+if [ -f "$rh6sysresources" ]; then
+    xrdb -nocpp -merge "$rh6sysresources"
+fi
+
+if [ -f "$sysresources" ]; then
+    xrdb -nocpp -merge "$sysresources"
+fi
+
+if [ -f "$userresources" ]; then
+    xrdb -nocpp -merge "$userresources"
+fi
+
+# merge in keymaps
+if [ -f "$sysxkbmap" ]; then
+    setxkbmap `cat "$sysxkbmap"`
+    XKB_IN_USE=yes
+fi
+
+if [ -f "$userxkbmap" ]; then
+    setxkbmap `cat "$userxkbmap"`
+    XKB_IN_USE=yes
+fi
+
+#
+# Eeek, this seems like too much magic here
+#
+if [ -z "$XKB_IN_USE" -a ! -L /etc/X11/X ]; then
+    if grep '^exec.*/Xsun' /etc/X11/X > /dev/null 2>&1 && [ -f /etc/X11/XF86Config ]; then
+       xkbsymbols=`sed -n -e 's/^[     ]*XkbSymbols[   ]*"\(.*\)".*$/\1/p' /etc/X11/XF86Config`
+       if [ -n "$xkbsymbols" ]; then
+           setxkbmap -symbols "$xkbsymbols"
+           XKB_IN_USE=yes
+       fi
+    fi
+fi
+
+# xkb and xmodmap don't play nice together
+if [ -z "$XKB_IN_USE" ]; then
+    if [ -f "$rh6sysmodmap" ]; then
+       xmodmap "$rh6sysmodmap"
+    fi
+
+    if [ -f "$sysmodmap" ]; then
+       xmodmap "$sysmodmap"
+    fi
+
+    if [ -f "$usermodmap" ]; then
+       xmodmap "$usermodmap"
+    fi
+fi
+
+unset XKB_IN_USE
+
+xhost +si:localuser:`id -un` || :
+
+# run all system xinitrc shell scripts.
+if [ -d /etc/X11/xinit/xinitrc.d ]; then
+    for i in /etc/X11/xinit/xinitrc.d/* ; do
+        if [ -x "$i" -a ! -d "$i" ]; then
+	    . "$i"
+        fi
+    done
+fi
+
+if [ "x$command" = "xdefault" ] ; then
+  if [ -x "$HOME/.Xclients" ]; then
+    command="$HOME/.Xclients"
+  elif [ -x /etc/X11/xinit/Xclients ]; then
+    command="/etc/X11/xinit/Xclients"
+  elif [ -x /etc/X11/Xclients ]; then
+    command="/etc/X11/Xclients"
+  else
+    if [ -n "$zenity" ] ; then
+	disptext=`gettextfunc "System has no Xclients file, so starting a failsafe xterm session.  Windows will have focus only if the mouse pointer is above them.  To get out of this mode type 'exit' in the window."`
+      "$zenity" --info --text "$disptext"
+    else
+      echo "$0: Cannot find Xclients"
+    fi
+    exec xterm -geometry 80x24+0+0
+  fi
+fi
+
+################################################################################################################
+
+# Make sure dbus is available then set gsettings
+export DISPLAY=:0
+
+set_gsettings() {
+
+if [[ -z "$DBUS_SESSION_BUS_ADDRESS" ]]; then
+        # No DBUS session running, start one.
+        eval `dbus-launch --sh-syntax`
+fi
+
+# ALPM hooks still aren't handling this 100% of the time.
+sudo glib-compile-schemas /usr/share/glib-2.0/schemas
+
+# Change keyboard layaout
+_current_val="$(gsettings get org.gnome.desktop.input-sources sources)"
+echo "${_current_val}" > /tmp/.input-sources
+if [[ *'[]'* = "${_current_val}" ]]; then
+        gsettings set org.gnome.desktop.input-sources sources "[('xkb','us')]"
+fi
+
+# Enabled extensions
+_extensions="['user-theme@gnome-shell-extensions.gcampax.github.com', 'status-menu-buttons@dev.antergos.com', 'dash-to-dock@micxgx.gmail.com', 'panel-osd@berend.de.schouwer.gmail.com', 'topIcons@adel.gadllah@gmail.com']"
+gsettings set org.gnome.shell enabled-extensions "${_extensions}"
+
+# Extension - Panel-OSD Settings
+gsettings set org.gnome.shell.extensions.panel-osd x-pos 96.0
+gsettings set org.gnome.shell.extensions.panel-osd y-pos 96.0
+gsettings set org.gnome.shell.extensions.panel-osd force-expand true
+
+# Extension - dash-to-dock Settings
+gsettings set org.gnome.shell.extensions.dash-to-dock apply-custom-theme false
+gsettings set org.gnome.shell.extensions.dash-to-dock opaque-background true
+gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0.5
+gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-running-dots false
+gsettings set org.gnome.shell.extensions.dash-to-dock custom-theme-shrink false
+
+# Randomly choose a default wallpaper from antergos-wallpapers
+DIR="/usr/share/antergos/wallpapers"
+PIC=$(ls ${DIR}/* | shuf -n1)
+
+gsettings set org.gnome.desktop.background picture-uri file://${PIC}
+
+# Set favorite apps
+gsettings set org.gnome.shell favorite-apps "['cnchi.desktop', 'nautilus.desktop', 'chromium.desktop', 'pidgin.desktop', 'gnome-music.desktop']"
+
+# Disable screensaver
+gsettings set org.gnome.desktop.screensaver lock-enabled false
+gsettings set org.gnome.desktop.lockdown disable-lock-screen true
+gsettings set org.gnome.desktop.session idle-delay 0
+
+# Set theme
+gsettings set org.gnome.desktop.interface gtk-theme 'Numix-Frost-Light'
+gsettings set org.gnome.desktop.wm.preferences theme 'Numix-Frost-Light'
+gsettings set org.gnome.shell.extensions.user-theme name 'Numix-Frost'
+
+# Set icon theme
+gsettings set org.gnome.desktop.interface icon-theme 'Numix-Square'
+
+# Not show desktop icons
+gsettings set org.gnome.desktop.background show-desktop-icons false
+
+# Directories befor files in nautilus
+gsettings set org.gnome.nautilus.preferences sort-directories-first true
+
+# Minimize and close buttons
+gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
+
+# Don't Disable terminal bell (accessibility concerns)
+gsettings set org.gnome.desktop.wm.preferences audible-bell true
+
+# Configure touchpad
+gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+gsettings set org.gnome.desktop.peripherals.touchpad natural-scroll true
+
+# Set fonts
+gsettings set org.gnome.desktop.interface font-name 'Open Sans 12'
+gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Open Sans 13'
+gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'rgba'
+
+# Turn on automatic date/time
+gsettings set org.gnome.desktop.datetime automatic-timezone true;
+timedatectl set-ntp true
+
+# Terminal Profile
+_schema='/org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/'
+gsettings set /org/gnome/terminal/legacy/profiles:/ default 'b1dcc9dd-5262-4d8d-a863-c897e6d979b9'
+gsettings set /org/gnome/terminal/legacy/profiles:/ list "['b1dcc9dd-5262-4d8d-a863-c897e6d979b9']"
+gsettings set "${_schema}" use-theme-colors false
+gsettings set "${_schema}" background-color '#262626262626'
+gsettings set "${_schema}" foreground-color '#F8F8F8F8F2F2'
+gsettings set "${_schema}" visible-name 'antergos'
+gsettings set "${_schema}" palette "['#1B1B1D1D1E1E', '#F9F926267272', '#8282B4B41414', '#FDFD97971F1F', '#5656C2C2D6D6', '#8C8C5454FEFE', '#464654545757', '#CCCCCCCCC6C6', '#505053535454', '#FFFF59599595', '#B6B6E3E35454', '#FEFEEDED6C6C', '#8C8CEDEDFFFF', '#9E9E6F6FFEFE', '#89899C9CA1A1', '#F8F8F8F8F2F2']"
+}
+
+echo "Running set-gsettings..."
+set_gsettings > /tmp/.set_gsettings 2>&1;
+echo "set-gsettings complete"
+gnome-keyring-daemon -rd
+echo "X session wrapper complete, running session $@"
+
+################################################################################################################
+
+echo "$0: Setup done, will execute: $command"
+
+eval exec $command
+
+echo "$0: Executing $command failed, will run xterm"
+
+if [ -n "$zenity" ] ; then
+	disptext=`gettextfunc "Failed to start the session, so starting a failsafe xterm session.  Windows will have focus only if the mouse pointer is above them.  To get out of this mode type 'exit' in the window."`
+	"$zenity" --info --text "$disptext"
+fi
+
+exec xterm -geometry 80x24+0+0
