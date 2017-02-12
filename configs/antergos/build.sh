@@ -262,6 +262,7 @@ remove_extra_icons() {
 
 # Copy iso_hotfix_utility files to root-image
 iso_hotfix_utility() {
+    echo ">>> Installing iso-hotfix-utility..."
     cp ${script_path}/iso-hotfix-utility/iso-hotfix-utility ${work_dir}/root-image/usr/bin/pacman-boot
     chmod 755 ${work_dir}/root-image/usr/bin/pacman-boot
 
@@ -269,8 +270,7 @@ iso_hotfix_utility() {
 
     for _file in ${script_path}/iso-hotfix-utility/dist/**
     do
-        cp "${_file}" "${work_dir}/root-image/etc/iso-hotfix-utility.d"
-        chmod 755 "${work_dir}/root-image/etc/iso-hotfix-utility.d/${_file}"
+        install -m755 -t "${work_dir}/root-image/etc/iso-hotfix-utility.d" "${_file}"
     done
 
     for fpath in ${script_path}/iso-hotfix-utility/po/*; do
