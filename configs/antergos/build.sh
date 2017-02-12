@@ -67,17 +67,15 @@ make_setup_mkinitcpio() {
         cp -L ${script_path}/plymouth.initcpio_hook ${work_dir}/root-image/etc/initcpio/hooks
         cp -L ${script_path}/plymouth.initcpio_install ${work_dir}/root-image/etc/initcpio/install
         #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
-        echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~PLYMOUTH DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
+        echo '>>> Plymouth done!'
     else
         sed -i 's|plymouth||g' ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
     fi
 
     mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2>&1
-    echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~MKINITCPIO DONE~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
-    if [[ -f ${work_dir}/root-image/boot/archiso.img ]]; then
-    		echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~archiso.img EXISTS!!!~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
-    else
-    		echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~CANNOT FIND archiso.img!!!~~~~~~~~~@@@@@@@@@@@@@@@@@@@';
+    echo '>>> Mkinitcpio done!'
+    if [[ ! -f ${work_dir}/root-image/boot/archiso.img ]]; then
+    		echo '>>> Building archiso.img!'
     		arch-chroot "${work_dir}/root-image" 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' 2>&1
     fi
 
@@ -91,7 +89,7 @@ make_boot() {
         cp ${work_dir}/root-image/boot/archiso.img ${work_dir}/iso/${install_dir}/boot/archiso.img
         cp ${work_dir}/root-image/boot/vmlinuz-linux ${work_dir}/iso/${install_dir}/boot/vmlinuz
     else
-        echo '@@@@@@@@@@@@@@@@@@@~~~~~~~~~work_dir is'; echo ${work_dir}; echo '~~~~~~~~~@@@@@@@@@@@@@@@@@@@'
+        echo '>>> work_dir is ${work_dir}'
         ls ${work_dir} && ls ${work_dir}/root-image/ && ls ${work_dir}/root-image/boot/
     fi
 }
@@ -259,7 +257,31 @@ remove_extra_icons() {
             ! -ipath '**highcolor**' \
             -type f -delete
     fi
+}
 
+
+# Copy iso_hotfix_utility files to root-image
+iso_hotfix_utility() {
+    cp ${script_path}/iso-hotfix-utility/iso-hotfix-utility ${work_dir}/root-image/usr/bin/pacman-boot
+    chmod 755 ${work_dir}/root-image/usr/bin/pacman-boot
+
+    mkdir -p "${work_dir}/root-image/etc/iso-hotfix-utility.d"
+
+    for _file in ${script_path}/iso-hotfix-utility/dist/**
+    do
+        cp "${_file}" "${work_dir}/root-image/etc/iso-hotfix-utility.d"
+        chmod 755 "${work_dir}/root-image/etc/iso-hotfix-utility.d/${_file}"
+    done
+
+    for fpath in ${script_path}/iso-hotfix-utility/po/*; do
+        if [[ -f "${fpath}" ]] && [[ "${fpath}" != 'po/CNCHI_UPDATER.pot' ]]; then
+            STRING_PO=`echo ${fpath#*/}`
+            STRING=`echo ${STRING_PO%.po}`
+            mkdir -p "${work_dir}/root-image/usr/share/locale/${STRING}/LC_MESSAGES"
+            msgfmt "${fpath}" -o "${work_dir}/root-image/usr/share/locale/${STRING}/LC_MESSAGES/CNCHI_UPDATER.mo"
+            echo "${STRING} installed..."
+        fi
+    done
 }
 
 
@@ -274,8 +296,7 @@ make_customize_root_image() {
         chmod 750 ${work_dir}/root-image/etc/sudoers.d
         chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
 
-        cp ${script_path}/iso-hotfix-utility/iso-hotfix-utility ${work_dir}/root-image/usr/bin/pacman-boot
-        chmod 755 ${work_dir}/root-image/usr/bin/pacman-boot
+        iso_hotfix_utility
 
         #mkdir -p ${work_dir}/root-image/etc/pacman.d
         #wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
@@ -470,7 +491,7 @@ build_kernel_modules_with_dkms() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'pacman -Rdd --noconfirm linux-headers dkms' run
 
-        # Bugfix 
+        # Bugfix
         cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
         chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
