@@ -424,6 +424,7 @@ make_customize_root_image() {
         for _schema in ${script_path}/*.gschema.override; do
             echo ">>> Will use ${_cfg}"
             cp ${_schema} ${work_dir}/root-image/usr/share/glib-2.0/schemas
+        done
 
         # Compile schemas
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
