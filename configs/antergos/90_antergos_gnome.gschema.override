@@ -16,7 +16,7 @@ picture-uri='file:///usr/share/antergos/wallpapers/antergos-wallpaper.png'
 sources=[('xkb','us')]
 
 [org.gnome.desktop.interface]
-clock-format='12h'
+clock-format='24h'
 clock-show-date=true
 clock-show-seconds=false
 gtk-theme='Numix-Frost-Light'
