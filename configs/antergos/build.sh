@@ -422,7 +422,7 @@ make_customize_root_image() {
         # Copy schemas
         mkdir -p ${work_dir}/root-image/usr/share/glib-2.0/schemas
         for _schema in ${script_path}/*.gschema.override; do
-            echo ">>> Will use ${_cfg}"
+            echo ">>> Will use ${_schema}"
             cp ${_schema} ${work_dir}/root-image/usr/share/glib-2.0/schemas
         done
 
