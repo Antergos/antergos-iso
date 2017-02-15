@@ -12,19 +12,17 @@ arch=$(uname -m)
 work_dir=work
 out_dir=/out
 verbose="-v"
-cmd_args=""
 keep_pacman_packages="y"
 pacman_conf="${work_dir}/pacman.conf"
 script_path=$(readlink -f ${0%/*})
 
+# Get ISO name from iso_name.txt
 if [ -f "${script_path}/iso_name.txt" ]; then
     iso_name=$(cat ${script_path}/iso_name.txt)
 fi
 
-setup_workdir() {
-    #cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+make_pacman_conf() {
     cache_dirs="/var/cache/pacman/pkg"
-    mkdir -p "${work_dir}"
     pacman_conf="${work_dir}/pacman.conf"
     sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" "${script_path}/pacman.conf" > "${pacman_conf}"
 }
@@ -617,45 +615,24 @@ fi
 
 while getopts 'N:V:L:D:w:o:zvh' arg; do
     case "${arg}" in
-        N)
-            iso_name="${OPTARG}"
-            cmd_args+=" -N ${iso_name}"
-            ;;
-        V)
-            iso_version="${OPTARG}"
-            cmd_args+=" -V ${iso_version}"
-            ;;
-        L)
-            iso_label="${OPTARG}"
-            cmd_args+=" -L ${iso_label}"
-            ;;
-        D)
-            install_dir="${OPTARG}"
-            cmd_args+=" -D ${install_dir}"
-            ;;
-        w)
-            work_dir="${OPTARG}"
-            cmd_args+=" -w ${work_dir}"
-            ;;
-        o)
-            out_dir="${OPTARG}"
-            cmd_args+=" -o ${out_dir}"
-            ;;
-        z)
-            keep_pacman_packages="y"
-            echo "Will keep pacman cache"
-            ;;
-        v)
-            verbose="-v"
-            cmd_args+=" -v"
-            ;;
-        h|?) _usage 0 ;;
+        N) iso_name="${OPTARG}" ;;
+        V) iso_version="${OPTARG}" ;;
+        L) iso_label="${OPTARG}" ;;
+        D) install_dir="${OPTARG}" ;;
+        w) work_dir="${OPTARG}" ;;
+        o) out_dir="${OPTARG}" ;;
+        z) keep_pacman_packages="y"
+           echo ">>> Will keep pacman cache in ISO file!" ;;
+        v) verbose="-v" ;;
+        h) _usage 0 ;;
         *)
-            _msg_error "Invalid argument '${arg}'" 0
+            echo "Invalid argument '${arg}'"
             _usage 1
             ;;
     esac
 done
+
+mkdir -p ${work_dir}
 
 shift $((OPTIND - 1))
 
