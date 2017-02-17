@@ -11,7 +11,7 @@ _set_locales
 #locale-gen > /dev/null
 
 # Install chinese fonts
-if [ "$LOCALE" = 'zh_TW' ] || [ "$LOCALE" = 'zh_CN' ];then
+if [ "$LOCALE" = 'zh_TW' ] || [ "$LOCALE" = 'zh_CN' ]; then
 	pacman --noconfirm -U /arch/pkg/opendesktop-fonts-1.4.2-1-any.pkg.tar.xz
 fi
 
@@ -23,6 +23,16 @@ sudo -u antergos echo ${LOCALE} > /home/antergos/.config/user-dirs.locale
 sudo -u antergos xdg-user-dirs-update
 
 systemd-detect-virt -v -q && { sudo depmod -a; modprobe -a vboxguest vboxsf vboxvideo; }
+
+VESA=$(grep vesa /proc/cmdline)
+if [ "$VESA" != "" ]; then
+    sudo cp /etc/antergos/10-vesa.conf /etc/X11/xorg.conf.d
+fi
+
+HEADLESS=$(grep headless /proc/cmdline)
+if [ "$HEADLESS" != "" ]; then
+    sudo cp /etc/antergos/10-headless.conf /etc/X11/xorg.conf.d
+fi
 
 echo "LiveCD Configuration Complete"
 exit 0;
