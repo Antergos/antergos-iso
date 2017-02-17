@@ -121,7 +121,7 @@ make_setup_mkinitcpio() {
 }
 
 # Customize installation (root-image)
-make_customize_rootfs) {
+make_customize_rootfs() {
     part_one() {
         cp -afLR ${script_path}/root-image ${work_dir}
         if [ -f "${work_dir}/root-image/etc/xdg/autostart/pamac-tray.desktop" ]; then
