@@ -640,8 +640,6 @@ fi
 
 command_name="${1}"
 
-setup_workdir
-
 case "${command_name}" in
     build)
         make_all
