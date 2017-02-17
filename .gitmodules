@@ -1,0 +1,6 @@
+[submodule "iso-hotfix-utility"]
+	path = iso-hotfix-utility
+	url = https://github.com/Antergos/iso-hotfix-utility.git
+[submodule "antergos-gfxboot"]
+	path = antergos-gfxboot
+	url = https://github.com/Antergos/antergos-gfxboot.git
