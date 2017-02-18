@@ -77,8 +77,9 @@ make_basefs() {
 
 # Additional packages (root-image)
 make_packages() {
-    for _file in ${script_path}/packages/packages.*
+    for _file in ${script_path}/packages/*.packages
     do
+        echo
         echo ">>> Installing packages from ${_file}..."
         mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${_file})" install
     done
