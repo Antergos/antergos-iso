@@ -21,6 +21,9 @@ script_path=$(readlink -f ${0%/*})
 keep=""
 pacman_conf="${work_dir}/pacman.conf"
 
+local_mirror=""
+# local_mirror="Server = http://192.168.1.78:8080/mirror/\$repo/os/\$arch"
+
 
 _usage ()
 {
@@ -145,6 +148,12 @@ make_customize_rootfs() {
         #mkdir -p ${work_dir}/root-image/etc/pacman.d
         #wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
         #sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
+
+        # Use local mirror if provided
+        if [ "$local_mirror" != "" ]; then
+            mkdir -p ${work_dir}/root-image/etc/pacman.d
+            echo "Server = ${local_mirror}" > ${work_dir}/root-image/etc/pacman.d/mirrorlist
+        fi
 
         #mkdir -p ${work_dir}/root-image/var/run/dbus
         #mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
