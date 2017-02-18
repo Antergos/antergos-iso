@@ -47,6 +47,8 @@ _usage ()
     echo "   build"
     echo "      Build selected .iso"
     echo "   clean"
+    echo "      Clean working directory"
+    echo "   purge"
     echo "      Clean working directory and .iso file in output directory of build"
     echo
     exit ${1}
