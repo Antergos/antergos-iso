@@ -636,8 +636,7 @@ if [ -f "${script_path}/iso_name.txt" ]; then
     iso_name=$(cat ${script_path}/iso_name.txt)
 fi
 
-
-while getopts 'N:V:L:D:w:o:zvh' arg; do
+while getopts 'N:V:L:D:w:o:vh' arg; do
     case "${arg}" in
         N) iso_name="${OPTARG}" ;;
         V) iso_version="${OPTARG}" ;;
