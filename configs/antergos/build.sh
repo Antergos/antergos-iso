@@ -17,8 +17,10 @@ arch=$(uname -m)
 verbose="-v"
 script_path=$(readlink -f ${0%/*})
 
-# To keep pacman xz packages use keep="-z"
-keep=""
+# Keep xz packages (default)
+keep="-z"
+
+# Pacman configuration file
 pacman_conf="${work_dir}/pacman.conf"
 
 
@@ -39,7 +41,6 @@ _usage ()
     echo "                        Default: ${work_dir}"
     echo "    -o <out_dir>       Set the output directory"
     echo "                        Default: ${out_dir}"
-    echo "    -z                 Keep xz packages inside iso"
     echo "    -v                 Enable verbose output"
     echo "    -h                 This help message"
     echo
@@ -67,6 +68,17 @@ make_pacman_conf() {
     cache_dirs="/var/cache/pacman/pkg"
     pacman_conf="${work_dir}/pacman.conf"
     sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" "${script_path}/pacman.conf" > "${pacman_conf}"
+
+    # Will remove cached pacman xz packages when the
+    # iso name contains "minimal" in its name
+    minimal=$(echo "${iso_name}" | grep -q "minimal")
+    if [ "$minimal" != "" ]; then
+        keep=""
+        echo ">>> Will remove cached xz packages for minimal iso"
+    else
+        keep="-z"
+        echo ">>> Will keep cached xz packages"
+    fi
 }
 
 # Base installation, plus needed packages (root-image)
@@ -141,6 +153,10 @@ make_customize_rootfs() {
         chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
 
         iso_hotfix_utility
+
+        if [ "$minimal" != "" ]; then
+            remove_extra_icons
+        fi
 
         #mkdir -p ${work_dir}/root-image/etc/pacman.d
         #wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
@@ -620,6 +636,7 @@ if [ -f "${script_path}/iso_name.txt" ]; then
     iso_name=$(cat ${script_path}/iso_name.txt)
 fi
 
+
 while getopts 'N:V:L:D:w:o:zvh' arg; do
     case "${arg}" in
         N) iso_name="${OPTARG}" ;;
@@ -628,8 +645,6 @@ while getopts 'N:V:L:D:w:o:zvh' arg; do
         D) install_dir="${OPTARG}" ;;
         w) work_dir="${OPTARG}" ;;
         o) out_dir="${OPTARG}" ;;
-        z) keep="-z"
-           echo ">>> Will keep pacman cache in ISO file" ;;
         v) verbose="-v" ;;
         h) _usage 0 ;;
         *)
