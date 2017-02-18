@@ -76,8 +76,8 @@ make_pacman_conf() {
 
     # Will remove cached pacman xz packages when the
     # iso name contains "minimal" in its name
-    minimal=`echo "${iso_name}" | grep minimal`
-    if [ "$minimal" != "" ]; then
+
+    if [[ ${iso_name} == *"minimal"* ]]; then
         keep=""
         echo ">>> Will remove cached xz packages for minimal iso"
     else
@@ -159,7 +159,7 @@ make_customize_rootfs() {
 
         iso_hotfix_utility
 
-        if [ "$minimal" != "" ]; then
+        if [[ ${iso_name} == *"minimal"* ]]; then
             remove_extra_icons
         fi
 
