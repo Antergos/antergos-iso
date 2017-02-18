@@ -109,10 +109,10 @@ make_setup_mkinitcpio() {
     cp -L ${script_path}/mkinitcpio.conf ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
     cp -L ${script_path}/root-image/etc/os-release ${work_dir}/root-image/etc
 
-    if [ -f "${script_path}/plymouthd.conf" ]; then
-        cp -L ${script_path}/plymouthd.conf ${work_dir}/root-image/etc/plymouth
-        cp -L ${script_path}/plymouth.initcpio_hook ${work_dir}/root-image/etc/initcpio/hooks
-        cp -L ${script_path}/plymouth.initcpio_install ${work_dir}/root-image/etc/initcpio/install
+    if [ -f "${script_path}/plymouth/plymouthd.conf" ]; then
+        cp -L ${script_path}/plymouth/plymouthd.conf ${work_dir}/root-image/etc/plymouth
+        cp -L ${script_path}/plymouth/plymouth.initcpio_hook ${work_dir}/root-image/etc/initcpio/hooks
+        cp -L ${script_path}/plymouth/plymouth.initcpio_install ${work_dir}/root-image/etc/initcpio/install
         #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
         echo '>>> Plymouth done!'
     else
@@ -264,14 +264,14 @@ make_customize_rootfs() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/update-ca-trust' run
 
-        # Copy schemas
+        # Copying GSettings XML schema files
         mkdir -p ${work_dir}/root-image/usr/share/glib-2.0/schemas
-        for _schema in ${script_path}/*.gschema.override; do
+        for _schema in ${script_path}/gsettings/*.gschema.override; do
             echo ">>> Will use ${_schema}"
             cp ${_schema} ${work_dir}/root-image/usr/share/glib-2.0/schemas
         done
 
-        # Compile schemas
+        # Compiling GSettings XML schema files
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas' run
 

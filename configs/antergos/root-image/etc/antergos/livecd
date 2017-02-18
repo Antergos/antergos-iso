@@ -26,12 +26,12 @@ systemd-detect-virt -v -q && { sudo depmod -a; modprobe -a vboxguest vboxsf vbox
 
 VESA=$(grep vesa /proc/cmdline)
 if [ "$VESA" != "" ]; then
-    sudo cp /etc/antergos/10-vesa.conf /etc/X11/xorg.conf.d
+    sudo cp /etc/antergos/xorg/10-vesa.conf /etc/X11/xorg.conf.d
 fi
 
 HEADLESS=$(grep headless /proc/cmdline)
 if [ "$HEADLESS" != "" ]; then
-    sudo cp /etc/antergos/10-headless.conf /etc/X11/xorg.conf.d
+    sudo cp /etc/antergos/xorg/10-headless.conf /etc/X11/xorg.conf.d
 fi
 
 echo "LiveCD Configuration Complete"
