@@ -23,6 +23,11 @@ keep="-z"
 # Pacman configuration file
 pacman_conf="${work_dir}/pacman.conf"
 
+# Get ISO name from iso_name.txt file
+if [ -f "${script_path}/iso_name.txt" ]; then
+    iso_name=$(cat ${script_path}/iso_name.txt)
+fi
+
 
 _usage ()
 {
@@ -71,7 +76,7 @@ make_pacman_conf() {
 
     # Will remove cached pacman xz packages when the
     # iso name contains "minimal" in its name
-    minimal=$(echo "${iso_name}" | grep -q "minimal")
+    minimal=`echo "${iso_name}" | grep minimal`
     if [ "$minimal" != "" ]; then
         keep=""
         echo ">>> Will remove cached xz packages for minimal iso"
@@ -629,11 +634,6 @@ fi
 if [[ ${arch} != x86_64 ]]; then
     echo "This script needs to be run on x86_64"
     _usage 1
-fi
-
-# Get ISO name from iso_name.txt file
-if [ -f "${script_path}/iso_name.txt" ]; then
-    iso_name=$(cat ${script_path}/iso_name.txt)
 fi
 
 while getopts 'N:V:L:D:w:o:vh' arg; do
