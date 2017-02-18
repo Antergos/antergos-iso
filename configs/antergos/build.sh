@@ -69,17 +69,21 @@ make_pacman_conf() {
 # Base installation, plus needed packages (root-image)
 make_basefs() {
     mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode memtest86+ nbd" install
+    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode nbd" install
 }
 
 # Additional packages (root-image)
 make_packages() {
-    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${script_path}/packages/packages.*)" install
+    for _file in ${script_path}/packages/packages.*
+    do
+        echo ">>> Installing packages from ${_file}..."
+        mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${_file})" install
+    done
 }
 
 # Needed packages for x86_64 EFI boot
 make_packages_efi() {
-    mkarchiso ${verbose} -w "${work_dir}" -C "${work_dir}/pacman.conf" -D "${install_dir}" -p "efitools" install
+    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "efitools" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
