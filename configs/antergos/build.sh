@@ -72,7 +72,7 @@ make_pacman_conf() {
 # Base installation, plus needed packages (root-image)
 make_basefs() {
     mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode nbd" install
+    mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode nbd memtest86+" install
 }
 
 # Additional packages (root-image)
