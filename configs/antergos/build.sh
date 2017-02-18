@@ -17,7 +17,8 @@ arch=$(uname -m)
 verbose="-v"
 script_path=$(readlink -f ${0%/*})
 
-keep_pacman_packages="y"
+# To keep pacman xz packages use keep="-z"
+keep=""
 pacman_conf="${work_dir}/pacman.conf"
 
 
@@ -38,7 +39,7 @@ _usage ()
     echo "                        Default: ${work_dir}"
     echo "    -o <out_dir>       Set the output directory"
     echo "                        Default: ${out_dir}"
-    echo "    -z                 Leave xz packages inside iso"
+    echo "    -z                 Keep xz packages inside iso"
     echo "    -v                 Enable verbose output"
     echo "    -h                 This help message"
     echo
@@ -68,8 +69,8 @@ make_pacman_conf() {
 
 # Base installation, plus needed packages (root-image)
 make_basefs() {
-    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode nbd" install
+    mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
+    mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode nbd" install
 }
 
 # Additional packages (root-image)
@@ -77,13 +78,13 @@ make_packages() {
     for _file in ${script_path}/packages/packages.*
     do
         echo ">>> Installing packages from ${_file}..."
-        mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${_file})" install
+        mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${_file})" install
     done
 }
 
 # Needed packages for x86_64 EFI boot
 make_packages_efi() {
-    mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "efitools" install
+    mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "efitools" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
@@ -115,7 +116,8 @@ make_setup_mkinitcpio() {
         sed -i 's|plymouth||g' ${work_dir}/root-image/etc/mkinitcpio-archiso.conf
     fi
 
-    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run 2>&1
+    mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run
     echo '>>> Mkinitcpio done!'
     if [[ ! -f ${work_dir}/root-image/boot/archiso.img ]]; then
     		echo '>>> Building archiso.img!'
@@ -208,9 +210,9 @@ make_customize_rootfs() {
             echo ">>> Chromium not installed."
         fi
 
-	# Setup Midori start page if installed
-	if [ -f "${work_dir}/root-image/usr/share/applications/midori.desktop" ]; then
-           sed -i 's|^Exec=midori %U|Exec=midori https://www.antergos.com|g' ${work_dir}/root-image/usr/share/applications/midori.desktop
+        # Setup Midori start page if installed
+        if [ -f "${work_dir}/root-image/usr/share/applications/midori.desktop" ]; then
+            sed -i 's|^Exec=midori %U|Exec=midori https://www.antergos.com|g' ${work_dir}/root-image/usr/share/applications/midori.desktop
         fi
 
         touch /var/tmp/customize_${iso_name}_rootfs.four
@@ -293,8 +295,8 @@ make_customize_rootfs() {
         # Black list floppy
         echo "blacklist floppy" > ${work_dir}/root-image/etc/modprobe.d/nofloppy.conf
 
-        # Black list pc speaker
-        echo "blacklist pcspkr" > ${work_dir}/root-image/etc/modprobe.d/nopcspkr.conf
+        ## Black list pc speaker
+        #echo "blacklist pcspkr" > ${work_dir}/root-image/etc/modprobe.d/nopcspkr.conf
 
         # Install translations for updater script
         ( "${script_path}/translations.sh" $(cd "${out_dir}"; pwd;) $(cd "${work_dir}"; pwd;) $(cd "${script_path}"; pwd;) )
@@ -526,7 +528,6 @@ make_iso_version_files() {
     done
 }
 
-
 # Build "dkms" kernel modules.
 make_kernel_modules_with_dkms() {
     if [[ ! -f /var/tmp/customize_${iso_name}_rootfs.dkms ]]; then
@@ -548,15 +549,13 @@ make_kernel_modules_with_dkms() {
     fi
 }
 
-
 # Build a single root filesystem
 make_prepare() {
     cp -a -l -f ${work_dir}/root-image ${work_dir}
 
-    mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}"  pkglist
-    mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}"  prepare
+    mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}" pkglist
+    mkarchiso ${verbose} -z -w "${work_dir}" -D "${install_dir}" prepare
 }
-
 
 # Build ISO
 make_iso() {
@@ -568,13 +567,17 @@ make_iso() {
     mkarchiso ${verbose} -z -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${isoName}"
 }
 
-
-clean_rootfs () {
+# Cleans rootfs
+clean_rootfs() {
     rm -rf ${work_dir}
-    rm -f ${out_dir}/${iso_name}-${iso_version}-*-${arch}.iso
     rm -f /var/tmp/customize_${iso_name}_rootfs.*
 }
 
+# Cleans rootfs and deletes iso files
+purge_rootfs() {
+    clean_rootfs
+    rm -f ${out_dir}/${iso_name}-${iso_version}-*-${arch}.iso
+}
 
 make_all() {
     run_once make_pacman_conf
@@ -609,7 +612,7 @@ if [[ ${arch} != x86_64 ]]; then
     _usage 1
 fi
 
-# Get ISO name from iso_name.txt
+# Get ISO name from iso_name.txt file
 if [ -f "${script_path}/iso_name.txt" ]; then
     iso_name=$(cat ${script_path}/iso_name.txt)
 fi
@@ -622,8 +625,8 @@ while getopts 'N:V:L:D:w:o:zvh' arg; do
         D) install_dir="${OPTARG}" ;;
         w) work_dir="${OPTARG}" ;;
         o) out_dir="${OPTARG}" ;;
-        z) keep_pacman_packages="y"
-           echo ">>> Will keep pacman cache in ISO file!" ;;
+        z) keep="-z"
+           echo ">>> Will keep pacman cache in ISO file" ;;
         v) verbose="-v" ;;
         h) _usage 0 ;;
         *)
@@ -650,5 +653,8 @@ case "${command_name}" in
         ;;
     clean)
         clean_rootfs
+        ;;
+    purge)
+        purge_rootfs
         ;;
 esac
