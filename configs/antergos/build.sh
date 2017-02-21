@@ -11,7 +11,7 @@ iso_version="${year}.${month}"
 
 install_dir="arch"
 work_dir=work
-out_dir=/out
+out_dir=out
 
 arch=$(uname -m)
 verbose="-v"
@@ -143,7 +143,6 @@ make_setup_mkinitcpio() {
     		echo '>>> Building archiso.img!'
     		arch-chroot "${work_dir}/root-image" 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' 2>&1
     fi
-
 }
 
 # Customize installation (root-image)
@@ -654,6 +653,7 @@ while getopts 'N:V:L:D:w:o:vh' arg; do
 done
 
 mkdir -p ${work_dir}
+mkdir -p ${out_dir}
 
 shift $((OPTIND - 1))
 
