@@ -24,15 +24,7 @@ sudo -u antergos xdg-user-dirs-update
 
 systemd-detect-virt -v -q && { sudo depmod -a; modprobe -a vboxguest vboxsf vboxvideo; }
 
-VESA=$(grep vesa /proc/cmdline)
-if [ "$VESA" != "" ]; then
-    sudo cp /etc/antergos/xorg/10-vesa.conf /etc/X11/xorg.conf.d
-fi
-
-HEADLESS=$(grep headless /proc/cmdline)
-if [ "$HEADLESS" != "" ]; then
-    sudo cp /etc/antergos/xorg/10-headless.conf /etc/X11/xorg.conf.d
-fi
+set_video_driver
 
 echo "LiveCD Configuration Complete"
 exit 0;
