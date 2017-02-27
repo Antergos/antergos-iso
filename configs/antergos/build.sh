@@ -558,15 +558,15 @@ make_kernel_modules_with_dkms() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'dkms autoinstall' run
 
-        # Remove kernel headers.
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'pacman -Rdd --noconfirm linux-headers' run
-
-        # Bugfix
+        # Bugfix (sometimes pacman tries to build zfs before spl!)
         cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
         chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/dkms.sh' run
+
+        # Remove kernel headers.
+        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+            -r 'pacman -Rdd --noconfirm linux-headers' run
 
         touch /var/tmp/customize_${iso_name}_rootfs.dkms
     fi
