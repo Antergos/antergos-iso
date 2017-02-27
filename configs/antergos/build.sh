@@ -558,9 +558,9 @@ make_kernel_modules_with_dkms() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'dkms autoinstall' run
 
-        # Remove kernel headers and dkms.
+        # Remove kernel headers.
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'pacman -Rdd --noconfirm linux-headers dkms' run
+            -r 'pacman -Rdd --noconfirm linux-headers' run
 
         # Bugfix
         cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
