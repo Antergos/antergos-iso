@@ -679,7 +679,8 @@ if [[ $# -lt 1 ]]; then
     _usage 1
 fi
 
-if [ "${2}" == "nozfs" ]; then
+if [ $# -gt 1 ] && [ "${2}" == "nozfs" ]; then
+    echo ">>> No ZFS modules will be added to the iso!"
     add_zfs="n"
 else
     add_zfs="y"
