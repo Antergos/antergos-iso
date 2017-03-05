@@ -17,8 +17,12 @@ arch=$(uname -m)
 verbose="-v"
 script_path=$(readlink -f ${0%/*})
 
-# Keep xz packages (default)
+# Keep xz packages
+# (minimal config will not keep them)
 keep="-z"
+
+# Add ZFS modules
+add_zfs="y"
 
 # Pacman configuration file
 pacman_conf="${work_dir}/pacman.conf"
@@ -52,6 +56,8 @@ _usage ()
     echo " Commands:"
     echo "   build"
     echo "      Build selected .iso"
+    echo "   build nozfs"
+    echo "      Build selected .iso without zfs modules"
     echo "   clean"
     echo "      Clean working directory"
     echo "   purge"
@@ -98,7 +104,11 @@ make_packages() {
     do
         echo
         echo ">>> Installing packages from ${_file}..."
-        mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "$(grep -h -v ^# ${_file})" install
+        packages=$(grep -h -v ^# ${_file})
+        if [ "${add_zfs}" != "y" ]; then
+            packages=$(grep -h -v ^# ${_file} | grep -h -v ^zfs)
+        fi
+        mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "${packages}" install
     done
 }
 
@@ -560,11 +570,13 @@ make_kernel_modules_with_dkms() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'dkms autoinstall' run
 
-        # Bugfix (sometimes pacman tries to build zfs before spl!)
-        cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
-        chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r '/usr/bin/dkms.sh' run
+        if [ "${add_zfs}" == "y" ]; then
+            # Bugfix (sometimes pacman tries to build zfs before spl!)
+            cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
+            chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
+            mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+                -r '/usr/bin/dkms.sh' run
+        fi
 
         # Remove kernel headers.
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
@@ -662,6 +674,12 @@ shift $((OPTIND - 1))
 if [[ $# -lt 1 ]]; then
     echo "No command specified"
     _usage 1
+fi
+
+if [ "${2}" == "nozfs" ]; then
+    add_zfs="n"
+else
+    add_zfs="y"
 fi
 
 command_name="${1}"
