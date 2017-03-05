@@ -352,6 +352,7 @@ make_customize_rootfs() {
 
 # Copy iso_hotfix_utility files to root-image
 iso_hotfix_utility() {
+    echo
     echo ">>> Installing iso-hotfix-utility..."
     cp ${script_path}/iso-hotfix-utility/iso-hotfix-utility ${work_dir}/root-image/usr/bin/pacman-boot
     chmod 755 ${work_dir}/root-image/usr/bin/pacman-boot
@@ -502,6 +503,8 @@ make_efiboot() {
 # Remove unused icons (should only be used by minimal installation)
 remove_extra_icons() {
     if [[ -d "${work_dir}/root-image/usr/share/icons" ]]; then
+        echo
+        echo ">>> Removing extra icons..."
         cd ${work_dir}/root-image/usr/share/icons
         find . \
             ! -iname '**Cnchi**' \
