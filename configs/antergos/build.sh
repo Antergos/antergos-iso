@@ -17,12 +17,13 @@ arch=$(uname -m)
 verbose="-v"
 script_path=$(readlink -f ${0%/*})
 
-# Keep xz packages
-# (minimal config will not keep them)
-keep="-z"
-
 # Add ZFS modules
-add_zfs="y"
+add_zfs_modules="y"
+
+# Install iso-hotfix-utility from source
+iso_hotfix="n"
+iso_hotfix_utility_version="1.0.17"
+iso_hotfix_utility_url="https://github.com/Antergos/iso-hotfix-utility/archive/${iso_hotfix_utility_version}.tar.gz"
 
 # Pacman configuration file
 pacman_conf="${work_dir}/pacman.conf"
@@ -56,8 +57,6 @@ _usage ()
     echo " Commands:"
     echo "   build"
     echo "      Build selected .iso"
-    echo "   build nozfs"
-    echo "      Build selected .iso without zfs modules"
     echo "   clean"
     echo "      Clean working directory"
     echo "   purge"
@@ -82,20 +81,19 @@ make_pacman_conf() {
 
     # Will remove cached pacman xz packages when the
     # iso name contains "minimal" in its name
-
     if [[ ${iso_name} == *"minimal"* ]]; then
-        keep=""
+        keep_xz=""
         echo ">>> Will remove cached xz packages for minimal iso"
     else
-        keep="-z"
+        keep_xz="-z"
         echo ">>> Will keep cached xz packages"
     fi
 }
 
 # Base installation, plus needed packages (root-image)
 make_basefs() {
-    mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode nbd memtest86+" install
+    mkarchiso ${verbose} ${keep_xz} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
+    mkarchiso ${verbose} ${keep_xz} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode nbd memtest86+" install
 }
 
 # Additional packages (root-image)
@@ -105,16 +103,16 @@ make_packages() {
         echo
         echo ">>> Installing packages from ${_file}..."
         packages=$(grep -h -v ^# ${_file})
-        if [ "${add_zfs}" != "y" ]; then
+        if [ "${add_zfs_modules}" != "y" ]; then
             packages=$(grep -h -v ^# ${_file} | grep -h -v ^zfs)
         fi
-        mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "${packages}" install
+        mkarchiso ${verbose} ${keep_xz} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "${packages}" install
     done
 }
 
 # Needed packages for x86_64 EFI boot
 make_packages_efi() {
-    mkarchiso ${verbose} ${keep} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "efitools" install
+    mkarchiso ${verbose} ${keep_xz} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "efitools" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
@@ -168,7 +166,9 @@ make_customize_rootfs() {
         chmod 750 ${work_dir}/root-image/etc/sudoers.d
         chmod 440 ${work_dir}/root-image/etc/sudoers.d/g_wheel
 
-        iso_hotfix_utility
+        if [ "$iso_hotfix" == "y" ]; then
+            iso_hotfix_utility
+        fi
 
         if [[ ${iso_name} == *"minimal"* ]]; then
             remove_extra_icons
@@ -350,10 +350,14 @@ make_customize_rootfs() {
     done
 }
 
-# Copy iso_hotfix_utility files to root-image
+# Install iso_hotfix_utility files to root-image
 iso_hotfix_utility() {
     echo
     echo ">>> Installing iso-hotfix-utility..."
+    wget $iso_hotfix_utility_url -O ${script_path}/iso-hotfix-utility.tar.gz
+    tar xfz ${script_path}/iso-hotfix-utility.tar.gz -C ${script_path}
+    mv "${script_path}/iso-hotfix-utility-${iso_hotfix_utility_version}" ${script_path}/iso-hotfix-utility
+
     cp ${script_path}/iso-hotfix-utility/iso-hotfix-utility ${work_dir}/root-image/usr/bin/pacman-boot
     chmod 755 ${work_dir}/root-image/usr/bin/pacman-boot
 
@@ -573,7 +577,7 @@ make_kernel_modules_with_dkms() {
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r 'dkms autoinstall' run
 
-        if [ "${add_zfs}" == "y" ]; then
+        if [ "${add_zfs_modules}" == "y" ]; then
             # Bugfix (sometimes pacman tries to build zfs before spl!)
             cp "${script_path}/dkms.sh" "${work_dir}/root-image/usr/bin"
             chmod +x "${work_dir}/root-image/usr/bin/dkms.sh"
@@ -677,13 +681,6 @@ shift $((OPTIND - 1))
 if [[ $# -lt 1 ]]; then
     echo "No command specified"
     _usage 1
-fi
-
-if [[ $# -gt 1 && "${2}" = "nozfs" ]]; then
-    echo ">>> ZFS modules will NOT be added to the iso!"
-    add_zfs="n"
-else
-    add_zfs="y"
 fi
 
 command_name="${1}"
