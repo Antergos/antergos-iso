@@ -259,7 +259,7 @@ make_customize_rootfs() {
             -r 'systemctl -fq enable pacman-init NetworkManager livecd vboxservice NetworkManager-wait-online systemd-networkd' run
 
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'systemctl -fq enable ModemManager' run
+            -r 'systemctl -fq enable ModemManager upower' run
 
         if [ -f "${script_path}/plymouthd.conf" ]; then
             mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
