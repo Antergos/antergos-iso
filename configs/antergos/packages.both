@@ -78,7 +78,6 @@ xf86-video-openchrome
 xf86-video-vesa
 xf86-video-vmware
 xorg-server
-xorg-server-utils
 
 
 # System Tools
