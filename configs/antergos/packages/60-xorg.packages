@@ -10,5 +10,4 @@ xf86-video-dummy
 xf86-video-nouveau
 xf86-video-vesa
 xorg-server
-xorg-server-utils
 xterm
