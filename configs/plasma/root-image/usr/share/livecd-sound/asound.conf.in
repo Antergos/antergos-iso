@@ -1,0 +1,12 @@
+pcm.!default {
+	type plug
+	slave.pcm {
+		type hw
+		card %card%
+	}
+}
+
+ctl.!default {
+	type hw
+	card %card%
+}
