@@ -1,0 +1,1 @@
+../antergos/build.sh
