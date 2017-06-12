@@ -20,6 +20,9 @@ script_path=$(readlink -f ${0%/*})
 # Add ZFS modules
 add_zfs_modules="y"
 
+# Keep xz packages in cache (minimal will remove them)
+keep_xz="-z"
+
 # Install iso-hotfix-utility from source
 iso_hotfix="n"
 iso_hotfix_utility_version="1.0.17"
