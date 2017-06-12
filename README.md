@@ -8,7 +8,7 @@ Modified version of archiso to build the Antergos ISO
 - libisoburn
 - mkinitcpio-nfs-utils
 - make
-- openfonts (tgz file)
+- opendesktop-fonts
 - patch
 - squashfs-tools
 - wget
