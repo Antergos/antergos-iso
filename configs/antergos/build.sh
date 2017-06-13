@@ -36,7 +36,7 @@ if [ -f "${script_path}/iso_name.txt" ]; then
     iso_name=${iso_name}-$(cat ${script_path}/version.txt)
 fi
 
-if [ ${add_zfs_modules} != "y" ]; then
+if [ "${add_zfs_modules}" != "y" ]; then
     iso_name=${iso_name}-nozfs
 fi
 
