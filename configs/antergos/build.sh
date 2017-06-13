@@ -616,7 +616,7 @@ make_iso() {
 
 # Cleans rootfs
 clean_rootfs() {
-    rm -rf ${work_dir}
+    rm -rf ${work_dir}/*
     rm -f /var/tmp/customize_${iso_name}_rootfs.*
 }
 
