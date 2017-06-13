@@ -10,8 +10,8 @@ month="$(date +'%-m')"
 iso_version="${year}.${month}"
 
 install_dir="arch"
-work_dir=work
-out_dir=out
+work_dir=/work
+out_dir=/out
 
 arch=$(uname -m)
 verbose="-v"
