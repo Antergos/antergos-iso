@@ -33,9 +33,12 @@ pacman_conf="${work_dir}/pacman.conf"
 
 # Get ISO name from iso_name.txt file
 if [ -f "${script_path}/iso_name.txt" ]; then
-    iso_name=$(cat ${script_path}/iso_name.txt)
+    iso_name=${iso_name}-$(cat ${script_path}/iso_name.txt)
 fi
 
+if [ ${add_zfs_modules} != "y" ]; then
+    iso_name=${iso_name}-nozfs
+fi
 
 _usage ()
 {
