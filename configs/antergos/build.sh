@@ -32,7 +32,7 @@ iso_hotfix_utility_url="https://github.com/Antergos/iso-hotfix-utility/archive/$
 pacman_conf="${work_dir}/pacman.conf"
 
 # Get ISO name from iso_name.txt file
-if [ -f "${script_path}/iso_name.txt" ]; then
+if [ -f "${script_path}/version.txt" ]; then
     iso_name=${iso_name}-$(cat ${script_path}/version.txt)
 fi
 
@@ -630,6 +630,8 @@ purge_rootfs() {
 }
 
 make_all() {
+    echo ">>> Building ${iso_name}..."
+
     run_once make_pacman_conf
     run_once make_basefs
     run_once make_packages
