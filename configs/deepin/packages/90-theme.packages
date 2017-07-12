@@ -1,1 +1,7 @@
-../../antergos/packages/90-theme.packages
+# Theme
+adwaita-icon-theme
+numix-frost-themes
+numix-icon-theme-square
+deepin-icon-theme
+deepin-gtk-theme
+
