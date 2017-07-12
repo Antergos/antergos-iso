@@ -24,7 +24,7 @@ add_zfs_modules="y"
 keep_xz="-z"
 
 # Install iso-hotfix-utility from source
-iso_hotfix="n"
+iso_hotfix="y"
 iso_hotfix_utility_version="1.0.17"
 iso_hotfix_utility_url="https://github.com/Antergos/iso-hotfix-utility/archive/${iso_hotfix_utility_version}.tar.gz"
 
