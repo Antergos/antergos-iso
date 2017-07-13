@@ -309,7 +309,7 @@ make_customize_rootfs() {
             cp ${_schema} ${work_dir}/root-image/usr/share/glib-2.0/schemas
         done
 
-        # Compiling GSettings XML schema files
+        # Compile GSettings XML schema files
         mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
             -r '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas' run
 

@@ -29,6 +29,12 @@ lock-enabled=false
 [org.gnome.desktop.session]
 idle-delay=0
 
+[org.gnome.desktop.datetime]
+automatic-timezone=true
+
+[org.gnome.desktop.input-sources]
+sources=[('xkb','us')]
+
 [org.gnome.desktop.wm.preferences]
 button-layout='appmenu:minimize,maximize,close'
 theme='Numix-Frost-Light'
