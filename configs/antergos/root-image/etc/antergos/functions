@@ -46,7 +46,11 @@ _set_locales ()
 
     # set kblayout and keymap
     sed -i "s#Identifier \"evdev keyboard catchall\".*#&\n        Option \"XkbLayout\" \"${KBLAYOUT}\"#"       ${DESTDIR}/etc/X11/xorg.conf.d/10-evdev.conf
+
     echo "KEYMAP=${KEYMAP}" > ${DESTDIR}/etc/vconsole.conf
+
+    # Set a cool console font
+    echo "FONT=ter-v14b" >> ${DESTDIR}/etc/vconsole.conf
 
     # set systemwide language
     echo "LANG=${LOCALE}.UTF-8" > ${DESTDIR}/etc/locale.conf
