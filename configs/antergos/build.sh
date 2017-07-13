@@ -591,9 +591,10 @@ make_kernel_modules_with_dkms() {
                 -r '/usr/bin/dkms.sh' run
         fi
 
+        # Removing linux-headers makes dkms hook delete broadcom-wl driver!
         # Remove kernel headers.
-        mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
-            -r 'pacman -Rdd --noconfirm linux-headers' run
+        #mkarchiso ${verbose} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" \
+        #    -r 'pacman -Rdd --noconfirm linux-headers' run
 
         touch /var/tmp/customize_${iso_name}_rootfs.dkms
     fi
