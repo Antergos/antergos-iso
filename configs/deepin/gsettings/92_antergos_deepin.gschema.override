@@ -17,3 +17,6 @@ icon-theme-name=Numix
 theme-name=Numix-Frost
 gtk-theme-name=Numix-Frost
 
+[com.deepin.dee.keyboard]
+user-layout-list=['us;']
+
