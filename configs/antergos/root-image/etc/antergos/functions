@@ -72,8 +72,8 @@ _set_locales ()
     sed -i "s/'us'/'${KBLAYOUT}'/" /etc/lightdm/Xsession
 
     # Fix keyboard layout in gsettings
-    for _schema in /usr/share/glib-2.0/schemas/*.gschema.override; do
-        sed -i "s/'us'/'${KBLAYOUT}'/" ${_schema}
+    for _SCHEMA in /usr/share/glib-2.0/schemas/*.gschema.override; do
+        sed -i "s/'us'/'${KBLAYOUT}'/" ${_SCHEMA}
     # Compile GSettings XML schema files
     /usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas
 
@@ -81,12 +81,12 @@ _set_locales ()
 
 # Sets correct video driver setup if driver is present in kernel command line
 set_video_driver() {
-    drivers=(nvidia vesa)
-    for driver in ${drivers[*]}
+    DRIVERS=(nvidia vesa)
+    for DRIVER in ${DRIVERS[*]}
     do
-        CMD=$(/usr/bin/grep $driver /proc/cmdline)
+        CMD=$(/usr/bin/grep ${DRIVER} /proc/cmdline)
         if [ "$CMD" != "" ]; then
-            sudo cp /etc/antergos/xorg/20-$driver.conf /etc/X11/xorg.conf.d
+            sudo cp /etc/antergos/xorg/20-${DRIVER}.conf /etc/X11/xorg.conf.d
         fi
     done
 }
