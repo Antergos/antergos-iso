@@ -180,9 +180,9 @@ make_customize_rootfs() {
             remove_extra_icons
         fi
 
-        #mkdir -p ${work_dir}/root-image/etc/pacman.d
-        #wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
-        #sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
+        mkdir -p ${work_dir}/root-image/etc/pacman.d
+        wget -O ${work_dir}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
+        sed -i "s/#Server/Server/g" ${work_dir}/root-image/etc/pacman.d/mirrorlist
 
         #mkdir -p ${work_dir}/root-image/var/run/dbus
         #mount -o bind /var/run/dbus ${work_dir}/root-image/var/run/dbus
