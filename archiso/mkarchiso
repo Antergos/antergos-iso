@@ -237,7 +237,7 @@ _pacman ()
             pacstrap -C "${pacman_conf}" -c -d -G -M "${work_dir}/root-image" --force $*
         fi
     fi
-    
+
 
     _msg_info "Packages installed successfully!"
 }
@@ -297,8 +297,8 @@ _mkrootfs_img () {
         _msg_error "The path '${work_dir}/root-image' does not exist" 1
     fi
 
-    _msg_info "Creating ext4 image of 5GiB..."
-    truncate -s 5G "${work_dir}/root-image.img"
+    _msg_info "Creating ext4 image of 8GiB..."
+    truncate -s 8G "${work_dir}/root-image.img"
     local _qflag=""
     if [[ ${quiet} == "y" ]]; then
         _qflag="-q"
@@ -328,9 +328,9 @@ _mkrootfs_sfs () {
         _msg_error "The path '${work_dir}/root-image' does not exist" 1
     fi
     _extra_arg="${1:-default}"
-    
+
     mkdir -p "${work_dir}/iso/${install_dir}"
-    
+
     if false && [[ ${_extra_arg} != minimal ]]; then
         # Squash an empty directory into a filesystem image for live usb persistance
         truncate -s 250M "${work_dir}/persistent_root-image.img"
@@ -339,11 +339,11 @@ _mkrootfs_sfs () {
         # mksquashfs "${work_dir}/persistent_root-image.img" "${work_dir}/iso/${install_dir}/persistent_root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress
         cp "${work_dir}/persistent_root-image.img" "${work_dir}/iso/${install_dir}"
     fi
-    
+
     # https://github.com/Antergos/antergos-iso/pull/39/
     _rootimg="${work_dir}/root-image"
     touch -r "${_rootimg}/usr" "${_rootimg}/etc/.updated" "${_rootimg}/var/.updated"
-    
+
     _msg_info "Creating SquashFS image, this may take some time..."
     if [[ "${quiet}" = "y" ]]; then
         mksquashfs "${work_dir}/root-image" "${work_dir}/iso/${install_dir}/root-image.sfs" -noappend -comp "${sfs_comp}" -no-progress &> /dev/null
@@ -386,11 +386,11 @@ command_checksum () {
 command_pkglist () {
     _show_config pkglist
 
-        _msg_info "Creating a list of installed packages on live-environment..."
-        pacman -Sl -r "${work_dir}/root-image" --config "${pacman_conf}" | \
-            awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > \
-            "${work_dir}/iso/${install_dir}/pkglist.${arch}.txt"
-        _msg_info "Done!"
+    _msg_info "Creating a list of installed packages on live-environment..."
+    pacman -Sl -r "${work_dir}/root-image" --config "${pacman_conf}" | \
+        awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > \
+        "${work_dir}/iso/${install_dir}/pkglist.${arch}.txt"
+    _msg_info "Done!"
 
 }
 
@@ -421,29 +421,29 @@ command_iso () {
 
     _show_config iso
 
-        mkdir -p ${out_dir}
-        _msg_info "Creating ISO image..."
-        local _qflag=""
-        if [[ ${quiet} == "y" ]]; then
-            _qflag="-quiet"
-        fi
-        xorriso -as mkisofs ${_qflag} \
-            -iso-level 3 \
-            -full-iso9660-filenames \
-            -volid "${iso_label}" \
-            -appid "${iso_application}" \
-            -publisher "${iso_publisher}" \
-            -preparer "prepared by mkarchiso" \
-            -eltorito-boot isolinux/isolinux.bin \
-            -eltorito-catalog isolinux/boot.cat \
-            -no-emul-boot -boot-load-size 4 -boot-info-table \
-            ${_persistence} \
-            -isohybrid-mbr ${work_dir}/iso/isolinux/isohdpfx.bin \
-            ${_iso_efi_boot_args} \
-            -output "${out_dir}/${img_name}" \
-            "${work_dir}/iso/"
-        _msg_info "Done! | $(ls -sh ${out_dir}/${img_name})"
-    
+    mkdir -p ${out_dir}
+    _msg_info "Creating ISO image..."
+    local _qflag=""
+    if [[ ${quiet} == "y" ]]; then
+        _qflag="-quiet"
+    fi
+    xorriso -as mkisofs ${_qflag} \
+        -iso-level 3 \
+        -full-iso9660-filenames \
+        -volid "${iso_label}" \
+        -appid "${iso_application}" \
+        -publisher "${iso_publisher}" \
+        -preparer "prepared by mkarchiso" \
+        -eltorito-boot isolinux/isolinux.bin \
+        -eltorito-catalog isolinux/boot.cat \
+        -no-emul-boot -boot-load-size 4 -boot-info-table \
+        ${_persistence} \
+        -isohybrid-mbr ${work_dir}/iso/isolinux/isohdpfx.bin \
+        ${_iso_efi_boot_args} \
+        -output "${out_dir}/${img_name}" \
+        "${work_dir}/iso/"
+    _msg_info "Done! | $(ls -sh ${out_dir}/${img_name})"
+
 }
 
 # create root-image.sfs filesystem, and push it in "iso" directory.
@@ -475,9 +475,7 @@ command_install () {
 
     _show_config install
 
-    
-        _pacman "--needed ${pkg_list}"
- 
+    _pacman "--needed ${pkg_list}"
 }
 
 command_init() {
@@ -567,5 +565,3 @@ case "${command_name}" in
         _usage 1
         ;;
 esac
-
-# vim:ts=4:sw=4:et:
