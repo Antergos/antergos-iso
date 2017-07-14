@@ -9,13 +9,13 @@ use-default-value=false
 custom-value=['/S@deepin-toggle-desktop', '/S@deepin-wm-multitaskingview', '/S@deepin-music', '/S@chromium', '/S@gnome-software', '/S@dde-control-center']
 
 [com.deepin.dde.appearance]
-gtk-theme=Numix-Frost
-icon-theme=Numix
+gtk-theme='Numix-Frost'
+icon-theme='Numix'
 
 [com.deepin.xsettings]
-icon-theme-name=Numix
-theme-name=Numix-Frost
-gtk-theme-name=Numix-Frost
+icon-theme-name='Numix'
+theme-name='Numix-Frost'
+gtk-theme-name='Numix-Frost'
 
 [com.deepin.dde.keyboard]
 user-layout-list=['us;']
@@ -30,13 +30,13 @@ theme-name = 'deepin'
 event-sounds = true
 
 [com.deepin.wrap.gnome.desktop.wm.preferences]
-theme = 'deepin'
+theme = 'Numix-Frost'
 audible-bell = false
 mouse-button-modifier = ''
 
 [com.deepin.wrap.gnome.desktop.interface]
 cursor-theme = 'deepin'
 gtk-key-theme = 'Default'
-gtk-theme = 'deepin'
-icon-theme = 'deepin'
+gtk-theme = 'Numix-Frost'
+icon-theme = 'Numix'
 gtk-im-module = 'fcitx'
