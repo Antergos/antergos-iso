@@ -73,7 +73,11 @@ _set_locales ()
 
     # Fix keyboard layout in gsettings
     for _SCHEMA in /usr/share/glib-2.0/schemas/*.gschema.override; do
+        # gnome
         sed -i "s/'us'/'${KBLAYOUT}'/" ${_SCHEMA}
+        # deepin
+        sed -i "s/'us;'/${KBLAYOUT};'/" ${_SCHEMA}
+
     # Compile GSettings XML schema files
     /usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas
 
