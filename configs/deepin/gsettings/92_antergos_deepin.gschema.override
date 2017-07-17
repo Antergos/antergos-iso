@@ -6,7 +6,7 @@ show-ratings=true
 
 [com.deepin.dde.dock.docked-apps]
 use-default-value=false
-custom-value=['/S@deepin-toggle-desktop', '/S@deepin-wm-multitaskingview', '/S@deepin-music', '/S@chromium', '/S@gnome-software', '/S@dde-control-center']
+custom-value=['/S@cnchi', '/S@deepin-toggle-desktop', '/S@deepin-wm-multitaskingview', '/S@deepin-music', '/S@chromium', '/S@gnome-software', '/S@dde-control-center']
 
 [com.deepin.dde.appearance]
 gtk-theme='Numix-Frost'
