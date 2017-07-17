@@ -93,9 +93,9 @@ make_pacman_conf() {
     fi
 
     if [[ "${KEEP_XZ}" == "n" ]]; then
-        echo ">>> Will remove cached xz packages for minimal iso"
+        echo ">>> Will REMOVE cached xz packages from ISO!"
     else
-        echo ">>> Will keep cached xz packages"
+        echo ">>> Will KEEP cached xz packages from ISO!"
     fi
 }
 
