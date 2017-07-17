@@ -90,6 +90,10 @@ make_pacman_conf() {
     if [[ ${ISO_NAME} == *"minimal"* ]]; then
         KEEP_XZ="n"
         KEEP_XZ_FLAG=""
+    elif [[ "${KEEP_XZ}" == "n" ]]; then
+        # Iso is not minimal, but it won't contain any cached packages either.
+        # Add it to the iso name, so everybody knows.
+        ISO_NAME=${ISO_NAME}-nocache
     fi
 
     if [[ "${KEEP_XZ}" == "n" ]]; then
