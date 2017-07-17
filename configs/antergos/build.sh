@@ -20,8 +20,8 @@ script_path=$(readlink -f ${0%/*})
 # Add ZFS modules
 add_zfs_modules="y"
 
-# Keep xz packages in cache (minimal will remove them)
-keep_xz="-z"
+# Keep xz packages in cache (minimal will always remove them)
+keep_xz="y"
 
 # Install iso-hotfix-utility from source
 iso_hotfix="y"
@@ -88,18 +88,21 @@ make_pacman_conf() {
     # Will remove cached pacman xz packages when the
     # iso name contains "minimal" in its name
     if [[ ${iso_name} == *"minimal"* ]]; then
-        keep_xz=""
+        keep_xz="n"
+        keep_xz_flag=""
+    fi
+
+    if [[ ${keep_xz} == "n" ]]; then
         echo ">>> Will remove cached xz packages for minimal iso"
     else
-        keep_xz="-z"
         echo ">>> Will keep cached xz packages"
     fi
 }
 
 # Base installation, plus needed packages (root-image)
 make_basefs() {
-    mkarchiso ${verbose} ${keep_xz} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
-    mkarchiso ${verbose} ${keep_xz} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode nbd memtest86+" install
+    mkarchiso ${verbose} ${keep_xz_flag} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" init
+    mkarchiso ${verbose} ${keep_xz_flag} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "haveged intel-ucode nbd memtest86+" install
 }
 
 # Additional packages (root-image)
@@ -112,13 +115,13 @@ make_packages() {
         if [ "${add_zfs_modules}" != "y" ]; then
             packages=$(grep -h -v ^# ${_file} | grep -h -v ^zfs)
         fi
-        mkarchiso ${verbose} ${keep_xz} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "${packages}" install
+        mkarchiso ${verbose} ${keep_xz_flag} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "${packages}" install
     done
 }
 
 # Needed packages for x86_64 EFI boot
 make_packages_efi() {
-    mkarchiso ${verbose} ${keep_xz} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "efitools" install
+    mkarchiso ${verbose} ${keep_xz_flag} -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "efitools" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
@@ -664,6 +667,12 @@ if [[ ${arch} != x86_64 ]]; then
     echo "This script needs to be run on x86_64"
     _usage 1
 fi
+
+keep_xz_flag=""
+if [[ "${keep_xz}" == "y" ]]; then
+    keep_xz_flag="-z"
+fi
+
 
 while getopts 'N:V:L:D:w:o:vh' arg; do
     case "${arg}" in
