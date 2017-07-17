@@ -81,9 +81,9 @@ run_once() {
 
 # Setup custom pacman.conf with current cache directories.
 make_pacman_conf() {
-    cache_dirs="/var/cache/pacman/pkg"
+    CACHE_DIRS="/var/cache/pacman/pkg"
     PACMAN_CONF="${WORK_DIR}/pacman.conf"
-    sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${cache_dirs[@]})|g" "${SCRIPT_PATH}/pacman.conf" > "${PACMAN_CONF}"
+    sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${CACHE_DIRS[@]})|g" "${SCRIPT_PATH}/pacman.conf" > "${PACMAN_CONF}"
 
     # Will remove cached pacman xz packages when the
     # iso name contains "minimal" in its name
@@ -92,7 +92,7 @@ make_pacman_conf() {
         KEEP_XZ_FLAG=""
     fi
 
-    if [[ ${KEEP_XZ} == "n" ]]; then
+    if [[ "${KEEP_XZ}" == "n" ]]; then
         echo ">>> Will remove cached xz packages for minimal iso"
     else
         echo ">>> Will keep cached xz packages"
