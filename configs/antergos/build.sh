@@ -31,14 +31,6 @@ ISO_HOTFIX_UTILITY_URL="https://github.com/Antergos/iso-hotfix-utility/archive/$
 # Pacman configuration file
 PACMAN_CONF="${WORK_DIR}/pacman.conf"
 
-# Get ISO name from iso_name.txt file
-if [ -f "${SCRIPT_PATH}/version.txt" ]; then
-    ISO_NAME=${ISO_NAME}-$(cat ${SCRIPT_PATH}/version.txt)
-fi
-
-if [ "${ADD_ZFS_MODULES}" != "y" ]; then
-    ISO_NAME=${ISO_NAME}-nozfs
-fi
 
 _usage ()
 {
@@ -84,23 +76,6 @@ make_pacman_conf() {
     CACHE_DIRS="/var/cache/pacman/pkg"
     PACMAN_CONF="${WORK_DIR}/pacman.conf"
     sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${CACHE_DIRS[@]})|g" "${SCRIPT_PATH}/pacman.conf" > "${PACMAN_CONF}"
-
-    # Will remove cached pacman xz packages when the
-    # iso name contains "minimal" in its name
-    if [[ ${ISO_NAME} == *"minimal"* ]]; then
-        KEEP_XZ="n"
-        KEEP_XZ_FLAG=""
-    elif [[ "${KEEP_XZ}" == "n" ]]; then
-        # Iso is not minimal, but it won't contain any cached packages either.
-        # Add it to the iso name, so everybody knows.
-        ISO_NAME=${ISO_NAME}-nocache
-    fi
-
-    if [[ "${KEEP_XZ}" == "n" ]]; then
-        echo ">>> Will REMOVE cached xz packages from ISO!"
-    else
-        echo ">>> Will KEEP cached xz packages from ISO!"
-    fi
 }
 
 # Base installation, plus needed packages (root-image)
@@ -660,7 +635,7 @@ make_all() {
 }
 
 
-# Program starts here
+# Program starts here ---------------------------------------------------------
 
 if [[ ${EUID} -ne 0 ]]; then
     echo "This script must be run as root."
@@ -672,9 +647,36 @@ if [[ ${ARCH} != x86_64 ]]; then
     _usage 1
 fi
 
+# Get ISO name from iso_name.txt file
+if [ -f "${SCRIPT_PATH}/version.txt" ]; then
+    ISO_NAME=${ISO_NAME}-$(cat ${SCRIPT_PATH}/version.txt)
+fi
+
+if [ "${ADD_ZFS_MODULES}" != "y" ]; then
+    ISO_NAME=${ISO_NAME}-nozfs
+fi
+
+# Set KEEP_XZ_FLAG variable from KEEP_XZ
 KEEP_XZ_FLAG=""
 if [[ "${KEEP_XZ}" == "y" ]]; then
     KEEP_XZ_FLAG="-z"
+fi
+
+# Will remove cached pacman xz packages when the
+# iso name contains "minimal" in its name
+if [[ ${ISO_NAME} == *"minimal"* ]]; then
+    KEEP_XZ="n"
+    KEEP_XZ_FLAG=""
+elif [[ "${KEEP_XZ}" == "n" ]]; then
+    # Iso is not minimal, but it won't contain any cached packages either.
+    # Add it to the iso name, so everybody knows.
+    ISO_NAME=${ISO_NAME}-nocache
+fi
+
+if [[ "${KEEP_XZ}" == "n" ]]; then
+    echo ">>> Will REMOVE cached xz packages from ISO!"
+else
+    echo ">>> Will KEEP cached xz packages from ISO!"
 fi
 
 while getopts 'N:V:L:D:w:o:vh' ARG; do
