@@ -610,11 +610,17 @@ clean_rootfs() {
 # Cleans rootfs and deletes iso files
 purge_rootfs() {
     clean_rootfs
-    rm -f ${OUT_DIR}/${ISO_NAME}-${ISO_VERSION}-*-${ARCH}.iso
+    rm -f ${OUT_DIR}/*.iso
 }
 
 make_all() {
     echo ">>> Building ${ISO_NAME}..."
+
+    if [[ "${KEEP_XZ}" == "n" ]]; then
+        echo ">>> Will REMOVE cached xz packages from ISO!"
+    else
+        echo ">>> Will KEEP cached xz packages in ISO!"
+    fi
 
     run_once make_pacman_conf
     run_once make_basefs
@@ -663,7 +669,7 @@ if [[ "${KEEP_XZ}" == "y" ]]; then
     KEEP_XZ_FLAG="-z"
 fi
 
-# Will remove cached pacman xz packages when the
+# Always remove cached pacman xz packages when the
 # iso name contains "minimal" in its name
 if [[ ${ISO_NAME} == *"minimal"* ]]; then
     KEEP_XZ="n"
@@ -672,12 +678,6 @@ elif [[ "${KEEP_XZ}" == "n" ]]; then
     # Iso is not minimal, but it won't contain any cached packages either.
     # Add it to the iso name, so everybody knows.
     ISO_NAME=${ISO_NAME}-nocache
-fi
-
-if [[ "${KEEP_XZ}" == "n" ]]; then
-    echo ">>> Will REMOVE cached xz packages from ISO!"
-else
-    echo ">>> Will KEEP cached xz packages from ISO!"
 fi
 
 while getopts 'N:V:L:D:w:o:vh' ARG; do
