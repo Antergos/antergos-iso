@@ -718,4 +718,7 @@ case "${COMMAND_NAME}" in
     purge)
         purge_rootfs
         ;;
+    make)
+        make_iso
+        ;;
 esac
