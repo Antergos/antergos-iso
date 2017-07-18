@@ -597,6 +597,7 @@ make_iso() {
     else
         FULL_ISO_NAME="${ISO_NAME}-${ISO_VERSION}-${ARCH}.iso"
     fi
+    echo ">>> Building ${FULL_ISO_NAME}..."
     mkarchiso ${VERBOSE} -z -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" -L "${ISO_LABEL}" -o "${OUT_DIR}" iso "${FULL_ISO_NAME}"
 }
 
