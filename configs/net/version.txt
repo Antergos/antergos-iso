@@ -1,1 +1,1 @@
-minimal
+net
