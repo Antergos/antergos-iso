@@ -1,9 +1,0 @@
-#
-# /etc/hosts: static lookup table for host names
-#
-
-#<ip-address>	<hostname.domain.org>	<hostname>
-127.0.0.1	localhost.localdomain	localhost	ant-<VERSION>-min
-::1		localhost.localdomain	localhost	ant-<VERSION>-min
-
-# End of file
