@@ -1,5 +1,5 @@
 #!/bin/sh
-# From Manjaroiso to Antergos-iso
+# LiveCD setup
 
 source /etc/antergos/functions
 
