@@ -76,7 +76,7 @@ _set_locales ()
         # gnome
         sed -i "s/'us'/'${KBLAYOUT}'/" ${_SCHEMA}
         # deepin
-        sed -i "s/'us;'/${KBLAYOUT};'/" ${_SCHEMA}
+        sed -i "s/'us;'/'${KBLAYOUT};'/" ${_SCHEMA}
     done
 
     # Compile GSettings XML schema files
