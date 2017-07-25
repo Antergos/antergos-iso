@@ -10,7 +10,7 @@ docked-apps=['/S@cnchi', '/S@deepin-toggle-desktop', '/S@deepin-wm-multitaskingv
 [com.deepin.dde.appearance]
 gtk-theme='Numix-Frost'
 icon-theme='Numix'
-background-uris=['file:///usr/share/antergos/wallpapers-deepin/antdeepin-logo-water.jpg','file:///usr/share/wallpapers/deepin/Sunset_of_the_Lake_Nam_by_Wang_Jinyu.jpg', 'file:///usr/share/wallpapers/deepin/Reflection_of_the_Kanas%20Lake_by_Wang_Jinyu.jpg', 'file:///usr/share/wallpapers/deepin/Autumn_in_Kanas_by_Wang_Jinyu.jpg']
+background-uris=['file:///usr/share/antergos/wallpapers/antergos-wallpaper.png','file:///usr/share/wallpapers/deepin/Sunset_of_the_Lake_Nam_by_Wang_Jinyu.jpg', 'file:///usr/share/wallpapers/deepin/Reflection_of_the_Kanas%20Lake_by_Wang_Jinyu.jpg', 'file:///usr/share/wallpapers/deepin/Autumn_in_Kanas_by_Wang_Jinyu.jpg']
 
 [com.deepin.xsettings]
 icon-theme-name='Numix'
