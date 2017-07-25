@@ -223,14 +223,15 @@ make_customize_rootfs() {
 
         # Setup journal
         sed -i 's/#\(Storage=\)auto/\1volatile/' ${WORK_DIR}/root-image/etc/systemd/journald.conf
-        # Setup gparted execution method
-        sed -i 's|^Exec=|Exec=sudo -E |g' ${WORK_DIR}/root-image/usr/share/applications/gparted.desktop
+
+        # Setup gparted execution method if installed
+        if [ -f "${WORK_DIR}/root-image/usr/share/applications/gparted.desktop ]; then
+            sed -i 's|^Exec=|Exec=sudo -E |g' ${WORK_DIR}/root-image/usr/share/applications/gparted.desktop
+        fi
 
         # Setup Chromium start page if installed
         if [ -f "${WORK_DIR}/root-image/usr/share/applications/chromium.desktop" ]; then
             sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${WORK_DIR}/root-image/usr/share/applications/chromium.desktop
-        else
-            echo ">>> Chromium not installed."
         fi
 
         # Setup Midori start page if installed
