@@ -345,6 +345,7 @@ iso_hotfix_utility() {
     echo ">>> Installing iso-hotfix-utility..."
     wget "${ISO_HOTFIX_UTILITY_URL}" -O ${SCRIPT_PATH}/iso-hotfix-utility.tar.gz
     tar xfz ${SCRIPT_PATH}/iso-hotfix-utility.tar.gz -C ${SCRIPT_PATH}
+    rm -f ${SCRIPT_PATH}/iso-hotfix-utility.tar.gz
     mv "${SCRIPT_PATH}/iso-hotfix-utility-${ISO_HOTFIX_UTILITY_VERSION}" ${SCRIPT_PATH}/iso-hotfix-utility
 
     cp "${SCRIPT_PATH}/iso-hotfix-utility/iso-hotfix-utility" "${WORK_DIR}/root-image/usr/bin/pacman-boot"
@@ -366,6 +367,7 @@ iso_hotfix_utility() {
             echo "${STRING} installed..."
         fi
     done
+    rm -rf ${SCRIPT_PATH}/iso-hotfix-utility
 }
 
 # Prepare ${INSTALL_DIR}/boot/
