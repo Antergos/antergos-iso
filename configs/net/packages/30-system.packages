@@ -3,5 +3,6 @@ expect
 powerpill
 reflector
 sudo
+upower
 wget
 xdg-user-dirs
