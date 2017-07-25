@@ -225,7 +225,7 @@ make_customize_rootfs() {
         sed -i 's/#\(Storage=\)auto/\1volatile/' ${WORK_DIR}/root-image/etc/systemd/journald.conf
 
         # Setup gparted execution method if installed
-        if [ -f "${WORK_DIR}/root-image/usr/share/applications/gparted.desktop ]; then
+        if [ -f "${WORK_DIR}/root-image/usr/share/applications/gparted.desktop" ]; then
             sed -i 's|^Exec=|Exec=sudo -E |g' ${WORK_DIR}/root-image/usr/share/applications/gparted.desktop
         fi
 
