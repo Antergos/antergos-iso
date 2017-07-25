@@ -20,7 +20,7 @@ SCRIPT_PATH=$(readlink -f ${0%/*})
 # Add ZFS modules
 ADD_ZFS_MODULES="y"
 
-# Keep xz packages in cache (minimal will always remove them)
+# Keep xz packages in cache (minimal and net versions will always remove them)
 KEEP_XZ="y"
 
 # Install iso-hotfix-utility from source
@@ -670,8 +670,8 @@ if [[ "${KEEP_XZ}" == "y" ]]; then
 fi
 
 # Always remove cached pacman xz packages when the
-# iso name contains "minimal" in its name
-if [[ ${ISO_NAME} == *"minimal"* ]]; then
+# iso name contains "minimal" or "net-install" in its name
+if [[ ${ISO_NAME} == *"minimal"* ]] || [[ ${ISO_NAME} == *"net-install"* ]]; then
     KEEP_XZ="n"
     KEEP_XZ_FLAG=""
 elif [[ "${KEEP_XZ}" == "n" ]]; then
