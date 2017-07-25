@@ -202,7 +202,7 @@ make_customize_rootfs() {
         mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
             -r 'systemctl set-default -f graphical.target' run
 
-       	rm ${WORK_DIR}/root-image/etc/xdg/autostart/vboxclient.desktop
+       	rm -f ${WORK_DIR}/root-image/etc/xdg/autostart/vboxclient.desktop
     	touch /var/tmp/customize_${ISO_NAME}_rootfs.three
     }
 
@@ -212,7 +212,7 @@ make_customize_rootfs() {
         mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
             -r '/usr/bin/set_password' run
 
-        rm ${WORK_DIR}/root-image/usr/bin/set_password
+        rm -f ${WORK_DIR}/root-image/usr/bin/set_password
         #echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${WORK_DIR}/root-image
 
         # Configuring pacman
