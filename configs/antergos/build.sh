@@ -251,10 +251,12 @@ make_customize_rootfs() {
         if [ -f "${WORK_DIR}/root-image/etc/systemd/system/NetworkManager.service" ]; then
             mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
                 -r 'systemctl -fq enable NetworkManager NetworkManager-wait-online' run
+        fi
 
         if [ -f "${WORK_DIR}/root-image/etc/systemd/system/vboxservice.service" ]; then
             mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
                 -r 'systemctl -fq enable vboxservice' run
+        fi
 
         mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
             -r 'systemctl -fq enable ModemManager upower' run
