@@ -296,25 +296,29 @@ make_customize_rootfs() {
         mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
             -r '/usr/bin/update-ca-trust' run
 
-        # Copying GSettings XML schema files
-        mkdir -p ${WORK_DIR}/root-image/usr/share/glib-2.0/schemas
-        for _schema in ${SCRIPT_PATH}/gsettings/*.gschema.override; do
-            echo ">>> Will use ${_schema}"
-            cp ${_schema} ${WORK_DIR}/root-image/usr/share/glib-2.0/schemas
-        done
+        # Setup gsettings (but in net-install)
+        if [[ ${ISO_NAME} != *"net-install"* ]]; then
+            # Copying GSettings XML schema files
+            mkdir -p ${WORK_DIR}/root-image/usr/share/glib-2.0/schemas
+            for _schema in ${SCRIPT_PATH}/gsettings/*.gschema.override; do
+                echo ">>> Will use ${_schema}"
+                cp ${_schema} ${WORK_DIR}/root-image/usr/share/glib-2.0/schemas
+            done
 
-        # Compile GSettings XML schema files
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas' run
+            # Compile GSettings XML schema files
+            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
+                -r '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas' run
 
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r '/usr/bin/update-desktop-database --quiet' run
+            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
+                -r '/usr/bin/update-desktop-database --quiet' run
 
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r '/usr/bin/update-mime-database /usr/share/mime' run
+            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
+                -r '/usr/bin/update-mime-database /usr/share/mime' run
 
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r '/usr/bin/gdk-pixbuf-query-loaders --update-cache' run
+            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
+                -r '/usr/bin/gdk-pixbuf-query-loaders --update-cache' run
+        fi
+
         # END Pacstrap/Pacman bug
 
         # Fix sudoers
