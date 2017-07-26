@@ -50,15 +50,12 @@ _show_space_usage () {
     _msg_info "Total: ${_total} MiB (100%) | Used: ${_used} MiB (${_pct_u}) | Avail: ${_avail} MiB ($((100 - ${_pct_u%\%}))%)"
 }
 
-
 _chroot_init() {
      if [[ -f "${work_dir}/mkarchiso.init" ]]; then
          _msg_info "Initial environment already installed, skipping."
      else
         mkdir -p ${work_dir}/root-image
-        echo "...$1..."
         if [[ "$1" == "minimal" ]]; then
-            _msg_info "Installing a minimal system!"
             _pacman "bash coreutils cryptsetup device-mapper dhcpd e2fsprogs filesystem jfsutils linux lvm2 mdadm pacman sed xfsprogs antergos-keyring antergos-mirrorlist syslinux"
         else
             _pacman "base antergos-keyring antergos-mirrorlist syslinux"
@@ -482,12 +479,7 @@ command_install () {
 
 command_init() {
     _show_config init
-    _chroot_init
-}
-
-command_init_minimal() {
-    _show_config init
-    _chroot_init minimal
+    _chroot_init "$@"
 }
 
 command_run() {
@@ -537,7 +529,7 @@ case "${command_name}" in
         command_init
         ;;
     init-minimal)
-        command_init_minimal
+        command_init minimal
         ;;
     install)
         command_install
