@@ -1,5 +1,6 @@
-# System Tools
+# System
 expect
+gnome-keyring
 powerpill
 openssh
 reflector
