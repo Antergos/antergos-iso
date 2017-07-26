@@ -57,9 +57,10 @@ _chroot_init() {
      else
         mkdir -p ${work_dir}/root-image
         if [[ "${1:-unset}" == "minimal" ]]; then
-          _pacman "bash coreutils cryptsetup device-mapper dhcpd e2fsprogs filesystem jfsutils linux lvm2 mdadm pacman sed xfsprogs antergos-keyring antergos-mirrorlist syslinux"
+            _msg_info "Installing a minimal system!"
+            _pacman "bash coreutils cryptsetup device-mapper dhcpd e2fsprogs filesystem jfsutils linux lvm2 mdadm pacman sed xfsprogs antergos-keyring antergos-mirrorlist syslinux"
         else
-          _pacman "base antergos-keyring antergos-mirrorlist syslinux"
+            _pacman "base antergos-keyring antergos-mirrorlist syslinux"
         fi
         : > "${work_dir}/mkarchiso.init"
      fi
