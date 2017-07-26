@@ -56,7 +56,7 @@ _chroot_init() {
          _msg_info "Initial environment already installed, skipping."
      else
         mkdir -p ${work_dir}/root-image
-        if [[ "${1:-unset}" == "minimal" ]]; then
+        if [[ "$1" == "minimal" ]]; then
             _msg_info "Installing a minimal system!"
             _pacman "bash coreutils cryptsetup device-mapper dhcpd e2fsprogs filesystem jfsutils linux lvm2 mdadm pacman sed xfsprogs antergos-keyring antergos-mirrorlist syslinux"
         else
