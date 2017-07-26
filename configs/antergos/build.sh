@@ -18,9 +18,11 @@ VERBOSE="-v"
 SCRIPT_PATH=$(readlink -f ${0%/*})
 
 # Add ZFS modules
+# (net-install iso will always remove them no matter what)
 ADD_ZFS_MODULES="y"
 
-# Keep xz packages in cache (minimal and net versions will always remove them)
+# Keep xz packages in cache
+# (minimal and net-install versions will always remove them no matter what)
 KEEP_XZ="y"
 KEEP_XZ_FLAG="-z"
 
@@ -394,9 +396,11 @@ make_boot_extra() {
     if [[ -f ${WORK_DIR}/root-image/boot/memtest86+/memtest.bin ]]; then
         cp ${WORK_DIR}/root-image/boot/memtest86+/memtest.bin ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest
     fi
+
     if [[ -f ${WORK_DIR}/root-image/usr/share/licenses/common/GPL2/license.txt ]]; then
         cp ${WORK_DIR}/root-image/usr/share/licenses/common/GPL2/license.txt ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest.COPYING
     fi
+    
     cp ${WORK_DIR}/root-image/boot/intel-ucode.img ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.img
     cp ${WORK_DIR}/root-image/usr/share/licenses/intel-ucode/LICENSE ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.LICENSE
 }
@@ -652,7 +656,6 @@ make_all() {
     exit 0;
 }
 
-
 # Program starts here ---------------------------------------------------------
 
 if [[ ${EUID} -ne 0 ]]; then
@@ -670,6 +673,12 @@ if [ -f "${SCRIPT_PATH}/version.txt" ]; then
     ISO_NAME=${ISO_NAME}-$(cat ${SCRIPT_PATH}/version.txt)
 fi
 
+# Always remove zfs modules in the net-install iso
+if [[ ${ISO_NAME} == *"net-install"* ]]; then
+    ADD_ZFS_MODULES="n"
+fi
+
+# Add nozfs to the iso name if no zfs modules are in it
 if [ "${ADD_ZFS_MODULES}" != "y" ]; then
     ISO_NAME=${ISO_NAME}-nozfs
 fi
