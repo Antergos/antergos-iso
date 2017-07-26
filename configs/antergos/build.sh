@@ -22,6 +22,7 @@ ADD_ZFS_MODULES="y"
 
 # Keep xz packages in cache (minimal and net versions will always remove them)
 KEEP_XZ="y"
+KEEP_XZ_FLAG="-z"
 
 # Install iso-hotfix-utility from source
 ISO_HOTFIX="y"
@@ -31,6 +32,14 @@ ISO_HOTFIX_UTILITY_URL="https://github.com/Antergos/iso-hotfix-utility/archive/$
 # Pacman configuration file
 PACMAN_CONF="${WORK_DIR}/pacman.conf"
 
+# Helper functions
+MKARCHISO() {
+    mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" "$@"
+}
+
+MKARCHISO_RUN() {
+    mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" -r "$@" run
+}
 
 _usage ()
 {
@@ -80,8 +89,13 @@ make_pacman_conf() {
 
 # Base installation, plus needed packages (root-image)
 make_basefs() {
-    mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" init
-    mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" -p "haveged intel-ucode nbd memtest86+" install
+    if [[ ${ISO_NAME} == *"minimal"* ]] || [[ ${ISO_NAME} == *"net-install"* ]]; then
+        MKARCHISO init-minimal
+    else
+        MKARCHISO init
+    fi
+
+    MKARCHISO -p "haveged intel-ucode nbd memtest86+" install
 }
 
 # Additional packages (root-image)
@@ -94,13 +108,13 @@ make_packages() {
         if [ "${ADD_ZFS_MODULES}" != "y" ]; then
             packages=$(grep -h -v ^# ${_file} | grep -h -v ^zfs)
         fi
-        mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" -p "${packages}" install
+        MKARCHISO -p "${packages}" install
     done
 }
 
 # Needed packages for x86_64 EFI boot
 make_packages_efi() {
-    mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" -p "efitools" install
+    MKARCHISO -p "efitools" install
 }
 
 # Copy mkinitcpio archiso hooks (root-image)
@@ -128,14 +142,13 @@ make_setup_mkinitcpio() {
         cp -L ${SCRIPT_PATH}/plymouth/plymouthd.conf ${WORK_DIR}/root-image/etc/plymouth
         cp -L ${SCRIPT_PATH}/plymouth/plymouth.initcpio_hook ${WORK_DIR}/root-image/etc/initcpio/hooks
         cp -L ${SCRIPT_PATH}/plymouth/plymouth.initcpio_install ${WORK_DIR}/root-image/etc/initcpio/install
-        #mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" -r 'plymouth-set-default-theme Antergos-Simple' run 2&>1
+        #MKARCHISO_RUN 'plymouth-set-default-theme Antergos-Simple'
         echo '>>> Plymouth done!'
     else
         sed -i 's|plymouth||g' ${WORK_DIR}/root-image/etc/mkinitcpio-archiso.conf
     fi
 
-    mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-        -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run
+    MKARCHISO_RUN 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img'
     echo '>>> Mkinitcpio done!'
     if [[ ! -f ${WORK_DIR}/root-image/boot/archiso.img ]]; then
     		echo '>>> Building archiso.img!'
@@ -176,31 +189,25 @@ make_customize_rootfs() {
     }
 
     part_two() {
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r '/usr/bin/locale-gen' run
+        MKARCHISO_RUN '/usr/bin/locale-gen'
         touch /var/tmp/customize_${ISO_NAME}_rootfs.two
     }
 
     part_three() {
         echo "Adding autologin group"
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r 'groupadd -r autologin' run
+        MKARCHISO_RUN 'groupadd -r autologin'
 
         echo "Adding nopasswdlogin group"
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r 'groupadd -r nopasswdlogin' run
+        MKARCHISO_RUN 'groupadd -r nopasswdlogin'
 
         echo "Adding antergos user"
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin,nopasswdlogin" antergos' run
+        MKARCHISO_RUN 'useradd -m -g users -G "audio,disk,optical,wheel,network,autologin,nopasswdlogin" antergos'
 
         # Set antergos account passwordless
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r 'passwd -d antergos' run
+        MKARCHISO_RUN 'passwd -d antergos'
 
         echo "Set systemd target"
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r 'systemctl set-default -f graphical.target' run
+        MKARCHISO_RUN 'systemctl set-default -f graphical.target'
 
        	rm -f ${WORK_DIR}/root-image/etc/xdg/autostart/vboxclient.desktop
     	touch /var/tmp/customize_${ISO_NAME}_rootfs.three
@@ -209,8 +216,7 @@ make_customize_rootfs() {
     part_four() {
         cp -L ${SCRIPT_PATH}/set_password ${WORK_DIR}/root-image/usr/bin
         chmod +x ${WORK_DIR}/root-image/usr/bin/set_password
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r '/usr/bin/set_password' run
+        MKARCHISO_RUN '/usr/bin/set_password'
 
         rm -f ${WORK_DIR}/root-image/usr/bin/set_password
         #echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${WORK_DIR}/root-image
@@ -244,57 +250,46 @@ make_customize_rootfs() {
 
     part_five() {
         # Enable services
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r 'systemctl -fq enable pacman-init livecd systemd-networkd' run
+        MKARCHISO_RUN 'systemctl -fq enable pacman-init livecd systemd-networkd'
 
         # Net-install does not have NetworkManager
         if [ -f "${WORK_DIR}/root-image/etc/systemd/system/NetworkManager.service" ]; then
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r 'systemctl -fq enable NetworkManager NetworkManager-wait-online' run
+            MKARCHISO_RUN 'systemctl -fq enable NetworkManager NetworkManager-wait-online'
         fi
 
         if [ -f "${WORK_DIR}/root-image/etc/systemd/system/vboxservice.service" ]; then
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r 'systemctl -fq enable vboxservice' run
+            MKARCHISO_RUN 'systemctl -fq enable vboxservice'
         fi
 
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r 'systemctl -fq enable ModemManager upower' run
+        MKARCHISO_RUN 'systemctl -fq enable ModemManager upower'
 
         if [ -f "${SCRIPT_PATH}/plymouthd.conf" ]; then
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r 'systemctl -fq enable plymouth-start' run
+            MKARCHISO_RUN 'systemctl -fq enable plymouth-start'
         fi
 
         if [ -f "${WORK_DIR}/root-image/etc/systemd/system/lightdm.service" ]; then
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r 'systemctl -fq enable lightdm' run
+            MKARCHISO_RUN 'systemctl -fq enable lightdm'
             chmod +x ${WORK_DIR}/root-image/etc/lightdm/Xsession
         fi
 
         if [ -f "${WORK_DIR}/root-image/etc/systemd/system/gdm.service" ]; then
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r 'systemctl -fq enable gdm' run
+            MKARCHISO_RUN 'systemctl -fq enable gdm'
             chmod +x ${WORK_DIR}/root-image/etc/gdm/Xsession
         fi
 
         # Disable pamac if present
         if [ -f "${WORK_DIR}/root-image/usr/lib/systemd/system/pamac.service" ]; then
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r 'systemctl -fq disable pamac pamac-cleancache.timer pamac-mirrorlist.timer' run
+            MKARCHISO_RUN 'systemctl -fq disable pamac pamac-cleancache.timer pamac-mirrorlist.timer'
         fi
 
         # Enable systemd-timesyncd (ntp)
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r 'systemctl -fq enable systemd-timesyncd.service' run
+        MKARCHISO_RUN 'systemctl -fq enable systemd-timesyncd.service'
 
         # Fix /home permissions
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r 'chown -R antergos:users /home/antergos' run
+        MKARCHISO_RUN 'chown -R antergos:users /home/antergos'
 
         # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r '/usr/bin/update-ca-trust' run
+        MKARCHISO_RUN '/usr/bin/update-ca-trust'
 
         # Setup gsettings (but in net-install)
         if [[ ${ISO_NAME} != *"net-install"* ]]; then
@@ -306,25 +301,16 @@ make_customize_rootfs() {
             done
 
             # Compile GSettings XML schema files
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas' run
+            MKARCHISO_RUN '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas'
 
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r '/usr/bin/update-desktop-database --quiet' run
-
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r '/usr/bin/update-mime-database /usr/share/mime' run
-
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r '/usr/bin/gdk-pixbuf-query-loaders --update-cache' run
+            MKARCHISO_RUN '/usr/bin/update-desktop-database --quiet'
+            MKARCHISO_RUN '/usr/bin/update-mime-database /usr/share/mime'
+            MKARCHISO_RUN '/usr/bin/gdk-pixbuf-query-loaders --update-cache'
             # END Pacstrap/Pacman bug
         else
             # Set multi-user target (text) as default boot mode for net-install
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r 'systemctl -fq enable multi-user.target' run
-
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r 'systemctl -fq set-default multi-user.target' run
+            MKARCHISO_RUN 'systemctl -fq enable multi-user.target'
+            MKARCHISO_RUN 'systemctl -fq set-default multi-user.target'
         fi
 
         # Fix sudoers
@@ -586,21 +572,18 @@ make_iso_version_files() {
 make_kernel_modules_with_dkms() {
     if [[ ! -f /var/tmp/customize_${ISO_NAME}_rootfs.dkms ]]; then
         # Build kernel modules that are handled by dkms so we can delete kernel headers to save space
-        mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-            -r 'dkms autoinstall' run
+        MKARCHISO_RUN 'dkms autoinstall'
 
         if [ "${ADD_ZFS_MODULES}" == "y" ]; then
             # Bugfix (sometimes pacman tries to build zfs before spl!)
             cp "${SCRIPT_PATH}/dkms.sh" "${WORK_DIR}/root-image/usr/bin"
             chmod +x "${WORK_DIR}/root-image/usr/bin/dkms.sh"
-            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-                -r '/usr/bin/dkms.sh' run
+            MKARCHISO_RUN '/usr/bin/dkms.sh'
         fi
 
         # Removing linux-headers makes dkms hook delete broadcom-wl driver!
         # Remove kernel headers.
-        #mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
-        #    -r 'pacman -Rdd --noconfirm linux-headers' run
+        #MKARCHISO -r 'pacman -Rdd --noconfirm linux-headers' run
 
         touch /var/tmp/customize_${ISO_NAME}_rootfs.dkms
     fi
@@ -610,8 +593,8 @@ make_kernel_modules_with_dkms() {
 make_prepare() {
     cp -a -l -f ${WORK_DIR}/root-image ${WORK_DIR}
 
-    mkarchiso ${VERBOSE} -z -w "${WORK_DIR}" -D "${INSTALL_DIR}" pkglist
-    mkarchiso ${VERBOSE} -z -w "${WORK_DIR}" -D "${INSTALL_DIR}" prepare
+    MKARCHISO pkglist
+    MKARCHISO prepare
 }
 
 # Build ISO
@@ -622,7 +605,7 @@ make_iso() {
         FULL_ISO_NAME="${ISO_NAME}-${ISO_VERSION}-${ARCH}.iso"
     fi
     echo ">>> Building ${FULL_ISO_NAME}..."
-    mkarchiso ${VERBOSE} -z -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" -L "${ISO_LABEL}" -o "${OUT_DIR}" iso "${FULL_ISO_NAME}"
+    MKARCHISO -L "${ISO_LABEL}" -o "${OUT_DIR}" iso "${FULL_ISO_NAME}"
 }
 
 # Cleans rootfs
@@ -688,9 +671,10 @@ if [ "${ADD_ZFS_MODULES}" != "y" ]; then
 fi
 
 # Set KEEP_XZ_FLAG variable from KEEP_XZ
-KEEP_XZ_FLAG=""
 if [[ "${KEEP_XZ}" == "y" ]]; then
     KEEP_XZ_FLAG="-z"
+else
+    KEEP_XZ_FLAG=""
 fi
 
 # Always remove cached pacman xz packages when the
