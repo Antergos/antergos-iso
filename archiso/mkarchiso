@@ -481,12 +481,7 @@ command_install () {
 
 command_init() {
     _show_config init
-    _chroot_init
-}
-
-command_init_minimal() {
-    _show_config init
-    _chroot_init minimal
+    _chroot_init "$@"
 }
 
 command_run() {
