@@ -56,6 +56,7 @@ _chroot_init() {
          _msg_info "Initial environment already installed, skipping."
      else
         mkdir -p ${work_dir}/root-image
+        echo "...$1..."
         if [[ "$1" == "minimal" ]]; then
             _msg_info "Installing a minimal system!"
             _pacman "bash coreutils cryptsetup device-mapper dhcpd e2fsprogs filesystem jfsutils linux lvm2 mdadm pacman sed xfsprogs antergos-keyring antergos-mirrorlist syslinux"
@@ -481,7 +482,12 @@ command_install () {
 
 command_init() {
     _show_config init
-    _chroot_init "$@"
+    _chroot_init
+}
+
+command_init_minimal() {
+    _show_config init
+    _chroot_init minimal
 }
 
 command_run() {
@@ -531,7 +537,7 @@ case "${command_name}" in
         command_init
         ;;
     init-minimal)
-        command_init minimal
+        command_init_minimal
         ;;
     install)
         command_install
