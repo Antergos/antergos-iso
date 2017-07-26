@@ -1,7 +1,6 @@
 # System
 curl
 expect
-gnome-keyring
 powerpill
 openssh
 reflector
