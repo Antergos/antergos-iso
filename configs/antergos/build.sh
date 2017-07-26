@@ -247,7 +247,7 @@ make_customize_rootfs() {
         mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
             -r 'systemctl -fq enable pacman-init livecd systemd-networkd' run
 
-	# Net-install does not have NetworkManager
+        # Net-install does not have NetworkManager
         if [ -f "${WORK_DIR}/root-image/etc/systemd/system/NetworkManager.service" ]; then
             mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
                 -r 'systemctl -fq enable NetworkManager NetworkManager-wait-online' run
@@ -317,9 +317,15 @@ make_customize_rootfs() {
 
             mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
                 -r '/usr/bin/gdk-pixbuf-query-loaders --update-cache' run
-        fi
+            # END Pacstrap/Pacman bug
+        else
+            # Set multi-user target (text) as default boot mode for net-install
+            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
+                -r 'systemctl -fq enable multi-user.target' run
 
-        # END Pacstrap/Pacman bug
+            mkarchiso ${VERBOSE} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" \
+                -r 'systemctl -fq set-default multi-user.target' run
+        fi
 
         # Fix sudoers
         chown -R root:root ${WORK_DIR}/root-image/etc/

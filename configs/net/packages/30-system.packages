@@ -1,8 +1,8 @@
 # System Tools
 expect
 powerpill
+openssh
 reflector
 sudo
 upower
 wget
-xdg-user-dirs
