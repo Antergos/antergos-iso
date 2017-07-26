@@ -391,8 +391,12 @@ make_boot() {
 
 # Add other aditional/extra files to ${INSTALL_DIR}/boot/
 make_boot_extra() {
-    cp ${WORK_DIR}/root-image/boot/memtest86+/memtest.bin ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest
-    cp ${WORK_DIR}/root-image/usr/share/licenses/common/GPL2/license.txt ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest.COPYING
+    if [[ -f ${WORK_DIR}/root-image/boot/memtest86+/memtest.bin ]]; then
+        cp ${WORK_DIR}/root-image/boot/memtest86+/memtest.bin ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest
+    fi
+    if [[ -f ${WORK_DIR}/root-image/usr/share/licenses/common/GPL2/license.txt ]]; then
+        cp ${WORK_DIR}/root-image/usr/share/licenses/common/GPL2/license.txt ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest.COPYING
+    fi
     cp ${WORK_DIR}/root-image/boot/intel-ucode.img ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.img
     cp ${WORK_DIR}/root-image/usr/share/licenses/intel-ucode/LICENSE ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.LICENSE
 }
