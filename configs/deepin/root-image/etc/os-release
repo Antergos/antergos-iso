@@ -1,5 +1,5 @@
 NAME="Antergos Linux"
-VERSION="<VERSION>-mate"
+VERSION="<VERSION>-deepin"
 ID=antergos
 ID_LIKE=arch
 PRETTY_NAME="Antergos Linux"
