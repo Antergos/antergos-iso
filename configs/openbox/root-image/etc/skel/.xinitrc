@@ -10,4 +10,7 @@ fi
 
 sudo timedatectl set-ntp true
 
+# Make sure keyring daemon is running
+eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets)
+
 exec dbus-launch --exit-with-session openbox-session
