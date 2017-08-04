@@ -4,7 +4,7 @@ notify-send -t 10000 -a "Cnchi" -i /usr/share/cnchi/data/antergos-icon.png "Upda
 killall python
 sudo rm -rf /usr/share/cnchi.old
 sudo mv /usr/share/cnchi /usr/share/cnchi.old
-rm -rf cnchi
+sudo rm -rf cnchi
 git clone https://github.com/Antergos/Cnchi cnchi
 cd cnchi
 git checkout 0.14.x
