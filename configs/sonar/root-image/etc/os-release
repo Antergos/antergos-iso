@@ -1,5 +1,5 @@
 NAME="Antergos Linux"
-VERSION="<VERSION>-6dots"
+VERSION="<VERSION>-sonar"
 ID=antergos
 ID_LIKE=arch
 PRETTY_NAME="Antergos Linux"
