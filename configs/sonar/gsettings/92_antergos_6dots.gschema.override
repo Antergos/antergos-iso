@@ -7,3 +7,5 @@ screen-reader-enabled=true
 screen-keyboard-enabled=false
 screen-magnifier-enabled=false
 
+[org.mate.interface]
+accessibility=true
