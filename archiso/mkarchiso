@@ -1,6 +1,5 @@
 #!/bin/bash
-
-set -e -u
+set -euo pipefail
 
 export LANG=C
 
@@ -55,7 +54,8 @@ _chroot_init() {
          _msg_info "Initial environment already installed, skipping."
      else
         mkdir -p ${work_dir}/root-image
-        if [[ "$1" == "minimal" ]]; then
+        minimal=${1:-}
+        if [[ "$minimal" == "minimal" ]]; then
             _pacman "bash coreutils cryptsetup e2fsprogs device-mapper filesystem linux pacman sed syslinux antergos-keyring antergos-mirrorlist"
             rm -rf "${work_dir}/root-image/usr/share/man/*"
         else

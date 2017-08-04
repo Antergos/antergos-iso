@@ -1,6 +1,5 @@
 #!/bin/bash
-
-set -e -u
+set -euo pipefail
 
 ISO_NAME="antergos"
 ISO_LABEL="ANTERGOS"
@@ -400,7 +399,7 @@ make_boot_extra() {
     if [[ -f ${WORK_DIR}/root-image/usr/share/licenses/common/GPL2/license.txt ]]; then
         cp ${WORK_DIR}/root-image/usr/share/licenses/common/GPL2/license.txt ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest.COPYING
     fi
-    
+
     cp ${WORK_DIR}/root-image/boot/intel-ucode.img ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.img
     cp ${WORK_DIR}/root-image/usr/share/licenses/intel-ucode/LICENSE ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.LICENSE
 }
