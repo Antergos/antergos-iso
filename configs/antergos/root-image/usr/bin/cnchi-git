@@ -1,0 +1,10 @@
+#!/bin/bash
+
+notify-send -t 10000 -a "Cnchi" -i /usr/share/cnchi/data/antergos-icon.png "Updating Cnchi with the latest GIT testing code. Please wait..."
+killall python
+mv /usr/share/cnchi /usr/share/cnchi.old
+git clone https://github.com/Antergos/Cnchi /usr/share/cnchi
+cd /usr/share/cnchi
+git checkout 0.14.x
+/usr/share/cnchi/cnchi -d -v
+notify-send -t 10000 -a "Cnchi" -i /usr/share/cnchi/data/antergos-icon.png "Updating Cnchi with the latest GIT testing code. Please wait..."
