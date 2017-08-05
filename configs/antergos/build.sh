@@ -694,6 +694,11 @@ if [[ ${ISO_NAME} == *"net-install"* ]]; then
     ADD_ZFS_MODULES="n"
 fi
 
+# Add nvidia to the iso name if nvidia proprietary drivers are used
+if [[ "$NVIDIA" == "y" ]]; then
+    ISO_NAME=${ISO_NAME}-nvidia
+fi
+
 # Add nozfs to the iso name if no zfs modules are in it
 if [ "${ADD_ZFS_MODULES}" != "y" ]; then
     ISO_NAME=${ISO_NAME}-nozfs
