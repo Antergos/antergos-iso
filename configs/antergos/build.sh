@@ -16,8 +16,9 @@ ARCH=$(uname -m)
 VERBOSE="-v"
 SCRIPT_PATH=$(readlink -f ${0%/*})
 
-# Use nvidia drivers (proprietary) instead of nouveau (free)
-NVIDIA="n"
+# Tell which nvidia drivers include into the iso
+NOUVEAU_DRIVER="y"
+NVIDIA_DRIVER="n"
 
 # Add ZFS modules
 # (net-install iso will always remove them no matter what)
@@ -107,11 +108,11 @@ make_packages() {
     for _file in ${SCRIPT_PATH}/packages/*.packages
     do
         FILEOK="true"
-        if [[ "$NVIDIA" == "y" ]] && [[ "${_file}" == *"nouveau"* ]]; then
-            # Do not add nouveau drivers if NVIDIA is wanted
+        if [[ "$NVIDIA_DRIVER" == "n" ]] && [[ "${_file}" == *"nvidia"* ]]; then
+            # Do not add nvidia driver
             FILEOK="false"
-        elif [[ "$NVIDIA" == "n" ]] && [[ "${_file}" == *"nvidia"* ]]; then
-            # Do not add nvidia drivers if nouveau is wanted
+        elif [[ "$NOUVEAU_DRIVER" == "n" ]] && [[ "${_file}" == *"nouveau"* ]]; then
+            # Do not add nouveau driver
             FILEOK="false"
         fi
 
@@ -694,8 +695,9 @@ if [[ ${ISO_NAME} == *"net-install"* ]]; then
     ADD_ZFS_MODULES="n"
 fi
 
-# Add nvidia to the iso name if nvidia proprietary drivers are used
-if [[ "$NVIDIA" == "y" ]]; then
+# Add nvidia to the iso name if nvidia proprietary drivers are used but
+# and the nouveau ones are not included
+if [[ "$NVIDIA_DRIVER" == "y" ]] && [[ "$NOUVEAU_DRIVER" == "n" ]]; then
     ISO_NAME=${ISO_NAME}-nvidia
 fi
 
