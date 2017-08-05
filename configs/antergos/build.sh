@@ -16,6 +16,9 @@ ARCH=$(uname -m)
 VERBOSE="-v"
 SCRIPT_PATH=$(readlink -f ${0%/*})
 
+# Use nvidia drivers (proprietary) instead of nouveau (free)
+NVIDIA="n"
+
 # Add ZFS modules
 # (net-install iso will always remove them no matter what)
 ADD_ZFS_MODULES="y"
@@ -103,13 +106,27 @@ make_basefs() {
 make_packages() {
     for _file in ${SCRIPT_PATH}/packages/*.packages
     do
-        echo
-        echo ">>> Installing packages from ${_file}..."
-        packages=$(grep -h -v ^# ${_file})
-        if [ "${ADD_ZFS_MODULES}" != "y" ]; then
-            packages=$(grep -h -v ^# ${_file} | grep -h -v ^zfs)
+        FILEOK="true"
+        if [[ "$NVIDIA" == "y" ]] && [[ "${_file}" == *"nouveau"* ]]; then
+            # Do not add nouveau drivers if NVIDIA is wanted
+            FILEOK="false"
+        elif [[ "$NVIDIA" == "n" ]] && [[ "${_file}" == *"nvidia"* ]]; then
+            # Do not add nvidia drivers if nouveau is wanted
+            FILEOK="false"
         fi
-        MKARCHISO -p "${packages}" install
+
+        if [[ "$FILEOK" == "true" ]]; then
+            echo
+            echo ">>> Installing packages from ${_file}..."
+            packages=$(grep -h -v ^# ${_file})
+            # Do not add ZFS module if instructed to do so
+            if [ "${ADD_ZFS_MODULES}" != "y" ]; then
+                packages=$(grep -h -v ^# ${_file} | grep -h -v ^zfs)
+            fi
+            MKARCHISO -p "${packages}" install
+        else
+            echo ">>> ${_file} skipped!"
+        fi
     done
 }
 
