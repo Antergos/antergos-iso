@@ -21,11 +21,9 @@ NOUVEAU_DRIVER="y"
 NVIDIA_DRIVER="n"
 
 # Add ZFS modules
-# (net-install iso will always remove them no matter what)
 ADD_ZFS_MODULES="y"
 
 # Keep xz packages in cache
-# (minimal and net-install versions will always remove them no matter what)
 KEEP_XZ="y"
 
 # Install iso-hotfix-utility from source
