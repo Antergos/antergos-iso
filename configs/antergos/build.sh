@@ -1,41 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-ISO_NAME="antergos"
-ISO_LABEL="ANTERGOS"
+if [ -f config ]; then
+    source ./config
+else
+    # No config file!
+    exit 1
+fi
 
-YEAR="$(date +'%y')"
-MONTH="$(date +'%-m')"
-ISO_VERSION="${YEAR}.${MONTH}"
-
-INSTALL_DIR="arch"
-WORK_DIR="/work"
-OUT_DIR="/out"
-
-ARCH=$(uname -m)
-VERBOSE="-v"
-SCRIPT_PATH=$(readlink -f ${0%/*})
-
-# Tell which nvidia drivers include into the iso
-NOUVEAU_DRIVER="y"
-NVIDIA_DRIVER="n"
-
-# Add ZFS modules
-# (net-install iso will always remove them no matter what)
-ADD_ZFS_MODULES="y"
-
-# Keep xz packages in cache
-# (minimal and net-install versions will always remove them no matter what)
-KEEP_XZ="y"
 KEEP_XZ_FLAG="-z"
-
-# Install iso-hotfix-utility from source
-ISO_HOTFIX="y"
-ISO_HOTFIX_UTILITY_VERSION="1.0.17"
-ISO_HOTFIX_UTILITY_URL="https://github.com/Antergos/iso-hotfix-utility/archive/${ISO_HOTFIX_UTILITY_VERSION}.tar.gz"
-
-# Pacman configuration file
-PACMAN_CONF="${WORK_DIR}/pacman.conf"
 
 # Helper functions
 MKARCHISO() {
@@ -94,7 +67,7 @@ make_pacman_conf() {
 
 # Base installation, plus needed packages (root-image)
 make_basefs() {
-    if [[ ${ISO_NAME} == *"minimal"* ]] || [[ ${ISO_NAME} == *"net-install"* ]]; then
+    if [[ ${ISO_NAME} == *"minimal"* ]] || [[ ${ISO_NAME} == *"netcli"* ]]; then
         MKARCHISO init-minimal
     else
         MKARCHISO init
@@ -190,7 +163,7 @@ make_customize_rootfs() {
             iso_hotfix_utility
         fi
 
-        if [[ ${ISO_NAME} == *"minimal"* ]]; then
+        if [[ ${ISO_NAME} == *"minimal"* ]] || [[ ${ISO_NAME} == *"netcli"* ]]; then
             remove_extra_icons
         fi
 
@@ -527,7 +500,7 @@ make_efiboot() {
     umount -d ${WORK_DIR}/efiboot
 }
 
-# Remove unused icons (should only be used by minimal installation)
+# Remove unused icons (should only be used by minimal and netcli installations)
 remove_extra_icons() {
     if [[ -d "${WORK_DIR}/root-image/usr/share/icons" ]]; then
         echo
@@ -685,16 +658,6 @@ if [[ ${ARCH} != x86_64 ]]; then
     _usage 1
 fi
 
-# Get ISO name from iso_name.txt file
-if [ -f "${SCRIPT_PATH}/version.txt" ]; then
-    ISO_NAME=${ISO_NAME}-$(cat ${SCRIPT_PATH}/version.txt)
-fi
-
-# Always remove zfs modules in the net-install iso
-if [[ ${ISO_NAME} == *"net-install"* ]]; then
-    ADD_ZFS_MODULES="n"
-fi
-
 # Add nvidia to the iso name if nvidia proprietary drivers are used but
 # and the nouveau ones are not included
 if [[ "$NVIDIA_DRIVER" == "y" ]] && [[ "$NOUVEAU_DRIVER" == "n" ]]; then
@@ -713,15 +676,9 @@ else
     KEEP_XZ_FLAG=""
 fi
 
-# Always remove cached pacman xz packages when the
-# iso name contains "minimal" or "net-install" in its name
-if [[ ${ISO_NAME} == *"minimal"* ]] || [[ ${ISO_NAME} == *"net-install"* ]]; then
-    KEEP_XZ="n"
-    KEEP_XZ_FLAG=""
-elif [[ "${KEEP_XZ}" == "n" ]]; then
-    # Iso is not minimal, but it won't contain any cached packages either.
-    # Add it to the iso name, so everybody knows.
-    ISO_NAME=${ISO_NAME}-nocache
+if [[ "${KEEP_XZ}" != "y" ]]; then
+    # Show in iso name that no xz packages are cached in the ISO
+    ISO_NAME=${ISO_NAME}-noxz
 fi
 
 while getopts 'N:V:L:D:w:o:vh' ARG; do

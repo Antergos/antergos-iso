@@ -1,0 +1,37 @@
+#!/bin/bash
+set -euo pipefail
+
+ISO_NAME="antergos-deepin"
+ISO_LABEL="ANTERGOS"
+
+YEAR="$(date +'%y')"
+MONTH="$(date +'%-m')"
+ISO_VERSION="${YEAR}.${MONTH}"
+
+INSTALL_DIR="arch"
+WORK_DIR="/work"
+OUT_DIR="/out"
+
+ARCH=$(uname -m)
+VERBOSE="-v"
+SCRIPT_PATH=$(readlink -f ${0%/*})
+
+# Tell which nvidia drivers include into the iso
+NOUVEAU_DRIVER="y"
+NVIDIA_DRIVER="n"
+
+# Add ZFS modules
+# (net-install iso will always remove them no matter what)
+ADD_ZFS_MODULES="n"
+
+# Keep xz packages in cache
+# (minimal and net-install versions will always remove them no matter what)
+KEEP_XZ="y"
+
+# Install iso-hotfix-utility from source
+ISO_HOTFIX="y"
+ISO_HOTFIX_UTILITY_VERSION="1.0.17"
+ISO_HOTFIX_UTILITY_URL="https://github.com/Antergos/iso-hotfix-utility/archive/${ISO_HOTFIX_UTILITY_VERSION}.tar.gz"
+
+# Pacman configuration file
+PACMAN_CONF="${WORK_DIR}/pacman.conf"
