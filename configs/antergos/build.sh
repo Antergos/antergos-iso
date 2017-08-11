@@ -294,10 +294,18 @@ make_customize_rootfs() {
         fi
 
         # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
-        MKARCHISO_RUN '/usr/bin/update-ca-trust'
-        MKARCHISO_RUN '/usr/bin/update-desktop-database --quiet'
-        MKARCHISO_RUN '/usr/bin/update-mime-database /usr/share/mime'
-        MKARCHISO_RUN '/usr/bin/gdk-pixbuf-query-loaders --update-cache'
+        if [ -e ${WORK_DIR}/root-image/usr/bin/update-ca-trust ]; then
+            MKARCHISO_RUN '/usr/bin/update-ca-trust'
+        fi
+        if [ -e ${WORK_DIR}/root-image/usr/bin/update-desktop-database ]; then
+            MKARCHISO_RUN '/usr/bin/update-desktop-database --quiet'
+        fi
+        if [ -e ${WORK_DIR}/root-image/usr/bin/update-mime-database ]; then
+            MKARCHISO_RUN '/usr/bin/update-mime-database /usr/share/mime'
+        fi
+        if [ -e ${WORK_DIR}/root-image/usr/bin/gdk-pixbuf-query-loaders ]; then
+            MKARCHISO_RUN '/usr/bin/gdk-pixbuf-query-loaders --update-cache'
+        fi
         # END Pacstrap/Pacman bug
 
         ## Set multi-user target (text) as default boot mode for net-install
