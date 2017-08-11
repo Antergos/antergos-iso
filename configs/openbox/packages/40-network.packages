@@ -1,7 +1,7 @@
 # Network
 b43-firmware
 b43-fwcutter
-broadcom-wl
+broadcom-wl-dkms
 dnsutils
 intel-ucode
 ipw2100-fw
