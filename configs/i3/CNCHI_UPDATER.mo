@@ -1,1 +1,0 @@
-../antergos/CNCHI_UPDATER.mo
