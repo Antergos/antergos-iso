@@ -280,11 +280,8 @@ make_customize_rootfs() {
         # Fix /home permissions
         MKARCHISO_RUN 'chown -R antergos:users /home/antergos'
 
-        # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
-        MKARCHISO_RUN '/usr/bin/update-ca-trust'
-
-        # Setup gsettings (but in net-install)
-        if [[ ${ISO_NAME} != *"net-install"* ]]; then
+        # Setup gsettings if gsettings folder exists
+        if [ -d ${SCRIPT_PATH}/gsettings ]; then
             # Copying GSettings XML schema files
             mkdir -p ${WORK_DIR}/root-image/usr/share/glib-2.0/schemas
             for _schema in ${SCRIPT_PATH}/gsettings/*.gschema.override; do
@@ -294,16 +291,18 @@ make_customize_rootfs() {
 
             # Compile GSettings XML schema files
             MKARCHISO_RUN '/usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas'
-
-            MKARCHISO_RUN '/usr/bin/update-desktop-database --quiet'
-            MKARCHISO_RUN '/usr/bin/update-mime-database /usr/share/mime'
-            MKARCHISO_RUN '/usr/bin/gdk-pixbuf-query-loaders --update-cache'
-            # END Pacstrap/Pacman bug
-        else
-            # Set multi-user target (text) as default boot mode for net-install
-            MKARCHISO_RUN 'systemctl -fq enable multi-user.target'
-            MKARCHISO_RUN 'systemctl -fq set-default multi-user.target'
         fi
+
+        # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
+        MKARCHISO_RUN '/usr/bin/update-ca-trust'
+        MKARCHISO_RUN '/usr/bin/update-desktop-database --quiet'
+        MKARCHISO_RUN '/usr/bin/update-mime-database /usr/share/mime'
+        MKARCHISO_RUN '/usr/bin/gdk-pixbuf-query-loaders --update-cache'
+        # END Pacstrap/Pacman bug
+
+        ## Set multi-user target (text) as default boot mode for net-install
+        #MKARCHISO_RUN 'systemctl -fq enable multi-user.target'
+        #MKARCHISO_RUN 'systemctl -fq set-default multi-user.target'
 
         # Fix sudoers
         chown -R root:root ${WORK_DIR}/root-image/etc/
