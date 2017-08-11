@@ -1,0 +1,10 @@
+# System Tools
+expect
+gnome-keyring
+libnotify
+librsvg
+powerpill
+reflector
+sudo
+wget
+xdg-user-dirs
