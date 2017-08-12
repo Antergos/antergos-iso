@@ -639,21 +639,37 @@ make_all() {
         echo ">>> Will KEEP cached xz packages in ISO!"
     fi
 
+    echo ">>> make pacman.conf"
     run_once make_pacman_conf
+    echo ">>> make basefs"
     run_once make_basefs
+    echo ">>> make packages"
     run_once make_packages
+    echo ">>> make efi packages"
     run_once make_packages_efi
+    echo ">>> make mkinitcpio setup"
     run_once make_setup_mkinitcpio
+    echo ">>> make customize rootfs"
     run_once make_customize_rootfs
+    echo ">>> make iso version files"
     run_once make_iso_version_files
+    echo ">>> make kernel modules (dkms)"
     run_once make_kernel_modules_with_dkms
+    echo ">>> make boot"
     run_once make_boot
+    echo ">>> make boot (extra)"
     run_once make_boot_extra
+    echo ">>> make syslinux"
     run_once make_syslinux
+    echo ">>> make isolinux"
     run_once make_isolinux
+    echo ">>> make efi"
     run_once make_efi
+    echo ">>> make efi boot"
     run_once make_efiboot
+    echo ">>> make prepare"
     run_once make_prepare
+    echo ">>> make iso"
     run_once make_iso
     exit 0;
 }
