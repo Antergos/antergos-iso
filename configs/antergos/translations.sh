@@ -2,43 +2,35 @@
 
 shopt -s nullglob
 
-_out_dir="$1"
-_work_dir="$2"
-_script_dir="$3"
+_OUT_DIR="$1"
+_WORK_DIR="$2"
+_SCRIPT_DIR="$3"
 
-
-
-for f in ${_out_dir}/trans/cnchi_updater/*.mo
+for mo_file in ${_OUT_DIR}/trans/cnchi_updater/*.mo
 do
-	fullname="$(basename ${f})"
-	echo "${fullname}"
+	fullname="$(basename ${mo_file})"
+	#echo "${fullname}"
 	fname="${fullname%.*}"
-	echo "${fname}"
-	dest="${_script_dir}/root-image/usr/share/locale/${fname}/LC_MESSAGES"
+	#echo "${fname}"
+	dest="${_SCRIPT_DIR}/root-image/usr/share/locale/${fname}/LC_MESSAGES"
 	echo "${dest}"
 	if ! [[ -d "${dest}" ]]; then
 		mkdir -p "${dest}";
 	fi
-	mv "${f}" "${dest}/CNCHI_UPDATER.mo"
+	mv "${mo_file}" "${dest}/CNCHI_UPDATER.mo"
 done
 
- 
-
-#for f in ${_out_dir}/trans/antergos-gfxboot/*.po
+#for f in ${_OUT_DIR}/trans/antergos-gfxboot/*.po
 #do
 #	echo "Moving ${f} to ${_script_dir}/antergos-gfxboot/po"
 #	mv -f "${f}" "${_script_dir}/antergos-gfxboot/po"
 #done
 
-cp -RL "${_script_dir}/antergos-gfxboot" "/usr/share/gfxboot/themes/"
+cp -RL "${_SCRIPT_DIR}/antergos-gfxboot" "/usr/share/gfxboot/themes/"
 cd /usr/share/gfxboot/themes/antergos-gfxboot
-
 tx pull
-
 make
-
-cp -R isolinux "${_script_dir}"
-
+cp -R /usr/share/gfxboot/themes/antergos-gfxboot/isolinux "${_SCRIPT_DIR}"
 
 shopt -u nullglob
 
