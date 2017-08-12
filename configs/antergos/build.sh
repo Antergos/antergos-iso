@@ -617,6 +617,11 @@ make_iso() {
 clean_rootfs() {
     rm -rf ${WORK_DIR}/*
     rm -f /var/tmp/customize_${ISO_NAME}_rootfs.*
+
+    # Clean isolinux directory created by translations.sh script
+    if [ -d ${SCRIPT_PATH}/isolinux ]; then
+        rm -rf ${SCRIPT_PATH}/isolinux
+    fi
 }
 
 # Cleans rootfs and deletes iso files
