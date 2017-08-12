@@ -5,6 +5,7 @@ libnotify
 librsvg
 powerpill
 reflector
+systemd-sysvcompat
 sudo
 wget
 xdg-user-dirs
