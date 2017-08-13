@@ -249,7 +249,13 @@ make_customize_rootfs() {
 
     part_five() {
         # Enable services
-        MKARCHISO_RUN 'systemctl -fq enable pacman-init livecd systemd-networkd'
+        MKARCHISO_RUN 'systemctl -fq enable pacman-init'
+
+        if [ -f "${ROOTFS}/etc/systemd/system/livecd.service" ]; then
+            MKARCHISO_RUN 'systemctl -fq enable livecd'
+        fi
+
+        MKARCHISO_RUN 'systemctl -fq enable systemd-networkd'
 
         if [ -f "${ROOTFS}/usr/lib/systemd/system/NetworkManager.service" ]; then
             MKARCHISO_RUN 'systemctl -fq enable NetworkManager NetworkManager-wait-online'
@@ -263,7 +269,8 @@ make_customize_rootfs() {
             MKARCHISO_RUN 'systemctl -fq enable vboxservice'
         fi
 
-        MKARCHISO_RUN 'systemctl -fq enable ModemManager upower'
+        MKARCHISO_RUN 'systemctl -fq enable ModemManager'
+        MKARCHISO_RUN 'systemctl -fq enable upower'
 
         if [ -f "${SCRIPT_PATH}/plymouthd.conf" ]; then
             MKARCHISO_RUN 'systemctl -fq enable plymouth-start'
@@ -285,7 +292,7 @@ make_customize_rootfs() {
         fi
 
         # Enable systemd-timesyncd (ntp)
-        MKARCHISO_RUN 'systemctl -fq enable systemd-timesyncd.service'
+        MKARCHISO_RUN 'systemctl -fq enable systemd-timesyncd'
 
         # Fix /home permissions
         MKARCHISO_RUN 'chown -R antergos:users /home/antergos'
@@ -304,16 +311,16 @@ make_customize_rootfs() {
         fi
 
         # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
-        if [ -e ${ROOTFS}/usr/bin/update-ca-trust ]; then
+        if [ -f ${ROOTFS}/usr/bin/update-ca-trust ]; then
             MKARCHISO_RUN '/usr/bin/update-ca-trust'
         fi
-        if [ -e ${ROOTFS}/usr/bin/update-desktop-database ]; then
+        if [ -f ${ROOTFS}/usr/bin/update-desktop-database ]; then
             MKARCHISO_RUN '/usr/bin/update-desktop-database --quiet'
         fi
-        if [ -e ${ROOTFS}/usr/bin/update-mime-database ]; then
+        if [ -f ${ROOTFS}/usr/bin/update-mime-database ]; then
             MKARCHISO_RUN '/usr/bin/update-mime-database /usr/share/mime'
         fi
-        if [ -e ${ROOTFS}/usr/bin/gdk-pixbuf-query-loaders ]; then
+        if [ -f ${ROOTFS}/usr/bin/gdk-pixbuf-query-loaders ]; then
             MKARCHISO_RUN '/usr/bin/gdk-pixbuf-query-loaders --update-cache'
         fi
         # END Pacstrap/Pacman bug
