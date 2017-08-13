@@ -291,6 +291,14 @@ make_customize_rootfs() {
             MKARCHISO_RUN 'systemctl -fq disable pamac pamac-cleancache.timer pamac-mirrorlist.timer'
         fi
 
+        # Useful a11y services for sonar
+        if [ -f "${ROOTFS}/usr/lib/systemd/system/espeakup.service" ]; then
+            MKARCHISO_RUN 'systemctl -fq enable espeakup'
+        fi
+        if [ -f "${ROOTFS}/usr/lib/systemd/system/brltty.service" ]; then
+            MKARCHISO_RUN 'systemctl -fq enable brltty'
+        fi
+
         # Enable systemd-timesyncd (ntp)
         MKARCHISO_RUN 'systemctl -fq enable systemd-timesyncd'
 
