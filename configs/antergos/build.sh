@@ -10,6 +10,9 @@ fi
 
 KEEP_XZ_FLAG="-z"
 
+# Root filesystem of our ISO image will be created here
+ROOTFS=${WORK_DIR}/root-image
+
 # Helper functions
 MKARCHISO() {
     mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" "$@"
@@ -112,52 +115,56 @@ make_packages_efi() {
 # Copy mkinitcpio archiso hooks (root-image)
 make_setup_mkinitcpio() {
     local _hook
-    mkdir -p ${WORK_DIR}/root-image/etc/initcpio/hooks
-    mkdir -p ${WORK_DIR}/root-image/etc/initcpio/install
-    mkdir -p ${WORK_DIR}/root-image/usr/lib/initcpio/hooks
-    mkdir -p ${WORK_DIR}/root-image/usr/lib/initcpio/install
+    mkdir -p ${ROOTFS}/etc/initcpio/hooks
+    mkdir -p ${ROOTFS}/etc/initcpio/install
+    mkdir -p ${ROOTFS}/usr/lib/initcpio/hooks
+    mkdir -p ${ROOTFS}/usr/lib/initcpio/install
     for _hook in archiso archiso_shutdown archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_loop_mnt; do
-         cp /usr/lib/initcpio/hooks/${_hook} ${WORK_DIR}/root-image/usr/lib/initcpio/hooks
-         cp /usr/lib/initcpio/install/${_hook} ${WORK_DIR}/root-image/usr/lib/initcpio/install
-         cp /usr/lib/initcpio/hooks/${_hook} ${WORK_DIR}/root-image/etc/initcpio/hooks
-         cp /usr/lib/initcpio/install/${_hook} ${WORK_DIR}/root-image/etc/initcpio/install
+         cp /usr/lib/initcpio/hooks/${_hook} ${ROOTFS}/usr/lib/initcpio/hooks
+         cp /usr/lib/initcpio/install/${_hook} ${ROOTFS}/usr/lib/initcpio/install
+         cp /usr/lib/initcpio/hooks/${_hook} ${ROOTFS}/etc/initcpio/hooks
+         cp /usr/lib/initcpio/install/${_hook} ${ROOTFS}/etc/initcpio/install
     done
-    cp /usr/lib/initcpio/install/archiso_kms ${WORK_DIR}/root-image/usr/lib/initcpio/install
-    cp /usr/lib/initcpio/archiso_shutdown ${WORK_DIR}/root-image/usr/lib/initcpio
-    sed -i "s|/usr/lib/initcpio/|/etc/initcpio/|g" ${WORK_DIR}/root-image/etc/initcpio/install/archiso_shutdown
-    cp /usr/lib/initcpio/install/archiso_kms ${WORK_DIR}/root-image/etc/initcpio/install
-    cp /usr/lib/initcpio/archiso_shutdown ${WORK_DIR}/root-image/etc/initcpio
-    cp -L ${SCRIPT_PATH}/mkinitcpio.conf ${WORK_DIR}/root-image/etc/mkinitcpio-archiso.conf
-    cp -L ${SCRIPT_PATH}/root-image/etc/os-release ${WORK_DIR}/root-image/etc
+    cp /usr/lib/initcpio/install/archiso_kms ${ROOTFS}/usr/lib/initcpio/install
+    cp /usr/lib/initcpio/archiso_shutdown ${ROOTFS}/usr/lib/initcpio
+    sed -i "s|/usr/lib/initcpio/|/etc/initcpio/|g" ${ROOTFS}/etc/initcpio/install/archiso_shutdown
+    cp /usr/lib/initcpio/install/archiso_kms ${ROOTFS}/etc/initcpio/install
+    cp /usr/lib/initcpio/archiso_shutdown ${ROOTFS}/etc/initcpio
+    cp -L ${SCRIPT_PATH}/mkinitcpio.conf ${ROOTFS}/etc/mkinitcpio-archiso.conf
+    cp -L ${SCRIPT_PATH}/root-image/etc/os-release ${ROOTFS}/etc
 
     if [ -f "${SCRIPT_PATH}/plymouth/plymouthd.conf" ]; then
-        cp -L ${SCRIPT_PATH}/plymouth/plymouthd.conf ${WORK_DIR}/root-image/etc/plymouth
-        cp -L ${SCRIPT_PATH}/plymouth/plymouth.initcpio_hook ${WORK_DIR}/root-image/etc/initcpio/hooks
-        cp -L ${SCRIPT_PATH}/plymouth/plymouth.initcpio_install ${WORK_DIR}/root-image/etc/initcpio/install
+        cp -L ${SCRIPT_PATH}/plymouth/plymouthd.conf ${ROOTFS}/etc/plymouth
+        cp -L ${SCRIPT_PATH}/plymouth/plymouth.initcpio_hook ${ROOTFS}/etc/initcpio/hooks
+        cp -L ${SCRIPT_PATH}/plymouth/plymouth.initcpio_install ${ROOTFS}/etc/initcpio/install
         #MKARCHISO_RUN 'plymouth-set-default-theme Antergos-Simple'
         echo '>>> Plymouth done!'
     else
-        sed -i 's|plymouth||g' ${WORK_DIR}/root-image/etc/mkinitcpio-archiso.conf
+        sed -i 's|plymouth||g' ${ROOTFS}/etc/mkinitcpio-archiso.conf
     fi
 
     MKARCHISO_RUN 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img'
     echo '>>> Mkinitcpio done!'
-    if [[ ! -f ${WORK_DIR}/root-image/boot/archiso.img ]]; then
+    if [[ ! -f ${ROOTFS}/boot/archiso.img ]]; then
     		echo '>>> Building archiso.img!'
-    		arch-chroot "${WORK_DIR}/root-image" 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' 2>&1
+    		arch-chroot "${ROOTFS}" 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' 2>&1
     fi
 }
 
 # Customize installation (root-image)
 make_customize_rootfs() {
     part_one() {
+        # Copy specific config root-image (and its contents) to our work dir
         cp -afLR ${SCRIPT_PATH}/root-image ${WORK_DIR}
-        if [ -f "${WORK_DIR}/root-image/etc/xdg/autostart/pamac-tray.desktop" ]; then
-            rm ${WORK_DIR}/root-image/etc/xdg/autostart/pamac-tray.desktop
+
+        if [ -f "${ROOTFS}/etc/xdg/autostart/pamac-tray.desktop" ]; then
+            rm ${ROOTFS}/etc/xdg/autostart/pamac-tray.desktop
         fi
-        ln -sf /usr/share/zoneinfo/UTC ${WORK_DIR}/root-image/etc/localtime
-        chmod 750 ${WORK_DIR}/root-image/etc/sudoers.d
-        chmod 440 ${WORK_DIR}/root-image/etc/sudoers.d/g_wheel
+
+        ln -sf /usr/share/zoneinfo/UTC ${ROOTFS}/etc/localtime
+
+        chmod 750 ${ROOTFS}/etc/sudoers.d
+        chmod 440 ${ROOTFS}/etc/sudoers.d/g_wheel
 
         if [ "${ISO_HOTFIX}" == "y" ]; then
             iso_hotfix_utility
@@ -167,16 +174,16 @@ make_customize_rootfs() {
             remove_extra_icons
         fi
 
-        mkdir -p ${WORK_DIR}/root-image/etc/pacman.d
-        wget -O ${WORK_DIR}/root-image/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
-        sed -i "s/#Server/Server/g" ${WORK_DIR}/root-image/etc/pacman.d/mirrorlist
+        mkdir -p ${ROOTFS}/etc/pacman.d
+        wget -O ${ROOTFS}/etc/pacman.d/mirrorlist 'https://www.archlinux.org/mirrorlist/?country=all&protocol=http&use_mirror_status=on'
+        sed -i "s/#Server/Server/g" ${ROOTFS}/etc/pacman.d/mirrorlist
 
-        #mkdir -p ${WORK_DIR}/root-image/var/run/dbus
-        #mount -o bind /var/run/dbus ${WORK_DIR}/root-image/var/run/dbus
+        #mkdir -p ${ROOTFS}/var/run/dbus
+        #mount -o bind /var/run/dbus ${ROOTFS}/var/run/dbus
 
         # Download opendesktop-fonts
-        #wget --content-disposition -P ${WORK_DIR}/root-image/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
-        #cp /start/opendesktop**.xz ${WORK_DIR}/root-image/arch/pkg
+        #wget --content-disposition -P ${ROOTFS}/arch/pkg 'https://www.archlinux.org/packages/community/any/opendesktop-fonts/download/'
+        #cp /start/opendesktop**.xz ${ROOTFS}/arch/pkg
         touch /var/tmp/customize_${ISO_NAME}_rootfs.one
     }
 
@@ -201,40 +208,40 @@ make_customize_rootfs() {
         echo "Set systemd target"
         MKARCHISO_RUN 'systemctl set-default -f graphical.target'
 
-       	rm -f ${WORK_DIR}/root-image/etc/xdg/autostart/vboxclient.desktop
+       	rm -f ${ROOTFS}/etc/xdg/autostart/vboxclient.desktop
     	touch /var/tmp/customize_${ISO_NAME}_rootfs.three
     }
 
     part_four() {
-        cp -L ${SCRIPT_PATH}/set_password ${WORK_DIR}/root-image/usr/bin
-        chmod +x ${WORK_DIR}/root-image/usr/bin/set_password
+        cp -L ${SCRIPT_PATH}/set_password ${ROOTFS}/usr/bin
+        chmod +x ${ROOTFS}/usr/bin/set_password
         MKARCHISO_RUN '/usr/bin/set_password'
 
-        rm -f ${WORK_DIR}/root-image/usr/bin/set_password
-        #echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${WORK_DIR}/root-image
+        rm -f ${ROOTFS}/usr/bin/set_password
+        #echo "antergos:U6aMy0wojraho" | chpasswd -R /antergos-iso/configs/antergos/${ROOTFS}
 
         # Configuring pacman
         echo "Configuring Pacman"
-        cp -f ${SCRIPT_PATH}/pacman.conf ${WORK_DIR}/root-image/etc/pacman.conf
-        sed -i 's|^#CheckSpace|CheckSpace|g' ${WORK_DIR}/root-image/etc/pacman.conf
-        sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${WORK_DIR}/root-image/etc/pacman.conf
+        cp -f ${SCRIPT_PATH}/pacman.conf ${ROOTFS}/etc/pacman.conf
+        sed -i 's|^#CheckSpace|CheckSpace|g' ${ROOTFS}/etc/pacman.conf
+        sed -i 's|^#SigLevel = Optional TrustedOnly|SigLevel = Optional|g' ${ROOTFS}/etc/pacman.conf
 
         # Setup journal
-        sed -i 's/#\(Storage=\)auto/\1volatile/' ${WORK_DIR}/root-image/etc/systemd/journald.conf
+        sed -i 's/#\(Storage=\)auto/\1volatile/' ${ROOTFS}/etc/systemd/journald.conf
 
         # Setup gparted execution method if installed
-        if [ -f "${WORK_DIR}/root-image/usr/share/applications/gparted.desktop" ]; then
-            sed -i 's|^Exec=|Exec=sudo -E |g' ${WORK_DIR}/root-image/usr/share/applications/gparted.desktop
+        if [ -f "${ROOTFS}/usr/share/applications/gparted.desktop" ]; then
+            sed -i 's|^Exec=|Exec=sudo -E |g' ${ROOTFS}/usr/share/applications/gparted.desktop
         fi
 
         # Setup Chromium start page if installed
-        if [ -f "${WORK_DIR}/root-image/usr/share/applications/chromium.desktop" ]; then
-            sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${WORK_DIR}/root-image/usr/share/applications/chromium.desktop
+        if [ -f "${ROOTFS}/usr/share/applications/chromium.desktop" ]; then
+            sed -i 's|^Exec=chromium %U|Exec=chromium --user-data-dir=/home/antergos/.config/chromium/Default --start-maximized --homepage=https://antergos.com|g' ${ROOTFS}/usr/share/applications/chromium.desktop
         fi
 
         # Setup Midori start page if installed
-        if [ -f "${WORK_DIR}/root-image/usr/share/applications/midori.desktop" ]; then
-            sed -i 's|^Exec=midori %U|Exec=midori https://www.antergos.com|g' ${WORK_DIR}/root-image/usr/share/applications/midori.desktop
+        if [ -f "${ROOTFS}/usr/share/applications/midori.desktop" ]; then
+            sed -i 's|^Exec=midori %U|Exec=midori https://www.antergos.com|g' ${ROOTFS}/usr/share/applications/midori.desktop
         fi
 
         touch /var/tmp/customize_${ISO_NAME}_rootfs.four
@@ -245,11 +252,11 @@ make_customize_rootfs() {
         MKARCHISO_RUN 'systemctl -fq enable pacman-init livecd systemd-networkd'
 
         # Net-install does not have NetworkManager
-        if [ -f "${WORK_DIR}/root-image/etc/systemd/system/NetworkManager.service" ]; then
+        if [ -f "${ROOTFS}/usr/lib/systemd/system/NetworkManager.service" ]; then
             MKARCHISO_RUN 'systemctl -fq enable NetworkManager NetworkManager-wait-online'
         fi
 
-        if [ -f "${WORK_DIR}/root-image/etc/systemd/system/vboxservice.service" ]; then
+        if [ -f "${ROOTFS}/usr/lib/systemd/system/vboxservice.service" ]; then
             MKARCHISO_RUN 'systemctl -fq enable vboxservice'
         fi
 
@@ -259,18 +266,18 @@ make_customize_rootfs() {
             MKARCHISO_RUN 'systemctl -fq enable plymouth-start'
         fi
 
-        if [ -f "${WORK_DIR}/root-image/etc/systemd/system/lightdm.service" ]; then
+        if [ -f "${ROOTFS}/usr/lib/systemd/system/lightdm.service" ]; then
             MKARCHISO_RUN 'systemctl -fq enable lightdm'
-            chmod +x ${WORK_DIR}/root-image/etc/lightdm/Xsession
+            chmod +x ${ROOTFS}/etc/lightdm/Xsession
         fi
 
-        if [ -f "${WORK_DIR}/root-image/etc/systemd/system/gdm.service" ]; then
+        if [ -f "${ROOTFS}/usr/lib/systemd/system/gdm.service" ]; then
             MKARCHISO_RUN 'systemctl -fq enable gdm'
-            chmod +x ${WORK_DIR}/root-image/etc/gdm/Xsession
+            chmod +x ${ROOTFS}/etc/gdm/Xsession
         fi
 
         # Disable pamac if present
-        if [ -f "${WORK_DIR}/root-image/usr/lib/systemd/system/pamac.service" ]; then
+        if [ -f "${ROOTFS}/usr/lib/systemd/system/pamac.service" ]; then
             MKARCHISO_RUN 'systemctl -fq disable pamac pamac-cleancache.timer pamac-mirrorlist.timer'
         fi
 
@@ -283,10 +290,10 @@ make_customize_rootfs() {
         # Setup gsettings if gsettings folder exists
         if [ -d ${SCRIPT_PATH}/gsettings ]; then
             # Copying GSettings XML schema files
-            mkdir -p ${WORK_DIR}/root-image/usr/share/glib-2.0/schemas
+            mkdir -p ${ROOTFS}/usr/share/glib-2.0/schemas
             for _schema in ${SCRIPT_PATH}/gsettings/*.gschema.override; do
                 echo ">>> Will use ${_schema}"
-                cp ${_schema} ${WORK_DIR}/root-image/usr/share/glib-2.0/schemas
+                cp ${_schema} ${ROOTFS}/usr/share/glib-2.0/schemas
             done
 
             # Compile GSettings XML schema files
@@ -294,16 +301,16 @@ make_customize_rootfs() {
         fi
 
         # BEGIN Pacstrap/Pacman bug where hooks are not run inside the chroot
-        if [ -e ${WORK_DIR}/root-image/usr/bin/update-ca-trust ]; then
+        if [ -e ${ROOTFS}/usr/bin/update-ca-trust ]; then
             MKARCHISO_RUN '/usr/bin/update-ca-trust'
         fi
-        if [ -e ${WORK_DIR}/root-image/usr/bin/update-desktop-database ]; then
+        if [ -e ${ROOTFS}/usr/bin/update-desktop-database ]; then
             MKARCHISO_RUN '/usr/bin/update-desktop-database --quiet'
         fi
-        if [ -e ${WORK_DIR}/root-image/usr/bin/update-mime-database ]; then
+        if [ -e ${ROOTFS}/usr/bin/update-mime-database ]; then
             MKARCHISO_RUN '/usr/bin/update-mime-database /usr/share/mime'
         fi
-        if [ -e ${WORK_DIR}/root-image/usr/bin/gdk-pixbuf-query-loaders ]; then
+        if [ -e ${ROOTFS}/usr/bin/gdk-pixbuf-query-loaders ]; then
             MKARCHISO_RUN '/usr/bin/gdk-pixbuf-query-loaders --update-cache'
         fi
         # END Pacstrap/Pacman bug
@@ -313,20 +320,20 @@ make_customize_rootfs() {
         #MKARCHISO_RUN 'systemctl -fq set-default multi-user.target'
 
         # Fix sudoers
-        chown -R root:root ${WORK_DIR}/root-image/etc/
-        chmod 660 ${WORK_DIR}/root-image/etc/sudoers
+        chown -R root:root ${ROOTFS}/etc/
+        chmod 660 ${ROOTFS}/etc/sudoers
 
         # Fix QT apps
-        echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${WORK_DIR}/root-image/etc/bash.bashrc
+        echo 'export GTK2_RC_FILES="$HOME/.gtkrc-2.0"' >> ${ROOTFS}/etc/bash.bashrc
 
         # Configure powerpill
-        sed -i 's|"ask" : true|"ask" : false|g' ${WORK_DIR}/root-image/etc/powerpill/powerpill.json
+        sed -i 's|"ask" : true|"ask" : false|g' ${ROOTFS}/etc/powerpill/powerpill.json
 
         # Black list floppy
-        echo "blacklist floppy" > ${WORK_DIR}/root-image/etc/modprobe.d/nofloppy.conf
+        echo "blacklist floppy" > ${ROOTFS}/etc/modprobe.d/nofloppy.conf
 
         ## Black list pc speaker
-        #echo "blacklist pcspkr" > ${WORK_DIR}/root-image/etc/modprobe.d/nopcspkr.conf
+        #echo "blacklist pcspkr" > ${ROOTFS}/etc/modprobe.d/nopcspkr.conf
 
         # Install translations for updater script
         ( "${SCRIPT_PATH}/translations.sh" $(cd "${OUT_DIR}"; pwd;) $(cd "${WORK_DIR}"; pwd;) $(cd "${SCRIPT_PATH}"; pwd;) )
@@ -354,22 +361,22 @@ iso_hotfix_utility() {
     rm -f ${SCRIPT_PATH}/iso-hotfix-utility.tar.gz
     mv "${SCRIPT_PATH}/iso-hotfix-utility-${ISO_HOTFIX_UTILITY_VERSION}" ${SCRIPT_PATH}/iso-hotfix-utility
 
-    cp "${SCRIPT_PATH}/iso-hotfix-utility/iso-hotfix-utility" "${WORK_DIR}/root-image/usr/bin/pacman-boot"
-    chmod 755 "${WORK_DIR}/root-image/usr/bin/pacman-boot"
+    cp "${SCRIPT_PATH}/iso-hotfix-utility/iso-hotfix-utility" "${ROOTFS}/usr/bin/pacman-boot"
+    chmod 755 "${ROOTFS}/usr/bin/pacman-boot"
 
-    mkdir -p "${WORK_DIR}/root-image/etc/iso-hotfix-utility.d"
+    mkdir -p "${ROOTFS}/etc/iso-hotfix-utility.d"
 
     for _file in ${SCRIPT_PATH}/iso-hotfix-utility/dist/**
     do
-        install -m755 -t "${WORK_DIR}/root-image/etc/iso-hotfix-utility.d" "${_file}"
+        install -m755 -t "${ROOTFS}/etc/iso-hotfix-utility.d" "${_file}"
     done
 
     for fpath in ${SCRIPT_PATH}/iso-hotfix-utility/po/*; do
         if [[ -f "${fpath}" ]] && [[ "${fpath}" != 'po/CNCHI_UPDATER.pot' ]]; then
             STRING_PO=`echo ${fpath#*/}`
             STRING=`echo ${STRING_PO%.po}`
-            mkdir -p "${WORK_DIR}/root-image/usr/share/locale/${STRING}/LC_MESSAGES"
-            msgfmt "${fpath}" -o "${WORK_DIR}/root-image/usr/share/locale/${STRING}/LC_MESSAGES/CNCHI_UPDATER.mo"
+            mkdir -p "${ROOTFS}/usr/share/locale/${STRING}/LC_MESSAGES"
+            msgfmt "${fpath}" -o "${ROOTFS}/usr/share/locale/${STRING}/LC_MESSAGES/CNCHI_UPDATER.mo"
             echo "${STRING} installed..."
         fi
     done
@@ -379,27 +386,27 @@ iso_hotfix_utility() {
 # Prepare ${INSTALL_DIR}/boot/
 make_boot() {
     mkdir -p ${WORK_DIR}/iso/${INSTALL_DIR}/boot/
-    if [[ -f ${WORK_DIR}/root-image/boot/archiso.img ]]; then
-        cp ${WORK_DIR}/root-image/boot/archiso.img ${WORK_DIR}/iso/${INSTALL_DIR}/boot/archiso.img
-        cp ${WORK_DIR}/root-image/boot/vmlinuz-linux ${WORK_DIR}/iso/${INSTALL_DIR}/boot/vmlinuz
+    if [[ -f ${ROOTFS}/boot/archiso.img ]]; then
+        cp ${ROOTFS}/boot/archiso.img ${WORK_DIR}/iso/${INSTALL_DIR}/boot/archiso.img
+        cp ${ROOTFS}/boot/vmlinuz-linux ${WORK_DIR}/iso/${INSTALL_DIR}/boot/vmlinuz
     else
         echo '>>> work_dir is ${WORK_DIR}'
-        ls ${WORK_DIR} && ls ${WORK_DIR}/root-image/ && ls ${WORK_DIR}/root-image/boot/
+        ls ${WORK_DIR} && ls ${ROOTFS}/ && ls ${ROOTFS}/boot/
     fi
 }
 
 # Add other aditional/extra files to ${INSTALL_DIR}/boot/
 make_boot_extra() {
-    if [[ -f ${WORK_DIR}/root-image/boot/memtest86+/memtest.bin ]]; then
-        cp ${WORK_DIR}/root-image/boot/memtest86+/memtest.bin ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest
+    if [[ -f ${ROOTFS}/boot/memtest86+/memtest.bin ]]; then
+        cp ${ROOTFS}/boot/memtest86+/memtest.bin ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest
     fi
 
-    if [[ -f ${WORK_DIR}/root-image/usr/share/licenses/common/GPL2/license.txt ]]; then
-        cp ${WORK_DIR}/root-image/usr/share/licenses/common/GPL2/license.txt ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest.COPYING
+    if [[ -f ${ROOTFS}/usr/share/licenses/common/GPL2/license.txt ]]; then
+        cp ${ROOTFS}/usr/share/licenses/common/GPL2/license.txt ${WORK_DIR}/iso/${INSTALL_DIR}/boot/memtest.COPYING
     fi
 
-    cp ${WORK_DIR}/root-image/boot/intel-ucode.img ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.img
-    cp ${WORK_DIR}/root-image/usr/share/licenses/intel-ucode/LICENSE ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.LICENSE
+    cp ${ROOTFS}/boot/intel-ucode.img ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.img
+    cp ${ROOTFS}/usr/share/licenses/intel-ucode/LICENSE ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.LICENSE
 }
 
 # Prepare /${INSTALL_DIR}/boot/syslinux
@@ -411,37 +418,37 @@ make_syslinux() {
              s|%ARCH%|${ARCH}|g" ${_cfg} > ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/${_cfg##*/}
     done
     cp -LR ${SCRIPT_PATH}/isolinux ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
-    cp ${WORK_DIR}/root-image/usr/lib/syslinux/bios/*.c32 ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
-    cp ${WORK_DIR}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
-    cp ${WORK_DIR}/root-image/usr/lib/syslinux/bios/memdisk ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
+    cp ${ROOTFS}/usr/lib/syslinux/bios/*.c32 ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
+    cp ${ROOTFS}/usr/lib/syslinux/bios/lpxelinux.0 ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
+    cp ${ROOTFS}/usr/lib/syslinux/bios/memdisk ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
     mkdir -p ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/hdt
-    gzip -c -9 ${WORK_DIR}/root-image/usr/share/hwdata/pci.ids > ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/hdt/pciids.gz
-    gzip -c -9 ${WORK_DIR}/root-image/usr/lib/modules/*-ARCH/modules.alias > ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/hdt/modalias.gz
+    gzip -c -9 ${ROOTFS}/usr/share/hwdata/pci.ids > ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/hdt/pciids.gz
+    gzip -c -9 ${ROOTFS}/usr/lib/modules/*-ARCH/modules.alias > ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/hdt/modalias.gz
 }
 
 # Prepare /isolinux
 make_isolinux() {
     mkdir -p ${WORK_DIR}/iso/isolinux
     cp -LR ${SCRIPT_PATH}/isolinux ${WORK_DIR}/iso
-    cp -R ${WORK_DIR}/root-image/usr/lib/syslinux/bios/* ${WORK_DIR}/iso/isolinux/
-    cp ${WORK_DIR}/root-image/usr/lib/syslinux/bios/*.c32 ${WORK_DIR}/iso/isolinux/
+    cp -R ${ROOTFS}/usr/lib/syslinux/bios/* ${WORK_DIR}/iso/isolinux/
+    cp ${ROOTFS}/usr/lib/syslinux/bios/*.c32 ${WORK_DIR}/iso/isolinux/
     sed "s|%ARCHISO_LABEL%|${ISO_LABEL}|g;
          s|%INSTALL_DIR%|${INSTALL_DIR}|g;
          s|%ARCH%|${ARCH}|g" ${SCRIPT_PATH}/isolinux/isolinux.cfg > ${WORK_DIR}/iso/isolinux/isolinux.cfg
-    cp ${WORK_DIR}/root-image/usr/lib/syslinux/bios/isolinux.bin ${WORK_DIR}/iso/isolinux/
-    cp ${WORK_DIR}/root-image/usr/lib/syslinux/bios/isohdpfx.bin ${WORK_DIR}/iso/isolinux/
-    cp ${WORK_DIR}/root-image/usr/lib/syslinux/bios/lpxelinux.0 ${WORK_DIR}/iso/isolinux/
+    cp ${ROOTFS}/usr/lib/syslinux/bios/isolinux.bin ${WORK_DIR}/iso/isolinux/
+    cp ${ROOTFS}/usr/lib/syslinux/bios/isohdpfx.bin ${WORK_DIR}/iso/isolinux/
+    cp ${ROOTFS}/usr/lib/syslinux/bios/lpxelinux.0 ${WORK_DIR}/iso/isolinux/
 }
 
 
 # Prepare /EFI
 make_efi() {
     mkdir -p ${WORK_DIR}/iso/EFI/boot
-    cp ${WORK_DIR}/root-image/usr/share/efitools/efi/PreLoader.efi ${WORK_DIR}/iso/EFI/boot/bootx64.efi
-    cp ${WORK_DIR}/root-image/usr/share/efitools/efi/HashTool.efi ${WORK_DIR}/iso/EFI/boot/
+    cp ${ROOTFS}/usr/share/efitools/efi/PreLoader.efi ${WORK_DIR}/iso/EFI/boot/bootx64.efi
+    cp ${ROOTFS}/usr/share/efitools/efi/HashTool.efi ${WORK_DIR}/iso/EFI/boot/
     cp ${SCRIPT_PATH}/efiboot/loader/bg.bmp ${WORK_DIR}/iso/EFI/
 
-    cp ${WORK_DIR}/root-image/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${WORK_DIR}/iso/EFI/boot/loader.efi
+    cp ${ROOTFS}/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${WORK_DIR}/iso/EFI/boot/loader.efi
 
     mkdir -p ${WORK_DIR}/iso/loader/entries
     cp ${SCRIPT_PATH}/efiboot/loader/loader.conf ${WORK_DIR}/iso/loader/
@@ -478,11 +485,11 @@ make_efiboot() {
     cp ${WORK_DIR}/iso/${INSTALL_DIR}/boot/intel_ucode.img ${WORK_DIR}/efiboot/EFI/archiso/intel_ucode.img
 
     mkdir -p ${WORK_DIR}/efiboot/EFI/boot
-    cp ${WORK_DIR}/root-image/usr/share/efitools/efi/PreLoader.efi ${WORK_DIR}/efiboot/EFI/boot/bootx64.efi
-    cp ${WORK_DIR}/root-image/usr/share/efitools/efi/HashTool.efi ${WORK_DIR}/efiboot/EFI/boot/
+    cp ${ROOTFS}/usr/share/efitools/efi/PreLoader.efi ${WORK_DIR}/efiboot/EFI/boot/bootx64.efi
+    cp ${ROOTFS}/usr/share/efitools/efi/HashTool.efi ${WORK_DIR}/efiboot/EFI/boot/
     cp ${SCRIPT_PATH}/efiboot/loader/bg.bmp ${WORK_DIR}/efiboot/EFI/
 
-    cp ${WORK_DIR}/root-image/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${WORK_DIR}/efiboot/EFI/boot/loader.efi
+    cp ${ROOTFS}/usr/lib/systemd/boot/efi/systemd-bootx64.efi ${WORK_DIR}/efiboot/EFI/boot/loader.efi
 
     mkdir -p ${WORK_DIR}/efiboot/loader/entries
     cp ${SCRIPT_PATH}/efiboot/loader/loader.conf ${WORK_DIR}/efiboot/loader/
@@ -509,10 +516,10 @@ make_efiboot() {
 
 # Remove unused icons (should only be used by minimal and netcli installations)
 remove_extra_icons() {
-    if [[ -d "${WORK_DIR}/root-image/usr/share/icons" ]]; then
+    if [[ -d "${ROOTFS}/usr/share/icons" ]]; then
         echo
         echo ">>> Removing extra icons..."
-        cd ${WORK_DIR}/root-image/usr/share/icons
+        cd ${ROOTFS}/usr/share/icons
         find . \
             ! -iname '**Cnchi**' \
             ! -iname '**image-missing.svg**' \
@@ -562,7 +569,7 @@ remove_extra_icons() {
 
 # Prepare ISO Version Files
 make_iso_version_files() {
-    base_dir="${WORK_DIR}/root-image/etc"
+    base_dir="${ROOTFS}/etc"
     version_files=('arch-release' 'hostname' 'hosts' 'lsb-release' 'os-release')
 
     # Replace <VERSION> with actual iso version in all version files.
@@ -581,8 +588,8 @@ make_kernel_modules_with_dkms() {
 
         if [ "${ADD_ZFS_MODULES}" == "y" ]; then
             # Bugfix (sometimes pacman tries to build zfs before spl!)
-            cp "${SCRIPT_PATH}/dkms.sh" "${WORK_DIR}/root-image/usr/bin"
-            chmod +x "${WORK_DIR}/root-image/usr/bin/dkms.sh"
+            cp "${SCRIPT_PATH}/dkms.sh" "${ROOTFS}/usr/bin"
+            chmod +x "${ROOTFS}/usr/bin/dkms.sh"
             MKARCHISO_RUN '/usr/bin/dkms.sh'
         fi
 
@@ -596,7 +603,7 @@ make_kernel_modules_with_dkms() {
 
 # Build a single root filesystem
 make_prepare() {
-    cp -a -l -f ${WORK_DIR}/root-image ${WORK_DIR}
+    cp -a -l -f ${ROOTFS} ${WORK_DIR}
 
     MKARCHISO pkglist
     MKARCHISO prepare
