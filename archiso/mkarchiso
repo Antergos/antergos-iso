@@ -56,8 +56,9 @@ _chroot_init() {
         mkdir -p ${work_dir}/root-image
         minimal=${1:-}
         if [[ "$minimal" == "minimal" ]]; then
-            _pacman "bash coreutils cryptsetup e2fsprogs device-mapper filesystem linux pacman sed syslinux antergos-keyring antergos-mirrorlist"
-            rm -rf "${work_dir}/root-image/usr/share/man/*"
+            #_pacman "bash coreutils cryptsetup e2fsprogs device-mapper filesystem linux pacman sed syslinux antergos-keyring antergos-mirrorlist"
+            _pacman "base syslinux antergos-keyring antergos-mirrorlist"
+            #rm -rf "${work_dir}/root-image/usr/share/man/*"
         else
             _pacman "base syslinux antergos-keyring antergos-mirrorlist"
         fi
