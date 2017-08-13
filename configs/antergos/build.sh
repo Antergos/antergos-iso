@@ -208,14 +208,9 @@ make_customize_rootfs() {
         # Set antergos account passwordless
         MKARCHISO_RUN 'passwd -d antergos'
 
-        echo "Set systemd target"
-        if [[ ${ISO_NAME} == *"netcli"* ]]; then
-            MKARCHISO_RUN 'systemctl -fq set-default multi-user.target'
-        else
-            MKARCHISO_RUN 'systemctl -fq set-default graphical.target'
-        fi
-
+        # Remove vboxclient from autostart
        	rm -f ${ROOTFS}/etc/xdg/autostart/vboxclient.desktop
+
     	touch /var/tmp/customize_${ISO_NAME}_rootfs.three
     }
 
@@ -362,6 +357,13 @@ make_customize_rootfs() {
 
         # Install translations for updater script
         ( "${SCRIPT_PATH}/translations.sh" $(cd "${OUT_DIR}"; pwd;) $(cd "${WORK_DIR}"; pwd;) $(cd "${SCRIPT_PATH}"; pwd;) )
+
+        echo "Set systemd target"
+        if [[ ${ISO_NAME} == *"netcli"* ]]; then
+            MKARCHISO_RUN 'systemctl -fq set-default multi-user.target'
+        else
+            MKARCHISO_RUN 'systemctl -fq set-default graphical.target'
+        fi
 
         touch /var/tmp/customize_${ISO_NAME}_rootfs.five
     }
