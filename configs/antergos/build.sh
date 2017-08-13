@@ -170,7 +170,10 @@ make_customize_rootfs() {
             iso_hotfix_utility
         fi
 
-        if [[ ${ISO_NAME} == *"minimal"* ]] || [[ ${ISO_NAME} == *"netcli"* ]]; then
+        #if [[ ${ISO_NAME} == *"minimal"* ]]; then
+        #    remove_extra_icons
+        #fi
+        if [[ ${ISO_NAME} == *"netcli"* ]]; then
             remove_extra_icons
         fi
 
@@ -206,7 +209,11 @@ make_customize_rootfs() {
         MKARCHISO_RUN 'passwd -d antergos'
 
         echo "Set systemd target"
-        MKARCHISO_RUN 'systemctl set-default -f graphical.target'
+        if [[ ${ISO_NAME} == *"netcli"* ]]; then
+            MKARCHISO_RUN 'systemctl -fq set-default multi-user.target'
+        else
+            MKARCHISO_RUN 'systemctl -fq set-default graphical.target'
+        fi
 
        	rm -f ${ROOTFS}/etc/xdg/autostart/vboxclient.desktop
     	touch /var/tmp/customize_${ISO_NAME}_rootfs.three
