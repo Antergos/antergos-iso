@@ -251,12 +251,15 @@ make_customize_rootfs() {
         # Enable services
         MKARCHISO_RUN 'systemctl -fq enable pacman-init livecd systemd-networkd'
 
-        # Net-install does not have NetworkManager
         if [ -f "${ROOTFS}/usr/lib/systemd/system/NetworkManager.service" ]; then
             MKARCHISO_RUN 'systemctl -fq enable NetworkManager NetworkManager-wait-online'
         fi
 
-        if [ -f "${ROOTFS}/usr/lib/systemd/system/vboxservice.service" ]; then
+        if [ -f "${ROOTFS}/etc/systemd/system/livecd-alsa-unmuter.service" ]; then
+            MKARCHISO_RUN 'systemctl -fq enable livecd-alsa-unmuter'
+        fi
+
+        if [ -f "${ROOTFS}/etc/systemd/system/vboxservice.service" ]; then
             MKARCHISO_RUN 'systemctl -fq enable vboxservice'
         fi
 
@@ -266,12 +269,12 @@ make_customize_rootfs() {
             MKARCHISO_RUN 'systemctl -fq enable plymouth-start'
         fi
 
-        if [ -f "${ROOTFS}/usr/lib/systemd/system/lightdm.service" ]; then
+        if [ -f "${ROOTFS}/etc/systemd/system/lightdm.service" ]; then
             MKARCHISO_RUN 'systemctl -fq enable lightdm'
             chmod +x ${ROOTFS}/etc/lightdm/Xsession
         fi
 
-        if [ -f "${ROOTFS}/usr/lib/systemd/system/gdm.service" ]; then
+        if [ -f "${ROOTFS}/etc/systemd/system/gdm.service" ]; then
             MKARCHISO_RUN 'systemctl -fq enable gdm'
             chmod +x ${ROOTFS}/etc/gdm/Xsession
         fi
