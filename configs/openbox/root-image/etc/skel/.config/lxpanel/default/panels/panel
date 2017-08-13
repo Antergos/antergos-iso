@@ -16,7 +16,7 @@ Global {
   usefontcolor=1
   fontcolor=#eeeeee
   usefontsize=1
-  fontsize=12
+  fontsize=10
   background=0
   backgroundfile=/usr/share/lxpanel/images/background.png
   iconsize=24
@@ -38,6 +38,9 @@ Plugin {
     }
     Button {
       id=menu://applications/System/Cnchi.desktop
+    }
+    Button {
+      id=menu://applications/Internet/midori.desktop
     }
     Button {
       id=menu://applications/DesktopSettings/nm-connection-editor.desktop
