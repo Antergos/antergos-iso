@@ -57,7 +57,16 @@ _chroot_init() {
         mkdir -p ${rootfs}
         minimal=${1:-}
         if [[ "$minimal" == "minimal" ]]; then
-            #_pacman "bash coreutils cryptsetup e2fsprogs device-mapper filesystem linux pacman sed syslinux antergos-keyring antergos-mirrorlist"
+            #_pacman "acl archlinux-keyring attr ca-certificates ca-certificates-cacert \
+            #ca-certificates-mozilla ca-certificates-utils cracklib curl db \
+            #expat gdbm glib2 gmp gnupg gnutls gpgme iana-etc icu keyutils krb5 \
+            #lz4 mpfr ncurses nettle npth openssl p11-kit pacman-mirrorlist pam \
+            #pambase pcre pinentry popt readline sqlite tzdata xz zlib antergos-keyring \
+            #bash bzip2 coreutils diffutils e2fsprogs file filesystem findutils \
+            #gawk gcc-libs gettext glibc grep gzip haveged inetutils iputils less \
+            #licenses logrotate nano pacman perl procps-ng psmisc sed shadow sysfsutils \
+            #tar texinfo util-linux which"
+
             _pacman "base syslinux antergos-keyring antergos-mirrorlist"
             #rm -rf "${rootfs}/usr/share/man/*"
         else
