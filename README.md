@@ -41,7 +41,7 @@ git checkout testing
 sudo make install
 ```
 
-5. While inside `antergos-iso` folder, clone antergos-gfxboot and use antergos-gfxboot `colors` branch :
+5. While inside the `antergos-iso` folder, clone antergos-gfxboot and use antergos-gfxboot `colors` branch :
 ```
 git clone https://github.com/antergos/antergos-gfxboot
 git checkout colors
