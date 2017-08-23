@@ -23,22 +23,35 @@ Please, check that you have 5GB (or more) of free harddisk space in your root pa
 ## Instructions (without docker)
 
 1. Install dependencies:
-`sudo pacman -S arch-install-scripts cpio dosfstools gfxboot libisoburn mkinitcpio-nfs-utils make patch squashfs-tools wget`
-
+```
+sudo pacman -S arch-install-scripts cpio dosfstools gfxboot libisoburn mkinitcpio-nfs-utils make patch squashfs-tools wget
+```
 2. Clone this repository using `--recursive` like this:
-`git clone https://github.com/antergos/antergos-iso.git --recursive`
-
+```
+git clone https://github.com/antergos/antergos-iso.git --recursive
+```
 3. Enter into antergos-iso folder and change to the testing branch:
-`cd antergos-iso` and then `git checkout testing`.
+```
+cd antergos-iso
+git checkout testing
+```
 
 4. Install our modified mkarchiso and configurations by running:
-`sudo make install`.
+```
+sudo make install
+```
 
 5. While inside `antergos-iso` folder, clone antergos-gfxboot and use antergos-gfxboot `colors` branch :
-`git clone https://github.com/antergos/antergos-gfxboot` and `git checkout colors`.
+```
+git clone https://github.com/antergos/antergos-gfxboot
+git checkout colors
+```
 
 6. Create /work and /out destination folders:
-`sudo mkdir /work` and `sudo mkdir /out`
+```
+sudo mkdir /work
+sudo mkdir /out
+```
 
 7. Go to the config directory you wish to build from.
 - The "official" iso is in `cd /home/USER/antergos-iso/configs/antergos/`
@@ -47,7 +60,9 @@ Please, check that you have 5GB (or more) of free harddisk space in your root pa
 8. Check text configuration file `config` with your favourite text editor.
 
 9. Build the iso:
-`sudo ./build.sh build`
+```
+sudo ./build.sh build
+```
 
  **If you want to try to build the iso again, please remember to clean all generated files first:** `sudo ./build.sh clean`
 
