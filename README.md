@@ -24,17 +24,22 @@ Please, check that you have 5GB (or more) of free harddisk space in your root pa
 
 1. Install dependencies:
 `sudo pacman -S arch-install-scripts cpio dosfstools gfxboot libisoburn mkinitcpio-nfs-utils make patch squashfs-tools wget`
-2. Clone this repository using `--recursive` like this: `git clone https://github.com/antergos/antergos-iso.git --recursive`
-3. Enter into antergos-iso folder and change to the testing branch: `cd antergos-iso` and then `git checkout testing`.
-4. Install our modified mkarchiso and configurations by running: `sudo make install`.
-5. While inside `antergos-iso` folder, clone antergos-gfxboot : `git clone https://github.com/antergos/antergos-gfxboot`
-6. Use antergos-gfxboot `colors` branch: `git checkout colors`
-7. Create /work and /out destination folders : `sudo mkdir /work` and `sudo mkdir /out`
+2. Clone this repository using `--recursive` like this:
+`git clone https://github.com/antergos/antergos-iso.git --recursive`
+3. Enter into antergos-iso folder and change to the testing branch:
+`cd antergos-iso` and then `git checkout testing`.
+4. Install our modified mkarchiso and configurations by running:
+`sudo make install`.
+5. While inside `antergos-iso` folder, clone antergos-gfxboot and use antergos-gfxboot `colors` branch :
+`git clone https://github.com/antergos/antergos-gfxboot` and `git checkout colors`.
+7. Create /work and /out destination folders:
+`sudo mkdir /work` and `sudo mkdir /out`
 8. Go to the config directory you wish to build from.
-- The "official" iso is in `cd /home/user/antergos-iso/configs/antergos/`
-- The "minimal" iso is in `cd /home/user/antergos-iso/configs/minimal/`
-9. Check text configuration file `config` with your favourite text editor
-10. Build the iso: `sudo ./build.sh build`
+- The "official" iso is in `cd /home/USER/antergos-iso/configs/antergos/`
+- The "minimal" iso is in `cd /home/USER/antergos-iso/configs/minimal/`
+9. Check text configuration file `config` with your favourite text editor.
+10. Build the iso:
+`sudo ./build.sh build`
 
  **If you want to try to build the iso again, please remember to clean all generated files first:** `sudo ./build.sh clean`
 
