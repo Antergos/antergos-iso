@@ -53,6 +53,8 @@ sudo mkdir /work
 sudo mkdir /out
 ```
 
+The `/work` folder will store the livecd filesystem while the `/out` folder will store your new ISO file.
+
 7. Go to the `config` directory you wish to build from.
 - The "official" iso is in the `antergos` folder.
 ```
