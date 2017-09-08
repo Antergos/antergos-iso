@@ -59,6 +59,8 @@ fwupdate
 gcab
 gedit
 gksu
+gnome-calculator
+gnome-font-viewer
 gnome-keyring
 gnome-software
 gst-libav
@@ -74,6 +76,7 @@ libsmbios
 libwnck3
 libyaml
 network-manager-applet
+networkmanager-openvpn
 ostree
 packagekit
 pepper-flash
@@ -81,6 +84,7 @@ pidgin
 polari
 pragha
 python-dae
+reflector
 startdde
 totem
 transmission-gtk
