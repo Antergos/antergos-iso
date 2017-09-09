@@ -14,12 +14,12 @@ KEEP_XZ_FLAG="-z"
 ROOTFS=${WORK_DIR}/root-image
 
 # Helper functions
-MKARCHISO() {
-    mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" "$@"
+MKANTISO() {
+    mkantiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" "$@"
 }
 
-MKARCHISO_RUN() {
-    mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" -r "$@" run
+MKANTISO_RUN() {
+    mkantiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" -r "$@" run
 }
 
 _usage ()
@@ -71,12 +71,12 @@ make_pacman_conf() {
 # Base installation, plus needed packages (root-image)
 make_basefs() {
     if [[ ${ISO_NAME} == *"minimal"* ]] || [[ ${ISO_NAME} == *"netcli"* ]]; then
-        MKARCHISO init-minimal
+        MKANTISO init-minimal
     else
-        MKARCHISO init
+        MKANTISO init
     fi
 
-    MKARCHISO -p "haveged intel-ucode nbd memtest86+" install
+    MKANTISO -p "haveged intel-ucode nbd memtest86+" install
 }
 
 # Additional packages (root-image)
@@ -100,7 +100,7 @@ make_packages() {
             if [ "${ADD_ZFS_MODULES}" != "y" ]; then
                 packages=$(grep -h -v ^# ${_file} | grep -h -v ^zfs)
             fi
-            MKARCHISO -p "${packages}" install
+            MKANTISO -p "${packages}" install
         else
             echo ">>> ${_file} skipped!"
         fi
@@ -109,10 +109,10 @@ make_packages() {
 
 # Needed packages for x86_64 EFI boot
 make_packages_efi() {
-    MKARCHISO -p "efitools" install
+    MKANTISO -p "efitools" install
 }
 
-# Copy mkinitcpio archiso hooks (root-image)
+# Copy mkinitcpio antiso hooks (root-image)
 make_setup_mkinitcpio() {
     local _hook
     mkdir -p ${ROOTFS}/etc/initcpio/hooks
@@ -168,6 +168,10 @@ make_customize_rootfs() {
 
         if [ "${ISO_HOTFIX}" == "y" ]; then
             iso_hotfix_utility
+        fi
+
+        if [ "${CNCHI_GIT}" == "y" ]; then
+            cnchi_git
         fi
 
         #if [[ ${ISO_NAME} == *"minimal"* ]]; then
@@ -408,6 +412,40 @@ iso_hotfix_utility() {
         fi
     done
     rm -rf ${SCRIPT_PATH}/iso-hotfix-utility
+}
+
+# Install cnchi installer from Git
+cnchi_git() {
+    echo
+    echo ">>> Warning! Installing Cnchi Installer from GIT (${CNCHI_GIT_BRANCH} branch)"
+    wget "${CNCHI_GIT_URL}" -O ${SCRIPT_PATH}/cnchi-git.zip
+    unzip ${SCRIPT_PATH}/cnchi-git.zip -d ${SCRIPT_PATH}
+    rm -f ${SCRIPT_PATH}/cnchi-git.zip
+
+    CNCHI_SRC="${SCRIPT_PATH}/Cnchi-${CNCHI_GIT_BRANCH}"
+
+    install -d ${ROOT_FS}/usr/share/{cnchi,locale}
+	install -Dm755 "${CNCHI_SRC}/bin/cnchi" "${ROOT_FS}/usr/bin/cnchi"
+	install -Dm755 "${CNCHI_SRC}/cnchi.desktop" "${ROOT_FS}/usr/share/applications/cnchi.desktop"
+	install -Dm644 "${CNCHI_SRC}/data/images/antergos/antergos-icon.png" "${ROOT_FS}/usr/share/pixmaps/cnchi.png"
+
+    # TODO: This should be included in Cnchi's src code as a separate file
+    # (as both files are needed to run cnchi)
+    sed -r -i 's|\/usr.+ -v|pkexec /usr/share/cnchi/bin/cnchi -s bugsnag|g' "${ROOT_FS}/usr/bin/cnchi"
+
+    for i in ${CNCHI_SRC}/cnchi ${CNCHI_SRC}/bin ${CNCHI_SRC}/data ${CNCHI_SRC}/scripts ${CNCHI_SRC}/ui; do
+        cp -R ${i} "${ROOT_FS}/usr/share/cnchi/"
+    done
+
+    for files in ${CNCHI_SRC}/po/*; do
+        if [ -f "$files" ] && [ "$files" != 'po/cnchi.pot' ]; then
+            STRING_PO=`echo ${files#*/}`
+            STRING=`echo ${STRING_PO%.po}`
+            mkdir -p ${ROOT_FS}/usr/share/locale/${STRING}/LC_MESSAGES
+            msgfmt $files -o ${ROOT_FS}/usr/share/locale/${STRING}/LC_MESSAGES/cnchi.mo
+            echo "${STRING} installed..."
+        fi
+    done
 }
 
 # Prepare ${INSTALL_DIR}/boot/
