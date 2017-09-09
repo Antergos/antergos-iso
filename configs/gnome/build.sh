@@ -14,11 +14,11 @@ KEEP_XZ_FLAG="-z"
 ROOTFS=${WORK_DIR}/root-image
 
 # Helper functions
-MKANTISO() {
+MKARCHISO() {
     mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" "$@"
 }
 
-MKANTISO_RUN() {
+MKARCHISO_RUN() {
     mkarchiso ${VERBOSE} ${KEEP_XZ_FLAG} -w "${WORK_DIR}" -C "${PACMAN_CONF}" -D "${INSTALL_DIR}" -r "$@" run
 }
 
@@ -71,12 +71,12 @@ make_pacman_conf() {
 # Base installation, plus needed packages (root-image)
 make_basefs() {
     if [[ ${ISO_NAME} == *"minimal"* ]] || [[ ${ISO_NAME} == *"netcli"* ]]; then
-        MKANTISO init-minimal
+        MKARCHISO init-minimal
     else
-        MKANTISO init
+        MKARCHISO init
     fi
 
-    MKANTISO -p "haveged intel-ucode nbd memtest86+" install
+    MKARCHISO -p "haveged intel-ucode nbd memtest86+" install
 }
 
 # Additional packages (root-image)
@@ -100,7 +100,7 @@ make_packages() {
             if [ "${ADD_ZFS_MODULES}" != "y" ]; then
                 packages=$(grep -h -v ^# ${_file} | grep -h -v ^zfs)
             fi
-            MKANTISO -p "${packages}" install
+            MKARCHISO -p "${packages}" install
         else
             echo ">>> ${_file} skipped!"
         fi
@@ -109,7 +109,7 @@ make_packages() {
 
 # Needed packages for x86_64 EFI boot
 make_packages_efi() {
-    MKANTISO -p "efitools" install
+    MKARCHISO -p "efitools" install
 }
 
 # Copy mkinitcpio antiso hooks (root-image)
