@@ -1,1 +1,19 @@
-../../antergos/packages/50-fonts.packages
+# Fonts
+divehi-fonts
+opendesktop-fonts
+terminus-font
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+ttf-aboriginal-sans
+ttf-arphic-uming
+ttf-baekmuk
+ttf-bitstream-vera
+ttf-dejavu
+ttf-droid
+ttf-freefont
+ttf-liberation
+ttf-opensans
+ttf-ubuntu-font-family
+unicode-character-database
+
