@@ -419,7 +419,7 @@ cnchi_git() {
     echo
     echo ">>> Warning! Installing Cnchi Installer from GIT (${CNCHI_GIT_BRANCH} branch)"
     wget "${CNCHI_GIT_URL}" -O ${SCRIPT_PATH}/cnchi-git.zip
-    unzip -o ${SCRIPT_PATH}/cnchi-git.zip -d ${SCRIPT_PATH}
+    unzip -uo ${SCRIPT_PATH}/cnchi-git.zip -d ${SCRIPT_PATH}
     rm -f ${SCRIPT_PATH}/cnchi-git.zip
 
     CNCHI_SRC="${SCRIPT_PATH}/Cnchi-${CNCHI_GIT_BRANCH}"
