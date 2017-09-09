@@ -424,25 +424,25 @@ cnchi_git() {
 
     CNCHI_SRC="${SCRIPT_PATH}/Cnchi-${CNCHI_GIT_BRANCH}"
 
-    install -d ${ROOT_FS}/usr/share/{cnchi,locale}
-	install -Dm755 "${CNCHI_SRC}/bin/cnchi" "${ROOT_FS}/usr/bin/cnchi"
-	install -Dm755 "${CNCHI_SRC}/cnchi.desktop" "${ROOT_FS}/usr/share/applications/cnchi.desktop"
-	install -Dm644 "${CNCHI_SRC}/data/images/antergos/antergos-icon.png" "${ROOT_FS}/usr/share/pixmaps/cnchi.png"
+    install -d ${ROOTFS}/usr/share/{cnchi,locale}
+	install -Dm755 "${CNCHI_SRC}/bin/cnchi" "${ROOTFS}/usr/bin/cnchi"
+	install -Dm755 "${CNCHI_SRC}/cnchi.desktop" "${ROOTFS}/usr/share/applications/cnchi.desktop"
+	install -Dm644 "${CNCHI_SRC}/data/images/antergos/antergos-icon.png" "${ROOTFS}/usr/share/pixmaps/cnchi.png"
 
     # TODO: This should be included in Cnchi's src code as a separate file
     # (as both files are needed to run cnchi)
-    sed -r -i 's|\/usr.+ -v|pkexec /usr/share/cnchi/bin/cnchi -s bugsnag|g' "${ROOT_FS}/usr/bin/cnchi"
+    sed -r -i 's|\/usr.+ -v|pkexec /usr/share/cnchi/bin/cnchi -s bugsnag|g' "${ROOTFS}/usr/bin/cnchi"
 
     for i in ${CNCHI_SRC}/cnchi ${CNCHI_SRC}/bin ${CNCHI_SRC}/data ${CNCHI_SRC}/scripts ${CNCHI_SRC}/ui; do
-        cp -R ${i} "${ROOT_FS}/usr/share/cnchi/"
+        cp -R ${i} "${ROOTFS}/usr/share/cnchi/"
     done
 
     for files in ${CNCHI_SRC}/po/*; do
         if [ -f "$files" ] && [ "$files" != 'po/cnchi.pot' ]; then
             STRING_PO=`echo ${files#*/}`
             STRING=`echo ${STRING_PO%.po}`
-            mkdir -p ${ROOT_FS}/usr/share/locale/${STRING}/LC_MESSAGES
-            msgfmt $files -o ${ROOT_FS}/usr/share/locale/${STRING}/LC_MESSAGES/cnchi.mo
+            mkdir -p ${ROOTFS}/usr/share/locale/${STRING}/LC_MESSAGES
+            msgfmt $files -o ${ROOTFS}/usr/share/locale/${STRING}/LC_MESSAGES/cnchi.mo
             echo "${STRING} installed..."
         fi
     done
