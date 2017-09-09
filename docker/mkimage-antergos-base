@@ -58,7 +58,7 @@ export PACMAN_MIRROR="Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$
 export ANTERGOS_LOCAL_MIRROR=""
 export ANTERGOS_MIRROR="Server = http://repo.antergos.info/\$repo/\$arch"
 
-EXTRA_PKGS="haveged antergos-keyring"
+EXTRA_PKGS="haveged antergos-keyring unzip"
 EXPECT_TIMEOUT=60
 ARCH_KEYRING="archlinux"
 ANTERGOS_KEYRING="antergos"
