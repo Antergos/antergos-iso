@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Deepin File Manager (Root)
+Comment=Access and organize files with root priviliges
+Icon=dde-file-manager
+Exec=dde-file-manager-pkexec
+NoDisplay=false
+Categories=Core;FileManager;GNOME;GTK;System;System-Tools;Utilities;
+Keywords=root;administrator;folder;manager;explore;disk;filesystem;deepin;
+MimeType=inode/directory;application/x-gnome-saved-search;
+StartupNotify=true
+Terminal=false
+
