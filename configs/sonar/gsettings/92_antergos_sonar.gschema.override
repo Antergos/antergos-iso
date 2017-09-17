@@ -44,24 +44,5 @@ command='ocrdesktop'
 binding='<Alt><Super>o'
 name='ocr the current window'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 [org.mate.interface]
 accessibility=true
