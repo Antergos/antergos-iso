@@ -1,9 +1,14 @@
 # Desktop
 compton
-lxpanel-gtk3
-lxterminal-gtk3
+gparted
+lxpanel
+lxterminal
+midori
 network-manager-applet
 nitrogen
 notify-osd
+obmenu
+openbox-menu
 openbox
-midori
+
+
