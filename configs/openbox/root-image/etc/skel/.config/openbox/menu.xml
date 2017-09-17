@@ -115,6 +115,13 @@
 					</execute>
 				</action>
 			</item>
+                        <item label="Terminal">
+                                <action name="Execute">
+                                        <execute>
+                                               lxterminal
+                                        </execute>
+                                </action>
+                        </item>
 		</menu>
 		<separator/>
 		<item label="Exit">
