@@ -48,3 +48,7 @@ show-create-link=true
 [org.gnome.shell]
 enabled-extensions=['user-theme@gnome-shell-extensions.gcampax.github.com', 'status-menu-buttons@dev.antergos.com', 'dash-to-dock@micxgx.gmail.com']
 favorite-apps=['nautilus.desktop', 'gnome-terminal.desktop', 'chromium.desktop', 'gnome-music.desktop', 'pamac.desktop']
+always-show-log-out=true
+
+[org.gnome.settings-daemon.plugins.xsettings]
+antialiasing='rgba'
