@@ -120,10 +120,10 @@ make_setup_mkinitcpio() {
     mkdir -p ${ROOTFS}/usr/lib/initcpio/hooks
     mkdir -p ${ROOTFS}/usr/lib/initcpio/install
     for _hook in archiso archiso_shutdown archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_loop_mnt; do
-         cp /usr/lib/initcpio/hooks/${_hook} ${ROOTFS}/usr/lib/initcpio/hooks
-         cp /usr/lib/initcpio/install/${_hook} ${ROOTFS}/usr/lib/initcpio/install
-         cp /usr/lib/initcpio/hooks/${_hook} ${ROOTFS}/etc/initcpio/hooks
-         cp /usr/lib/initcpio/install/${_hook} ${ROOTFS}/etc/initcpio/install
+        cp /usr/lib/initcpio/hooks/${_hook} ${ROOTFS}/usr/lib/initcpio/hooks
+        cp /usr/lib/initcpio/install/${_hook} ${ROOTFS}/usr/lib/initcpio/install
+        cp /usr/lib/initcpio/hooks/${_hook} ${ROOTFS}/etc/initcpio/hooks
+        cp /usr/lib/initcpio/install/${_hook} ${ROOTFS}/etc/initcpio/install
     done
     cp /usr/lib/initcpio/install/archiso_kms ${ROOTFS}/usr/lib/initcpio/install
     cp /usr/lib/initcpio/archiso_shutdown ${ROOTFS}/usr/lib/initcpio
@@ -146,8 +146,8 @@ make_setup_mkinitcpio() {
     MKARCHISO_RUN 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img'
     echo '>>> Mkinitcpio done!'
     if [[ ! -f ${ROOTFS}/boot/archiso.img ]]; then
-    		echo '>>> Building archiso.img!'
-    		arch-chroot "${ROOTFS}" 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' 2>&1
+        echo '>>> Building archiso.img!'
+        arch-chroot "${ROOTFS}" 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' 2>&1
     fi
 }
 
@@ -213,9 +213,9 @@ make_customize_rootfs() {
         MKARCHISO_RUN 'passwd -d antergos'
 
         # Remove vboxclient from autostart
-       	rm -f ${ROOTFS}/etc/xdg/autostart/vboxclient.desktop
+        rm -f ${ROOTFS}/etc/xdg/autostart/vboxclient.desktop
 
-    	touch /var/tmp/customize_${ISO_NAME}_rootfs.three
+        touch /var/tmp/customize_${ISO_NAME}_rootfs.three
     }
 
     part_four() {
@@ -425,9 +425,9 @@ cnchi_git() {
     CNCHI_SRC="${SCRIPT_PATH}/Cnchi-${CNCHI_GIT_BRANCH}"
 
     install -d ${ROOTFS}/usr/share/{cnchi,locale}
-	install -Dm755 "${CNCHI_SRC}/bin/cnchi" "${ROOTFS}/usr/bin/cnchi"
-	install -Dm755 "${CNCHI_SRC}/cnchi.desktop" "${ROOTFS}/usr/share/applications/cnchi.desktop"
-	install -Dm644 "${CNCHI_SRC}/data/images/antergos/antergos-icon.png" "${ROOTFS}/usr/share/pixmaps/cnchi.png"
+    install -Dm755 "${CNCHI_SRC}/bin/cnchi" "${ROOTFS}/usr/bin/cnchi"
+    install -Dm755 "${CNCHI_SRC}/cnchi.desktop" "${ROOTFS}/usr/share/applications/cnchi.desktop"
+    install -Dm644 "${CNCHI_SRC}/data/images/antergos/antergos-icon.png" "${ROOTFS}/usr/share/pixmaps/cnchi.png"
 
     # TODO: This should be included in Cnchi's src code as a separate file
     # (as both files are needed to run cnchi)
@@ -480,7 +480,7 @@ make_syslinux() {
     for _cfg in ${SCRIPT_PATH}/isolinux/*.cfg; do
         sed "s|%ARCHISO_LABEL%|${ISO_LABEL}|g;
              s|%INSTALL_DIR%|${INSTALL_DIR}|g;
-             s|%ARCH%|${ARCH}|g" ${_cfg} > ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/${_cfg##*/}
+        s|%ARCH%|${ARCH}|g" ${_cfg} > ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/${_cfg##*/}
     done
     cp -LR ${SCRIPT_PATH}/isolinux ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
     cp ${ROOTFS}/usr/lib/syslinux/bios/*.c32 ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
@@ -499,7 +499,7 @@ make_isolinux() {
     cp ${ROOTFS}/usr/lib/syslinux/bios/*.c32 ${WORK_DIR}/iso/isolinux/
     sed "s|%ARCHISO_LABEL%|${ISO_LABEL}|g;
          s|%INSTALL_DIR%|${INSTALL_DIR}|g;
-         s|%ARCH%|${ARCH}|g" ${SCRIPT_PATH}/isolinux/isolinux.cfg > ${WORK_DIR}/iso/isolinux/isolinux.cfg
+    s|%ARCH%|${ARCH}|g" ${SCRIPT_PATH}/isolinux/isolinux.cfg > ${WORK_DIR}/iso/isolinux/isolinux.cfg
     cp ${ROOTFS}/usr/lib/syslinux/bios/isolinux.bin ${WORK_DIR}/iso/isolinux/
     cp ${ROOTFS}/usr/lib/syslinux/bios/isohdpfx.bin ${WORK_DIR}/iso/isolinux/
     cp ${ROOTFS}/usr/lib/syslinux/bios/lpxelinux.0 ${WORK_DIR}/iso/isolinux/
@@ -524,13 +524,13 @@ make_efi() {
         [[ "${boot_entry}" = **'archiso-cd'** ]] && continue
         fname=$(basename ${boot_entry})
         sed "s|%ARCHISO_LABEL%|${ISO_LABEL}|g;
-            s|%INSTALL_DIR%|${INSTALL_DIR}|g" ${boot_entry} > ${WORK_DIR}/iso/loader/entries/${fname}
+        s|%INSTALL_DIR%|${INSTALL_DIR}|g" ${boot_entry} > ${WORK_DIR}/iso/loader/entries/${fname}
     done
 
-   # EFI Shell 2.0 for UEFI 2.3+
-   curl -o ${WORK_DIR}/iso/EFI/shellx64_v2.efi https://raw.githubusercontent.com/tianocore/edk2/master/ShellBinPkg/UefiShell/X64/Shell.efi
-   # EFI Shell 1.0 for non UEFI 2.3+
-   curl -o ${WORK_DIR}/iso/EFI/shellx64_v1.efi https://raw.githubusercontent.com/tianocore/edk2/master/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
+    # EFI Shell 2.0 for UEFI 2.3+
+    curl -o ${WORK_DIR}/iso/EFI/shellx64_v2.efi https://raw.githubusercontent.com/tianocore/edk2/master/ShellBinPkg/UefiShell/X64/Shell.efi
+    # EFI Shell 1.0 for non UEFI 2.3+
+    curl -o ${WORK_DIR}/iso/EFI/shellx64_v1.efi https://raw.githubusercontent.com/tianocore/edk2/master/EdkShellBinPkg/FullShell/X64/Shell_Full.efi
 }
 
 
@@ -565,7 +565,7 @@ make_efiboot() {
         [[ "${boot_entry}" = **'archiso-usb-default'** ]] && continue
         fname=$(basename ${boot_entry})
         sed "s|%ARCHISO_LABEL%|${ISO_LABEL}|g;
-            s|%INSTALL_DIR%|${INSTALL_DIR}|g" ${boot_entry} > ${WORK_DIR}/efiboot/loader/entries/${fname}
+        s|%INSTALL_DIR%|${INSTALL_DIR}|g" ${boot_entry} > ${WORK_DIR}/efiboot/loader/entries/${fname}
     done
 
     for boot_entry in ${WORK_DIR}/efiboot/loader/entries/**.conf; do
@@ -586,49 +586,49 @@ remove_extra_icons() {
         echo ">>> Removing extra icons..."
         cd ${ROOTFS}/usr/share/icons
         find . \
-            ! -iname '**Cnchi**' \
-            ! -iname '**image-missing.svg**' \
-            ! -iname '**emblem-default.svg**' \
-            ! -iname '**dialog-warning.svg**' \
-            ! -iname '**edit-undo**' \
-            ! -iname '**list-add**' \
-            ! -iname '**list-remove**' \
-            ! -iname '**system-run**' \
-            ! -iname '**edit-clear-all**' \
-            ! -iname 'dialog-***' \
-            ! -iname '**-yes.svg**' \
-            ! -iname '**_yes.svg**' \
-            ! -iname '**-no.svg**' \
-            ! -iname '**stock_no.svg**' \
-            ! -iname 'nm-***' \
-            ! -iname '**system-software-install**' \
-            ! -iname '***bluetooth***' \
-            ! -iname '***printer***' \
-            ! -iname '***firefox***' \
-            ! -iname '**network-server**' \
-            ! -iname '***preferences-desktop-font***' \
-            ! -iname '**fonts**' \
-            ! -iname '**applications-accessories**' \
-            ! -iname '**text-editor**' \
-            ! -iname '**accessories-text-editor**' \
-            ! -iname '**gnome-mime-x-directory-smb-share**' \
-            ! -iname '**terminal**' \
-            ! -iname '**video-display**' \
-            ! -iname '**go-next-symbolic**' \
-            ! -iname '**go-previous-symbolic**' \
-            ! -iname '**_close**' \
-            ! -iname '**-close**' \
-            ! -iname '**dialog-**' \
-            ! -iname 'nm-**' \
-            ! -iname 'window-**' \
-            ! -iname '**network**' \
-            ! -iname 'index.theme' \
-            ! -iname '**system-shutdown**' \
-            ! -iname '**pan-**' \
-            ! -iname '**symbolic**' \
-            ! -ipath '**Adwaita**' \
-            ! -ipath '**highcolor**' \
-            -type f -delete
+        ! -iname '**Cnchi**' \
+        ! -iname '**image-missing.svg**' \
+        ! -iname '**emblem-default.svg**' \
+        ! -iname '**dialog-warning.svg**' \
+        ! -iname '**edit-undo**' \
+        ! -iname '**list-add**' \
+        ! -iname '**list-remove**' \
+        ! -iname '**system-run**' \
+        ! -iname '**edit-clear-all**' \
+        ! -iname 'dialog-***' \
+        ! -iname '**-yes.svg**' \
+        ! -iname '**_yes.svg**' \
+        ! -iname '**-no.svg**' \
+        ! -iname '**stock_no.svg**' \
+        ! -iname 'nm-***' \
+        ! -iname '**system-software-install**' \
+        ! -iname '***bluetooth***' \
+        ! -iname '***printer***' \
+        ! -iname '***firefox***' \
+        ! -iname '**network-server**' \
+        ! -iname '***preferences-desktop-font***' \
+        ! -iname '**fonts**' \
+        ! -iname '**applications-accessories**' \
+        ! -iname '**text-editor**' \
+        ! -iname '**accessories-text-editor**' \
+        ! -iname '**gnome-mime-x-directory-smb-share**' \
+        ! -iname '**terminal**' \
+        ! -iname '**video-display**' \
+        ! -iname '**go-next-symbolic**' \
+        ! -iname '**go-previous-symbolic**' \
+        ! -iname '**_close**' \
+        ! -iname '**-close**' \
+        ! -iname '**dialog-**' \
+        ! -iname 'nm-**' \
+        ! -iname 'window-**' \
+        ! -iname '**network**' \
+        ! -iname 'index.theme' \
+        ! -iname '**system-shutdown**' \
+        ! -iname '**pan-**' \
+        ! -iname '**symbolic**' \
+        ! -ipath '**Adwaita**' \
+        ! -ipath '**highcolor**' \
+        -type f -delete
     fi
 }
 
@@ -794,7 +794,7 @@ while getopts 'N:V:L:D:w:o:vh' ARG; do
         *)
             echo "Invalid argument '${ARG}'"
             _usage 1
-            ;;
+        ;;
     esac
 done
 
@@ -813,14 +813,14 @@ COMMAND_NAME="${1}"
 case "${COMMAND_NAME}" in
     build)
         make_all
-        ;;
+    ;;
     clean)
         clean_rootfs
-        ;;
+    ;;
     purge)
         purge_rootfs
-        ;;
+    ;;
     make)
         make_iso
-        ;;
+    ;;
 esac
