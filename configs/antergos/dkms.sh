@@ -4,7 +4,7 @@ _KERNVER_STR="$(pacman -Q linux)"
 _KERNVER="${_KERNVER_STR/linux }-ARCH"
 _MODVER_STR="$(pacman -Q zfs)"
 _MODVER_STR="${_MODVER_STR/zfs }"
-_MODVER="${_MODVER_STR/.r*}"
+_MODVER="${_MODVER_STR%-*}"
 
 pacman -S --needed linux-headers
 
