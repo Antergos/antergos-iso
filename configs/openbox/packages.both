@@ -11,6 +11,7 @@ crda
 haveged
 arch-install-scripts
 fakeroot
+dkms
 
 # Cnchi Graphical Installer
 cnchi
