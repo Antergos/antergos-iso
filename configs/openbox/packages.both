@@ -12,6 +12,7 @@ haveged
 arch-install-scripts
 fakeroot
 dkms
+linux-headers
 
 # Cnchi Graphical Installer
 cnchi
