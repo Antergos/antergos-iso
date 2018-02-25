@@ -21,6 +21,7 @@ Modified version of archiso to build the Antergos ISO
  (or setup isolinux/syslinux).
  - Create destination folder `/out` : `sudo mkdir /out`
  - Create a symlink to your working directory and call it `/start` : `sudo ln -s /var/tmp/antergos /start`
+  - Download `opendesktop-fonts-X.X.X-X-any.pkg.tar.xz` from https://www.archlinux.org/packages/community/any/opendesktop-fonts/ (Download from Mirror) and move it in `/start`
  - Build the iso (run the command inside the `/var/tmp/antergos` directory): `sudo ./build.sh build dual`
  
 /start and /out are defaults. You can change it passing the desired directories as parameters to build.sh
