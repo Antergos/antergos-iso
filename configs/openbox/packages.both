@@ -84,7 +84,7 @@ compton
 nitrogen
 lxpanel-gtk3
 xfce4-notifyd
-lxterminal-gtk3
+lxterminal
 
 # Set antergos user password
 expect
