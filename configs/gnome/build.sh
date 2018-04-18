@@ -8,10 +8,39 @@ else
     exit 1
 fi
 
+#####################################################################################################################
+# Globals (these are for all configs (gnome, kde, ...).
+# Check 'config' file inside each config folder for specific options)
+
+ARCH=$(uname -m)
+SCRIPT_PATH=$(readlink -f ${0%/*})
+
+# ISO version (uses year and month)
+YEAR="$(date +'%y')"
+MONTH="$(date +'%-m')"
+ISO_VERSION="${YEAR}.${MONTH}"
+
+# xz flag (cache)
 KEEP_XZ_FLAG="-z"
 
-# Root filesystem of our ISO image will be created here
+# antergos-gfxboot GIT url
+GFXBOOT_GIT_URL="https://github.com/Antergos/antergos-gfxboot.git"
+
+# iso-hotfix-utility
+ISO_HOTFIX_UTILITY_VERSION="1.0.17"
+ISO_HOTFIX_UTILITY_URL="https://github.com/Antergos/iso-hotfix-utility/archive/${ISO_HOTFIX_UTILITY_VERSION}.tar.gz"
+
+# Cnchi GIT data
+CNCHI_GIT_BRANCH="0.14.x"
+CNCHI_GIT_URL="https://github.com/Antergos/Cnchi/archive/${CNCHI_GIT_BRANCH}.zip"
+
+# Pacman configuration file
+PACMAN_CONF="${WORK_DIR}/pacman.conf"
+
+# Root filesystem of our ISO image. It will be created here.
 ROOTFS=${WORK_DIR}/root-image
+
+#####################################################################################################################
 
 # Helper functions
 MKARCHISO() {
