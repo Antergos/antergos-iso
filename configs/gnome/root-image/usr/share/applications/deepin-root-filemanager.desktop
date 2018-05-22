@@ -11,4 +11,5 @@ Keywords=root;administrator;folder;manager;explore;disk;filesystem;deepin;
 MimeType=inode/directory;application/x-gnome-saved-search;
 StartupNotify=true
 Terminal=false
+NotShowIn=GNOME;
 
