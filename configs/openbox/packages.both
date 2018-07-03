@@ -27,7 +27,6 @@ upower
 dialog
 ipw2100-fw
 ipw2200-fw
-zd1211-firmware
 wireless_tools
 wpa_actiond
 b43-fwcutter
