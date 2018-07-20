@@ -52,3 +52,7 @@ always-show-log-out=true
 
 [org.gnome.settings-daemon.plugins.xsettings]
 antialiasing='rgba'
+
+[org.gnome.settings-daemon.plugins.power]
+sleep-inactive-ac-type='nothing'
+sleep-inactive-battery-type='nothing'
