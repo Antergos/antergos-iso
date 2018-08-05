@@ -8,6 +8,11 @@ _MODVER="${_MODVER_STR%-*}"
 
 pacman -S --needed linux-headers
 
+# :unamused:
+[[ -e "/usr/lib/modules/${_KERNVER}" ]] || _KERNVER="${_KERNVER,,}"
+[[ -e "/usr/lib/modules/${_KERNVER}" ]] || _KERNVER="${_KERNVER}1"
+
+
 echo '>>> Updating module dependencies. Please wait ...'
 
 if [[ $(dkms status -k "${_KERNVER}" "spl/${_MODVER}") != *'installed'* ]]; then
