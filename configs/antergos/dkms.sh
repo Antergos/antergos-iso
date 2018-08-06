@@ -14,24 +14,14 @@ pacman -S --needed linux-headers
 [[ -e "/usr/lib/modules/${_KERNVER}" ]] || _KERNVER="${_KERNVER}1"
 
 
-wait_for_debugging() {
-	echo "Waiting for debugging..."
-
-	while true
-	do
-		sleep 60
-	done
-}
-
-
 echo '>>> Updating module dependencies. Please wait ...'
 
 if [[ $(dkms status -k "${_KERNVER}" "spl/${_MODVER}") != *'installed'* ]]; then
-	{ dkms install -k "${_KERNVER}" "spl/${_MODVER}"; } || wait_for_debugging #exit 1
+	{ dkms install -k "${_KERNVER}" "spl/${_MODVER}"; } || exit 1
 fi
 
 if [[ $(dkms status -k "${_KERNVER}" "zfs/${_MODVER}") != *'installed'* ]]; then
-	{ dkms install -k "${_KERNVER}" "zfs/${_MODVER}"; } || wait_for_debugging #exit 1
+	{ dkms install -k "${_KERNVER}" "zfs/${_MODVER}"; } || exit 1
 fi
 
 { mkinitcpio -p linux && exit 0; } || exit 1
