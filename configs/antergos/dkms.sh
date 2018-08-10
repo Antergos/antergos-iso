@@ -3,7 +3,7 @@
 _KERNVER_STR="$(pacman -Q linux)"
 _KERNVER="${_KERNVER_STR/linux }"
 _KERNVER="${_KERNVER%-*}"
-_KERNVER="${_KERNVER/.arch1/-arch1}"
+_KERNVER="${_KERNVER/.arch1/-arch1-1-ARCH}"
 _MODVER_STR="$(pacman -Q zfs)"
 _MODVER_STR="${_MODVER_STR/zfs }"
 _MODVER="${_MODVER_STR%-*}"
