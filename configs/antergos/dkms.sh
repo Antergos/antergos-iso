@@ -2,7 +2,7 @@
 
 _KERNVER_STR="$(pacman -Q linux)"
 _KERNVER="${_KERNVER_STR/linux }"
-_KERNVER="${_KERNVER%-*}-ARCH"
+_KERNVER="${_KERNVER%-*}"
 _MODVER_STR="$(pacman -Q zfs)"
 _MODVER_STR="${_MODVER_STR/zfs }"
 _MODVER="${_MODVER_STR%-*}"
@@ -10,8 +10,8 @@ _MODVER="${_MODVER_STR%-*}"
 pacman -S --needed linux-headers
 
 # :unamused:
-[[ -e "/usr/lib/modules/${_KERNVER}" ]] || _KERNVER="${_KERNVER,,}"
-[[ -e "/usr/lib/modules/${_KERNVER}" ]] || _KERNVER="${_KERNVER}1"
+#[[ -e "/usr/lib/modules/${_KERNVER}" ]] || _KERNVER="${_KERNVER,,}"
+#[[ -e "/usr/lib/modules/${_KERNVER}" ]] || _KERNVER="${_KERNVER}1"
 
 
 echo '>>> Updating module dependencies. Please wait ...'
