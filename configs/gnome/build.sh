@@ -505,6 +505,7 @@ make_boot_extra() {
 
 # Prepare /${INSTALL_DIR}/boot/syslinux
 make_syslinux() {
+    _uname_r=$(file -b ${work_dir}/root-image/boot/vmlinuz-linux | awk 'f{print;f=0} /version/{f=1}' RS=' ')
     mkdir -p ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
     for _cfg in ${SCRIPT_PATH}/isolinux/*.cfg; do
         sed "s|%ARCHISO_LABEL%|${ISO_LABEL}|g;
@@ -517,7 +518,7 @@ make_syslinux() {
     cp ${ROOTFS}/usr/lib/syslinux/bios/memdisk ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
     mkdir -p ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/hdt
     gzip -c -9 ${ROOTFS}/usr/share/hwdata/pci.ids > ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/hdt/pciids.gz
-    gzip -c -9 ${ROOTFS}/usr/lib/modules/*-ARCH/modules.alias > ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/hdt/modalias.gz
+    gzip -c -9 ${ROOTFS}/usr/lib/modules/${_uname_r}/modules.alias > ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux/hdt/modalias.gz
 }
 
 # Prepare /isolinux
