@@ -1,0 +1,35 @@
+ #!/bin/bash
+
+rank_mirrors() {
+    if [ -f /etc/pacman.d/mirrorlist.pacnew ]; then
+        cp /etc/pacman.d/mirrorlist.pacnew /etc/pacman.d/mirrorlist
+    fi
+
+    if [ -f /etc/pacman.d/antergos-mirrorlist.pacnew ]; then
+        cp /etc/pacman.d/antergos-mirrorlist.pacnew /etc/pacman.d/antergos-mirrorlist
+    fi
+
+    sed -e 's/^#Server/Server/' /etc/pacman.d/mirrorlist > /tmp/mirrorlist
+    echo "Ranking Arch mirror list... this might take some time. Please wait!"
+    rankmirrors -n 10 /tmp/mirrorlist > /etc/pacman.d/mirrorlist
+
+    sed -e 's/^#Server/Server/' /etc/pacman.d/antergos-mirrorlist > /tmp/antergos-mirrorlist
+    echo "Ranking Antergos mirror list... this might take some time. Please wait!"
+    rankmirrors -n 10 /tmp/antergos-mirrorlist > /etc/pacman.d/antergos-mirrorlist
+
+    echo "Updating pacman databases..."
+    pacman -Syy --noconfirm
+}
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
+echo "Ranking mirrors... please wait."
+rank_mirrors
+echo "Updating mirrors lists... please wait."
+pacman -S --noconfirm pacman-mirrorlist antergos-mirrorlist
+echo "Ranking mirrors (last time)... please wait."
+rank_mirrors
+echo "All done!"

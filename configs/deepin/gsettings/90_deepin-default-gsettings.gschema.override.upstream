@@ -1,0 +1,139 @@
+[com.deepin.wrap.gnome.desktop.background]
+primary-color = '#000000'
+secondary-color = '#023c88'
+picture-uri = 'file:///usr/share/backgrounds/deepin/desktop.jpg'
+
+[com.deepin.wrap.gnome.desktop.sound]
+theme-name = 'deepin'
+event-sounds = true
+
+[com.deepin.wrap.gnome.desktop.wm.preferences]
+theme = 'deepin'
+audible-bell = false
+mouse-button-modifier = ''
+
+[com.deepin.wrap.gnome.desktop.interface]
+cursor-theme = 'deepin'
+gtk-key-theme = 'Default'
+gtk-theme = 'deepin'
+icon-theme = 'deepin'
+gtk-im-module = 'fcitx'
+
+[com.deepin.wrap.gnome.desktop.wm.keybindings]
+close = ['<Alt>F4']
+maximize = ['<Super>Up']
+unmaximize = ['<Super>Down']
+minimize = ['<Super>N']
+show-desktop = ['<Super>D']
+toggle-maximized = ['<Super>M', '<Alt>F10']
+toggle-on-all-workspaces = []
+cycle-windows = []
+cycle-windows-backward = []
+cycle-group = []
+cycle-group-backward = []
+panel-main-menu = []
+panel-run-dialog = []
+switch-applications = ['<Alt>Tab']
+switch-applications-backward = ['<Alt><Shift>Tab']
+switch-windows = []
+switch-windows-backward = []
+switch-group = ['<Alt>Above_Tab']
+switch-group-backward = ['<Alt><Shift>Above_Tab']
+switch-panels = ['<Control><Alt>Tab']
+move-to-workspace-1 = ['<Super><Shift>1', '<Super><Shift>KP_1']
+move-to-workspace-2 = ['<Super><Shift>2', '<Super><Shift>KP_2']
+move-to-workspace-3 = ['<Super><Shift>3', '<Super><Shift>KP_3']
+move-to-workspace-4 = ['<Super><Shift>4', '<Super><Shift>KP_4']
+move-to-workspace-5 = ['<Super><Shift>5', '<Super><Shift>KP_5']
+move-to-workspace-6 = ['<Super><Shift>6', '<Super><Shift>KP_6']
+move-to-workspace-7 = ['<Super><Shift>7', '<Super><Shift>KP_7']
+move-to-workspace-8 = ['<Super><Shift>8', '<Super><Shift>KP_8']
+move-to-workspace-9 = ['<Super><Shift>9', '<Super><Shift>KP_9']
+move-to-workspace-left = ['<Super><Shift>Left']
+move-to-workspace-right = ['<Super><Shift>Right']
+move-to-workspace-down = []
+move-to-workspace-up = []
+move-to-monitor-left = []
+move-to-monitor-right = []
+move-to-monitor-up = []
+move-to-monitor-down = []
+switch-to-workspace-1 = ['<Super>1', '<Super>KP_1']
+switch-to-workspace-2 = ['<Super>2', '<Super>KP_2']
+switch-to-workspace-3 = ['<Super>3', '<Super>KP_3']
+switch-to-workspace-4 = ['<Super>4', '<Super>KP_4']
+switch-to-workspace-5 = ['<Super>5', '<Super>KP_5']
+switch-to-workspace-6 = ['<Super>6', '<Super>KP_6']
+switch-to-workspace-7 = ['<Super>7', '<Super>KP_7']
+switch-to-workspace-8 = ['<Super>8', '<Super>KP_8']
+switch-to-workspace-9 = ['<Super>9', '<Super>KP_9']
+switch-to-workspace-left = ['<Super>Left']
+switch-to-workspace-right = ['<Super>Right']
+switch-to-workspace-down = []
+switch-to-workspace-up = []
+switch-input-source = []
+switch-input-source-backward = []
+
+[org.gnome.gedit.preferences.encodings]
+candidate-encodings = ['UTF-8','GB18030','GB2312','GBK','BIG5','CURRENT','UTF-16']
+
+[com.deepin.wrap.pantheon.desktop.gala.appearance]
+button-layout = ':minimize,maximize,close'
+
+[com.deepin.wrap.pantheon.desktop.gala.behavior]
+dynamic-workspaces = false
+dock-names = ['plank']
+window-overview-type = 'grid'
+panel-main-menu-action = ''
+hotcorner-custom-command = ''
+hotcorner-bottomright = 'none'
+hotcorner-topright = 'none'
+hotcorner-bottomleft = 'none'
+hotcorner-topleft = 'none'
+
+[com.deepin.wrap.pantheon.desktop.gala.keybindings]
+expose-windows = ['<Super>W']
+expose-all-windows = ['<Super>A']
+preview-workspace = ['<Super>S']
+switch-input-source = []
+switch-input-source-backward = []
+cycle-workspaces-next = []
+cycle-workspaces-previous = []
+zoom-in = ['<Super>plus', '<Super>KP_Add']
+zoom-out = ['<Super>minus', '<Super>KP_Subtract']
+move-to-workspace-first = ['<Super><Shift>Home', '<Control><Alt><Shift>Home']
+move-to-workspace-last = ['<Super><Shift>End', '<Control><Alt><Shift>End']
+switch-to-workspace-first = ['<Super>Home', '<Control><Alt>Home']
+switch-to-workspace-last = ['<Super>End', '<Control><Alt>End']
+
+[com.deepin.wrap.gnome.mutter]
+auto-maximize = false
+overlay-key = ''
+
+[com.deepin.wrap.gnome.mutter.keybindings]
+toggle-tiled-right = []
+toggle-tiled-left = []
+
+[com.deepin.wrap.gnome.metacity]
+theme = 'deepin'
+
+[com.deepin.dde.keybinding.system]
+launcher = ['Super_L']
+
+[com.deepin.wrap.pantheon.desktop.gala.animations]
+enable-animations = true
+open-duration = 350
+snap-duration = 250
+close-duration = 300
+menu-duration = 150
+minimize-duration = 200
+workspace-switch-duration = 300
+
+[com.deepin.dde.launcher]
+apps-order = ['google-chrome', 'wps-office-wps', 'wps-office-wpp', 'wps-office-et', 'dde-file-manager', 'skype', 'deepin-appstore', 'spotify', 'deepin-music', 'deepin-movie', 'steam', 'deepin-screenshot', 'deepin-image-viewer', 'foxitreader', 'evince', 'org.gnome.gedit', 'thunderbird', 'deepin-terminal', 'deepin-screen-recorder', 'deepin-voice-recorder', 'deepin-feedback', 'deepin-remote-assistance', 'deepin-cloudprint-config-helper', 'deepin-cloud-scan-config-helper', 'simple-scan', 'deepin-boot-maker', 'dde-computer', 'deepin-toggle-desktop', 'dde-trash', 'dde-control-center', 'deepin-wm-multitaskingview', 'gnome-system-monitor', 'system-config-printer', 'deepin-calendar', 'gnome-calculator', 'org.gnome.font-viewer', 'org.gnome.fileroller', 'mintdrivers', 'chmsee', 'crossover', 'gdebi', 'gparted']
+apps-order-zh-cn = ['google-chrome', 'wps-office-wps', 'wps-office-wpp', 'wps-office-et', 'dde-file-manager', 'deepin.com.qq.im', 'deepin-appstore', 'netease-cloud-music', 'deepin-music', 'deepin-movie', 'steam', 'deepin-screenshot', 'deepin-image-viewer', 'foxitreader', 'org.gnome.gedit', 'thunderbird', 'youdao-dict', 'fcitx-ui-sogou-qimpanel', 'deepin-terminal', 'deepin-screen-recorder', 'deepin-voice-recorder', 'deepin-feedback', 'deepin-remote-assistance', 'deepin-cloudprint-config-helper', 'deepin-cloud-scan-config-helper', 'simple-scan', 'deepin-boot-maker', 'dde-computer', 'deepin-toggle-desktop', 'dde-trash', 'dde-control-center', 'deepin-wm-multitaskingview', 'fcitx', 'fcitx-configtool', 'gnome-system-monitor', 'system-config-printer', 'deepin-calendar', 'gnome-calculator', 'org.gnome.font-viewer', 'org.gnome.fileroller', 'mintdrivers', 'chmsee', 'crossover', 'gdebi', 'gparted']
+apps-order-zh-tw = ['google-chrome', 'wps-office-wps', 'wps-office-wpp', 'wps-office-et', 'dde-file-manager', 'deepin-appstore', 'deepin-music', 'deepin-movie', 'steam', 'deepin-screenshot', 'deepin-image-viewer', 'foxitreader', 'org.gnome.gedit', 'thunderbird', 'deepin-terminal', 'deepin-screen-recorder', 'deepin-voice-recorder', 'deepin-feedback', 'deepin-remote-assistance', 'deepin-cloudprint-config-helper', 'deepin-cloud-scan-config-helper', 'simple-scan', 'deepin-boot-maker', 'dde-computer', 'deepin-toggle-desktop', 'dde-trash', 'dde-control-center', 'deepin-wm-multitaskingview', 'fcitx', 'fcitx-configtool', 'gnome-system-monitor', 'system-config-printer', 'deepin-calendar', 'gnome-calculator', 'org.gnome.font-viewer', 'org.gnome.fileroller', 'mintdrivers', 'chmsee', 'crossover', 'gdebi', 'gparted']
+
+[com.deepin.dde.dock]
+docked-apps = ['deepin-toggle-desktop', 'deepin-wm-multitaskingview','dde-file-manager','deepin-appstore','deepin-music','deepin-movie','google-chrome','dde-control-center']
+hide-mode = 'keep-showing'
+

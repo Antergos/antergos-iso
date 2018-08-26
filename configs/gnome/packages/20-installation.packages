@@ -1,0 +1,17 @@
+# Installation
+arch-install-scripts
+crda
+dialog
+dmraid
+efibootmgr
+efitools
+fakeroot
+gparted
+gptfdisk
+grub
+haveged
+hwdetect
+hwinfo
+ntp
+os-prober
+parted

@@ -1,0 +1,8 @@
+# Cnchi Graphical Installer
+cnchi
+python-bugsnag
+python-lxml
+python-mako
+python-mock
+python-requests
+upower

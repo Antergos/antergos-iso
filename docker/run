@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#echo "Removing old containers..."
+#docker rm antergos-iso-data
+#docker rm antergos-iso-build
+#echo "Creating antergos-iso data volume container..."
+#docker create -v /raid/antergos-iso-data/out:/out -v /raid/antergos-iso-data/work:/work --name antergos-iso-data antergos-iso /bin/true
+#echo "Creating antergos-iso build container..."
+#docker run -ti --privileged --volumes-from antergos-iso-data --name antergos-iso-build antergos-iso
+
+
+echo "Removing old container..."
+docker rm antergos-iso-build
+
+echo "Running antergos-iso-build container..."
+docker run -t --privileged -v /out:/out -v /work:/work --name antergos-iso-build antergos-iso
+

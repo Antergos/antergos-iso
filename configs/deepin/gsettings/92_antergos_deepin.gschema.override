@@ -1,0 +1,48 @@
+[org.gnome.software]
+download-updates=false
+show-nonfree-software=true
+allow-updates=false
+show-ratings=true
+
+[com.deepin.dde.dock]
+docked-apps=['/S@cnchi', '/S@deepin-toggle-desktop', '/S@deepin-wm-multitaskingview', '/S@dde-file-manager', '/S@deepin-music', '/S@chromium', '/S@gnome-software', '/S@dde-control-center']
+
+[com.deepin.dde.appearance]
+gtk-theme='Numix-Frost'
+icon-theme='Numix'
+background-uris=['file:///usr/share/wallpapers/deepin/antdeepin-logo-water.jpg', 'file:///usr/share/wallpapers/deepin/Sunset_of_the_Lake_Nam_by_Wang_Jinyu.jpg', 'file:///usr/share/wallpapers/deepin/Reflection_of_the_Kanas%20Lake_by_Wang_Jinyu.jpg', 'file:///usr/share/wallpapers/deepin/Autumn_in_Kanas_by_Wang_Jinyu.jpg']
+
+[com.deepin.xsettings]
+icon-theme-name='Numix'
+theme-name='Numix-Frost'
+gtk-theme-name='Numix-Frost'
+
+[com.deepin.dde.keyboard]
+layout='us;'
+user-layout-list=['us;']
+
+[com.deepin.wrap.gnome.desktop.background]
+primary-color = '#000000'
+secondary-color = '#023c88'
+picture-uri = 'file:///usr/share/antergos/wallpapers-deepin/antdeepin-logo-water.jpg'
+
+[com.deepin.wrap.gnome.desktop.sound]
+theme-name = 'deepin'
+event-sounds = true
+
+[com.deepin.wrap.gnome.desktop.wm.preferences]
+theme = 'Numix-Frost'
+audible-bell = false
+mouse-button-modifier = ''
+
+[com.deepin.wrap.gnome.desktop.interface]
+cursor-theme = 'deepin'
+gtk-key-theme = 'Default'
+gtk-theme = 'Numix-Frost'
+icon-theme = 'Numix'
+gtk-im-module = 'fcitx'
+
+[com.deepin.dde.zone]
+left-up = 'dbus-send --print-reply --dest=com.deepin.dde.Launcher /com/deepin/dde/Launcher com.deepin.dde.Launcher.Toggle'
+right-up = 'dbus-send --session --dest=com.deepin.wm --print-reply /com/deepin/wm com.deepin.wm.PerformAction int32:1'
+left-down = 'dbus-send --session --dest=com.deepin.wm --print-reply /com/deepin/wm com.deepin.wm.PerformAction int32:6'

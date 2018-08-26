@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "Creating antergos-base docker image..."
+pacman -S --needed --noconfirm arch-install-scripts expect
+./mkimage-antergos-base
+
+echo "Creating antergos-iso docker image..."
+docker build -t antergos-iso .

@@ -1,0 +1,18 @@
+################################################################################
+
+Welcome To Antergos! - \r (\l) (net install)
+
+To login use root (without password)
+
+To download latest version of the Antergos Architect installer:
+    git clone https://github.com/antergos/architect
+
+To start installation:
+    cd architect
+    ./architect.sh
+
+Before starting installation, check that you have a working Internet conenction
+
+Please visit our Support Forum for assistance: https://forum.antergos.com/
+
+################################################################################

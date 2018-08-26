@@ -1,0 +1,10 @@
+# System
+curl
+expect
+powerpill
+openssh
+reflector
+sudo
+systemd-sysvcompat
+upower
+wget

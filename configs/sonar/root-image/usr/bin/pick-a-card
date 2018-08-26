@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# If there are multiple usable sound cards, prompt the user to choose one,
+# using auditory feedback.
+# This script is released under the GNU General Public License.
+
+source /usr/share/livecd-sound/functions
+
+nwords() {
+	echo $#
+}
+
+is_numeric() {
+	local str=$1
+	expr match "$str" '[[:digit:]]\+$' > /dev/null 2>&1
+}
+
+set_default_card() {
+	local card=$1
+	sed -e "s/%card%/$card/g" < /usr/share/livecd-sound/asound.conf.in \
+	    > /etc/asound.conf
+}
+
+play_on_card() {
+	local card=$1 file=$2
+	aplay "-Dplughw:$card,0" "$file"
+}
+
+set -f
+usable_cards="$(list_non_pcsp_cards)"
+num_usable_cards=$(nwords $usable_cards)
+
+if [ "$num_usable_cards" -eq 1 ]; then
+	exit 0
+fi
+
+for card in $usable_cards; do
+	if ! is_numeric "$card"; then
+		continue
+	fi
+	play_on_card "$card" /usr/share/livecd-sound/sounds/pick-a-card.wav&
+done
+wait
+sleep 1
+for card in $usable_cards; do
+	if ! is_numeric "$card"; then
+		continue
+	fi
+	play_on_card "$card" /usr/share/livecd-sound/sounds/beep.wav
+	if read -t 10; then
+		set_default_card "$card"
+		break
+	fi
+done

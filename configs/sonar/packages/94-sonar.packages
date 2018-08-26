@@ -1,0 +1,23 @@
+# 6dots
+alsa-utils
+bluez
+bluez-libs
+brltty-minimal
+clonezilla
+darkhttpd
+ddrescue
+dhclient
+dnsmasq
+elinks
+espeak
+espeakup
+ethtool
+gnu-netcat
+gpm
+irssi
+lftp
+mc
+orca
+python2-speechd
+vim-minimal
+

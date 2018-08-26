@@ -14,3 +14,4 @@ gtk-xft-hinting=1
 gtk-xft-hintstyle="hintmedium"
 gtk-xft-rgba="rgb"
 gtk-modules="gail:atk-bridge"
+
