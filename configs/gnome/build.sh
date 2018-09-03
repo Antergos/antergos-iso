@@ -681,9 +681,12 @@ make_iso_version_files() {
 
 # Build "dkms" kernel modules.
 make_kernel_modules_with_dkms() {
+    # Appears that bug in pacman has been fixed and this is no longer necessary
+    return 0
+
     if [[ ! -f /var/tmp/customize_${ISO_NAME}_rootfs.dkms ]]; then
         # Build kernel modules that are handled by dkms so we can delete kernel headers to save space
-        MKARCHISO_RUN 'dkms autoinstall'
+        MKARCHISO_RUN 'dkms autoinstall -k'
 
         if [ "${ADD_ZFS_MODULES}" == "y" ]; then
             # Bugfix (sometimes pacman tries to build zfs before spl!)
