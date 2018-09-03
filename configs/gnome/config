@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-ISO_NAME="antergos-gnome"
+ISO_NAME="antergos"
 ISO_LABEL="ANTERGOS"
 
 INSTALL_DIR="arch"
