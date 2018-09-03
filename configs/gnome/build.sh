@@ -505,7 +505,7 @@ make_boot_extra() {
 
 # Prepare /${INSTALL_DIR}/boot/syslinux
 make_syslinux() {
-    _uname_r=$(file -b ${work_dir}/root-image/boot/vmlinuz-linux | awk 'f{print;f=0} /version/{f=1}' RS=' ')
+    _uname_r=$(file -b ${WORK_DIR}/root-image/boot/vmlinuz-linux | awk 'f{print;f=0} /version/{f=1}' RS=' ')
     mkdir -p ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
     for _cfg in ${SCRIPT_PATH}/isolinux/*.cfg; do
         sed "s|%ARCHISO_LABEL%|${ISO_LABEL}|g;
