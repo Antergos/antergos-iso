@@ -505,7 +505,7 @@ make_boot_extra() {
 
 # Prepare /${INSTALL_DIR}/boot/syslinux
 make_syslinux() {
-    _uname_r=$(file -b ${work_dir}/root-image/boot/vmlinuz-linux | awk 'f{print;f=0} /version/{f=1}' RS=' ')
+    _uname_r=$(file -b ${WORK_DIR}/root-image/boot/vmlinuz-linux | awk 'f{print;f=0} /version/{f=1}' RS=' ')
     mkdir -p ${WORK_DIR}/iso/${INSTALL_DIR}/boot/syslinux
     for _cfg in ${SCRIPT_PATH}/isolinux/*.cfg; do
         sed "s|%ARCHISO_LABEL%|${ISO_LABEL}|g;
@@ -570,9 +570,9 @@ make_efiboot() {
     truncate -s 64M ${WORK_DIR}/iso/EFI/archiso/efiboot.img
     mkfs.fat -n ARCHISO_EFI ${WORK_DIR}/iso/EFI/archiso/efiboot.img
 
-    if [[ ! -f /dev/loop0 ]]; then
+    if [[ ! -e /dev/loop0 ]]; then
         mknod /dev/loop0 b 7 0
-    fi  
+    fi
 
     mkdir -p ${WORK_DIR}/efiboot
     mount ${WORK_DIR}/iso/EFI/archiso/efiboot.img ${WORK_DIR}/efiboot
@@ -681,9 +681,12 @@ make_iso_version_files() {
 
 # Build "dkms" kernel modules.
 make_kernel_modules_with_dkms() {
+    # Appears that bug in pacman has been fixed and this is no longer necessary
+    return 0
+
     if [[ ! -f /var/tmp/customize_${ISO_NAME}_rootfs.dkms ]]; then
         # Build kernel modules that are handled by dkms so we can delete kernel headers to save space
-        MKARCHISO_RUN 'dkms autoinstall'
+        MKARCHISO_RUN 'dkms autoinstall -k'
 
         if [ "${ADD_ZFS_MODULES}" == "y" ]; then
             # Bugfix (sometimes pacman tries to build zfs before spl!)
