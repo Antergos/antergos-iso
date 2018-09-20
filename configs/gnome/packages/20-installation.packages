@@ -1,5 +1,6 @@
 # Installation
 arch-install-scripts
+pacman-contrib
 crda
 dialog
 dmraid
