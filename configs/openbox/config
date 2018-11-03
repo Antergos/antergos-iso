@@ -3,6 +3,7 @@ set -euo pipefail
 
 ISO_NAME="antergos-minimal"
 ISO_LABEL="ANTERGOS"
+IS_MINIMAL="y"
 
 INSTALL_DIR="arch"
 WORK_DIR="/work"
