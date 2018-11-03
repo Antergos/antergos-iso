@@ -797,12 +797,12 @@ fi
 
 # Add nvidia to the iso name if nvidia proprietary drivers are used but
 # and the nouveau ones are not included
-if [[ "$NVIDIA_DRIVER" == "y" ]] && [[ "$NOUVEAU_DRIVER" == "n" ]]; then
+if [[ "$NVIDIA_DRIVER" = "y" && "$NOUVEAU_DRIVER" = "n" && -z "${IS_MINIMAL}" ]]; then
     ISO_NAME=${ISO_NAME}-nvidia
 fi
 
 # Add nozfs to the iso name if no zfs modules are in it
-if [ "${ADD_ZFS_MODULES}" != "y" ]; then
+if [[ "${ADD_ZFS_MODULES}" != "y" && -z "${IS_MINIMAL}" ]]; then
     ISO_NAME=${ISO_NAME}-nozfs
 fi
 
@@ -813,7 +813,7 @@ else
     KEEP_XZ_FLAG=""
 fi
 
-if [[ "${KEEP_XZ}" != "y" ]]; then
+if [[ "${KEEP_XZ}" != "y" && -z "${IS_MINIMAL}" ]]; then
     # Show in iso name that no xz packages are cached in the ISO
     ISO_NAME=${ISO_NAME}-noxz
 fi
